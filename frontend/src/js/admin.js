@@ -573,16 +573,69 @@ function renderDynamicDashboard() {
 // Orders Management Subsystem
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Orders Management Subsystem & Real-Time Auto-Polling
+// ---------------------------------------------------------------------------
+
 let activeOrderFilter = 'all';
 let activeDeptFilter = 'all';
+let isFirstOrderLoad = true;
+let previousOrderIds = new Set();
 
 /**
- * Initializes orders table rendering, status pill filters, and order inspection actions.
+ * Synthesizes a subtle, pleasant two-tone kitchen chime using Web Audio API.
+ * Requires no external audio files.
+ */
+function playKitchenChimeSound() {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const now = ctx.currentTime;
+
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(880, now); // A5
+    gain1.gain.setValueAtTime(0.2, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.6);
+
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(1320, now + 0.12); // E6
+    gain2.gain.setValueAtTime(0.25, now + 0.12);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.12);
+    osc2.stop(now + 1.0);
+  } catch (e) {
+    // Web Audio auto-play may be suppressed prior to user interaction
+  }
+}
+
+/**
+ * Initializes orders table rendering, status pill filters, and auto-polling loops.
  */
 function initOrdersSection() {
   loadLiveOrdersFromBackend();
-  // Auto-refresh orders every 4 seconds for live kitchen dispatch
-  setInterval(loadLiveOrdersFromBackend, 4000);
+  
+  // 1. High-frequency live order polling (every 3 seconds for kitchen dispatch)
+  setInterval(loadLiveOrdersFromBackend, 3000);
+
+  // 2. Secondary background polling for stock, holds, and events (every 10 seconds)
+  setInterval(() => {
+    loadCafeFromBackend();
+    loadFlowersFromBackend();
+    loadLibraryFromBackend();
+    loadLoansFromBackend();
+    loadEventsFromBackend();
+  }, 10000);
 
   // Department Filter Pills (Café, Library/Books, Flowers)
   const deptPills = document.querySelectorAll('#orders-dept-pills .pill-tab-btn');
@@ -661,7 +714,7 @@ function initOrdersSection() {
 }
 
 /**
- * Pulls orders from Supabase via backend API and replaces local data.
+ * Pulls orders from Supabase via backend API, detects new incoming orders, and refreshes UI.
  */
 async function loadLiveOrdersFromBackend() {
   try {
@@ -738,6 +791,22 @@ async function loadLiveOrdersFromBackend() {
       });
     }
 
+    // Detect new orders on subsequent polling cycles
+    const currentOrderIds = new Set(parsedOrders.map(o => o.id));
+    if (!isFirstOrderLoad) {
+      const newlyArrived = parsedOrders.filter(o => !previousOrderIds.has(o.id));
+      if (newlyArrived.length > 0) {
+        const newest = newlyArrived[0];
+        playKitchenChimeSound();
+        if (typeof showToast === 'function') {
+          showToast(`🔔 New Order Received: ${newest.id} (${newest.customer})`, 'restaurant');
+        }
+      }
+    } else {
+      isFirstOrderLoad = false;
+    }
+
+    previousOrderIds = currentOrderIds;
     adminOrders = parsedOrders;
     adminOrders.sort((a, b) => b.timestamp - a.timestamp);
     renderOrdersTable();
