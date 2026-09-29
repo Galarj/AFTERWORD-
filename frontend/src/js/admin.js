@@ -780,7 +780,7 @@ async function loadLiveOrdersFromBackend() {
           dept: dept,
           customer: o.profiles?.full_name || (o.user_id ? `Patron (${o.user_id.slice(0, 8)})` : (o.table_number ? `Table #${o.table_number}` : 'Guest Patron')),
           customerType: o.table_number ? `In-Seat (Table ${o.table_number})` : 'Counter Pickup',
-          items: itemsStr || `Order Total $${o.total}`,
+          items: itemsStr || `Order Total ₱${o.total}`,
           type: o.order_type === 'in_seat' ? 'In-Seat Service' : 'Counter Pickup',
           total: Number(o.total),
           status: statusClean,
@@ -861,7 +861,7 @@ function renderOrdersTable() {
         <span class="text-sm font-semibold">${ord.items}</span>
       </td>
       <td><span class="text-xs text-muted text-mono">${ord.type}</span></td>
-      <td><span class="text-mono font-semibold">$${ord.total.toFixed(2)}</span></td>
+      <td><span class="text-mono font-semibold">₱${ord.total.toFixed(2)}</span></td>
       <td>
         <span class="status-badge status-badge--${ord.status}">${ord.status}</span>
       </td>

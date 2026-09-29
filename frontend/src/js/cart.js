@@ -157,9 +157,9 @@ function renderCartItems() {
         <span class="cart-empty-desc">Add fresh pastries, espresso roasts, or botanical stems.</span>
       </div>
     `;
-    if (subtotalEl) subtotalEl.textContent = '$0.00';
-    if (taxEl) taxEl.textContent = '$0.00';
-    if (totalEl) totalEl.textContent = '$0.00';
+    if (subtotalEl) subtotalEl.textContent = '₱0.00';
+    if (taxEl) taxEl.textContent = '₱0.00';
+    if (totalEl) totalEl.textContent = '₱0.00';
     return;
   }
 
@@ -171,20 +171,20 @@ function renderCartItems() {
     <div class="cart-item-row">
       <div class="cart-item-info">
         <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-meta">${item.category} · $${item.price.toFixed(2)} each</div>
+        <div class="cart-item-meta">${item.category} · ₱${item.price.toFixed(2)} each</div>
       </div>
       <div class="cart-item-qty">
         <button class="cart-qty-btn" data-qty-action="decrease" data-index="${index}" aria-label="Decrease quantity of ${item.name}">−</button>
         <span class="cart-qty-count">${item.quantity}</span>
         <button class="cart-qty-btn" data-qty-action="increase" data-index="${index}" aria-label="Increase quantity of ${item.name}">+</button>
       </div>
-      <div class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+      <div class="cart-item-price">₱${(item.price * item.quantity).toFixed(2)}</div>
     </div>
   `).join('');
 
-  if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-  if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-  if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
+  if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+  if (taxEl) taxEl.textContent = `₱${tax.toFixed(2)}`;
+  if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
 }
 
 /**
@@ -327,7 +327,7 @@ function initCart() {
         }
 
         const orderRef = res?.order?.order_number ? ` (${res.order.order_number})` : '';
-        showToast(`Order Placed! Total: $${getCartTotal().toFixed(2)}${orderRef} — ${destination}`, 'check_circle');
+        showToast(`Order Placed! Total: ₱${getCartTotal().toFixed(2)}${orderRef} — ${destination}`, 'check_circle');
 
         cart = [];
         saveCart();

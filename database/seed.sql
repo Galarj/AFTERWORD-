@@ -101,7 +101,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Americano',
     'Rich double shot of house espresso lengthened with hot water or poured over ice for a clean, bold coffee flavor.',
-    4.00,
+    110.00,
     100,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
@@ -110,7 +110,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Cappuccino',
     'Classic equal parts espresso, silky steamed milk, and a generous layer of dense, velvety microfoam.',
-    4.75,
+    125.00,
     80,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
@@ -119,7 +119,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Caffè Latte',
     'Smooth, balanced espresso blended with gently textured whole or oat milk and finished with pouring latte art.',
-    5.00,
+    135.00,
     90,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
@@ -128,7 +128,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Dark Chocolate Mocha',
     'Full-bodied espresso stirred with melted bittersweet dark chocolate sauce, steamed milk, and dusted with cacao.',
-    5.75,
+    145.00,
     70,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
@@ -137,7 +137,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Stone-Ground Uji Matcha',
     'Vibrant jade ceremonial matcha froth balanced with warm oat milk. Rich umami with sweet toasted nori notes.',
-    6.25,
+    150.00,
     35,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'drinks'),
@@ -146,7 +146,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Sparkling Cascara Tonic',
     'Organic coffee cherry husk tisane steeped cold, lightly carbonated with fresh lemon verbena and mountain spring water.',
-    5.25,
+    130.00,
     40,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'drinks'),
@@ -155,7 +155,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Cardamom Morning Knot',
     'Swedish-style braided butter brioche infused with freshly crushed green cardamom pods and raw pearl sugar crust.',
-    5.25,
+    120.00,
     20,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'food'),
@@ -164,7 +164,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Classic 72-Layer Croissant',
     'Shatteringly crisp honeycomb exterior giving way to an ethereal, buttery and lightly cultured sourdough interior.',
-    4.85,
+    115.00,
     25,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'food'),
@@ -173,7 +173,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Hearth Rosemary & Olive Focaccia',
     'Stone-baked in cast iron with garden rosemary needles, flaked Maldon sea salt, and cold-pressed Sicilian olive oil.',
-    6.00,
+    140.00,
     15,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'food'),
@@ -183,7 +183,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'The Morning Mist Bunch',
     'An airy, romantic gathering of garden roses, feathery white astilbe, silver dollar eucalyptus, and sea lavender.',
-    42.00,
+    450.00,
     15,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'fresh'),
@@ -192,7 +192,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'Terracotta Ranunculus',
     'Warm autumnal bunch featuring apricot ranunculus, copper chrysanthemum, dried bunny tails, and golden wheat.',
-    38.00,
+    380.00,
     12,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'fresh'),
@@ -201,7 +201,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
 (
     'The Archival Dried Cloche',
     'Everlasting botanical arrangement enclosed under handblown bell jar glass with preserved pampas and lunaria.',
-    54.00,
+    550.00,
     8,
     TRUE,
     (SELECT category_id FROM public.categories WHERE slug = 'dried'),
