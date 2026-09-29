@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Café & Daily Bakes — AFTERWORD</title>
+  <meta name="description"
+    content="Mindfully sourced single-origin coffees, slow drip infusions, and wild-fermented morning pastries baked before dawn in North Square.">
+
+  <!-- Typography & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet">
+
+  <!-- Core Design System CSS -->
+  <link rel="stylesheet" href="../../styles/main.css">
+
+  <!-- Patron Authentication & Site Gatekeeper -->
+  <script src="../js/auth.js"></script>
+</head>
+
+<body>
+
+  <!-- Top Operational System Bar -->
+  <aside class="system-status-bar" aria-label="Café Status">
+    <div class="container system-status-inner">
+      <div class="flex-row items-center gap-xs flex-wrap">
+        <span class="sys-tag">AFTERWORD CAFÉ // BAR & SEATING</span>
+        <span>OPEN DAILY 7:00 AM – 9:00 PM</span>
+        <span>·</span>
+        <span>DINE-IN & TAKEAWAY</span>
+      </div>
+      <div class="flex-row items-center gap-sm flex-wrap">
+        <span class="text-main font-semibold">House Blend On Bar</span>
+        <span class="flex-row items-center gap-xs text-secondary font-semibold">
+          <span class="status-dot active"></span> Bakery: Freshly Baked Today
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Site Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <a href="../../index.html" class="brand-logo" aria-label="AFTERWORD Home">AFTERWORD</a>
+        <nav class="nav-links" aria-label="Primary Navigation">
+          <a href="../../index.html" class="nav-link">Home</a>
+          <a href="cafe.html" class="nav-link active">Café</a>
+          <a href="library.html" class="nav-link">Library</a>
+          <a href="flowers.html" class="nav-link">Flowers</a>
+          <a href="events.html" class="nav-link">Events</a>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="header-search">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" placeholder="Search catalog, events..." aria-label="Search catalog or events">
+        </div>
+
+        <button class="cart-toggle-btn" aria-label="Open Order Tray">
+          <span class="material-symbols-outlined icon-18 icon-secondary">shopping_bag</span>
+          <span class="font-semibold">Tray</span>
+          <span class="cart-count-badge">0</span>
+        </button>
+
+        <a href="profile.html" class="nav-user-avatar" title="Patron Member Profile">
+          <span class="material-symbols-outlined">person</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <nav class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <a href="../../index.html" class="nav-link">Home</a>
+    <a href="cafe.html" class="nav-link active">Café & Daily Bakes</a>
+    <a href="library.html" class="nav-link">The Bookshelf</a>
+    <a href="flowers.html" class="nav-link">Floral Studio & Stems</a>
+    <a href="events.html" class="nav-link">Workshops & Events</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Hero / Title Section -->
+    <section class="section section-bordered bg-surface-low">
+      <div class="container">
+        <div class="flex-row items-start justify-between flex-wrap gap-sm">
+          <div class="col-span-8">
+            <span class="section-eyebrow">COFFEE & DAILY BAKERY</span>
+            <h1 class="hero-title text-primary">Café & Daily Bakes</h1>
+            <p class="hero-desc">
+              Freshly brewed coffee, specialty drinks, and pastries baked every morning. Grab a cup, find a seat, and
+              take your time.
+            </p>
+          </div>
+          <div>
+
+            <div class="text-mono text-xs text-muted mt-xs">
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <nav class="tab-bar mt-lg mb-0" data-filter-target="data-category" aria-label="Café Categories">
+          <button class="tab-btn active" data-category="all">All Offerings</button>
+          <button class="tab-btn" data-category="coffee">Coffee</button>
+          <button class="tab-btn" data-category="drinks">Drinks</button>
+          <button class="tab-btn" data-category="food">Food</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Menu Offerings Grid -->
+    <section class="section">
+      <div class="container">
+
+        <!-- Section Header -->
+        <div class="section-header-row">
+          <div>
+            <h2 class="section-title">Coffee & Drinks</h2>
+            <p class="section-desc">Freshly pulled espresso, hand brews, and chilled drinks.</p>
+          </div>
+          <span class="text-mono text-xs text-secondary font-semibold">HOT & ICED AVAILABLE</span>
+        </div>
+
+        <div class="grid-3 mb-xl">
+
+          <!-- Item 1: Americano -->
+          <article class="card card-hover" data-category="coffee">
+            <div class="card-image-wrap card-img-180">
+              <img src="../../assets/images/coffee/americano.jpg" alt="Americano">
+              <span class="chip chip-coffee badge-pos-tr">ESPRESSO</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Americano</h3>
+              <span class="card-price">$4.00</span>
+            </div>
+            <span class="text-mono text-xs text-secondary font-semibold text-uppercase mb-xs">
+              DOUBLE ESPRESSO · HOT OR ICED
+            </span>
+            <p class="card-desc">
+              Rich double shot of house espresso lengthened with hot water or poured over ice for a clean, bold coffee
+              flavor.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">12oz Cup</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Americano" data-price="4.00"
+                data-category="Coffee">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+          <!-- Item 2: Cappuccino -->
+          <article class="card card-hover" data-category="coffee">
+            <div class="card-image-wrap card-img-180">
+              <img src="../../assets/images/coffee/cappuccino.jpg" alt="Cappuccino">
+              <span class="chip chip-coffee badge-pos-tr">ESPRESSO</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Cappuccino</h3>
+              <span class="card-price">$4.75</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              1:1:1 RATIO · VELVET MICROFOAM
+            </span>
+            <p class="card-desc">
+              Classic equal parts espresso, silky steamed milk, and a generous layer of dense, velvety microfoam.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">8oz Ceramic Cup</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Cappuccino" data-price="4.75"
+                data-category="Coffee">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+          <!-- Item 3: Caffè Latte -->
+          <article class="card card-hover" data-category="coffee">
+            <div class="card-image-wrap card-img-180">
+              <img src="../../assets/images/coffee/latte.jpg" alt="Caffè Latte">
+              <span class="chip chip-coffee badge-pos-tr">ESPRESSO</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Caffè Latte</h3>
+              <span class="card-price">$5.00</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              ESPRESSO · STEAMED MILK · LATTE ART
+            </span>
+            <p class="card-desc">
+              Smooth, balanced espresso blended with gently textured whole or oat milk and finished with pouring latte
+              art.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">12oz Cup</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Caffè Latte" data-price="5.00"
+                data-category="Coffee">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+          <!-- Item 4: Dark Chocolate Mocha -->
+          <article class="card card-hover" data-category="coffee">
+            <div class="card-image-wrap card-img-180">
+              <img src="../../assets/images/coffee/mocha.jpg" alt="Dark Chocolate Mocha">
+              <span class="chip chip-terracotta badge-pos-tr">SIGNATURE</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Dark Chocolate Mocha</h3>
+              <span class="card-price">$5.75</span>
+            </div>
+            <span class="text-mono text-xs text-secondary font-semibold text-uppercase mb-xs">
+              ESPRESSO · BITTERSWEET CACAO · STEAMED MILK
+            </span>
+            <p class="card-desc">
+              Full-bodied espresso stirred with melted bittersweet dark chocolate sauce, steamed milk, and dusted with
+              cacao.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">Hot or Iced</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Dark Chocolate Mocha" data-price="5.75"
+                data-category="Coffee">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+          <!-- Item 5: Ceremonial Matcha -->
+          <article class="card card-hover" data-category="drinks">
+            <div class="card-image-wrap card-img-180">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhY1z1iSYwnjefsn76tDWNuCLeFe-RAT7KopMJrRKtBVGOg6g1N9TLMZafo9AZFxQh3JW8368MFjTNHarY7jXZ5uaJd5PX6TVMG38rswK9SEDp1sqkEL7SNWTAuiv1HYD8grIBowofF82GPtZmD4DpzQSB1n81WIhcZP2MnWNFSLoLeMs3GUcXIG0-M1qiRdBkZWLd5f-AgRgrOzx5vDROUwNzVnxmSyT_bFLyyZ1p2hTK9iuhj34i"
+                alt="Ceremonial Uji Matcha">
+              <span class="chip chip-olive badge-pos-tr">BOTANICAL TEA</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Stone-Ground Uji Matcha</h3>
+              <span class="card-price">$6.25</span>
+            </div>
+            <span class="text-mono text-xs text-secondary font-semibold text-uppercase mb-xs">
+              FIRST-HARVEST KYOTO · BAMBOO WHISKED
+            </span>
+            <p class="card-desc">
+              Vibrant jade ceremonial matcha froth balanced with warm oat milk. Rich umami with sweet toasted nori
+              notes.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">Unsweetened</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Stone-Ground Uji Matcha"
+                data-price="6.25" data-category="Drinks">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+          <!-- Item 6: Cascara Fizz -->
+          <article class="card card-hover" data-category="drinks">
+            <div class="card-image-wrap card-img-180">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRHRV1XClS5QScmo_7p3xkvX3zlGlVu2F8dcAalH207gTncGeBiYKgm3nxqCUyXgM2UPzn917mu0wJQSStuhStw7JM1tdCKt6q0R8ujFmMov2kXIBpRKLzyD5aVifP-EgxaFMNCZwO_kWi-SH4o7QUtKFuilWejI99d7BWuBnih3mj8iew7JGFcXDDiDp75DWQlpqnD0s85a_KhQ4i0NgBpQC1TNKY26Tka7H6q1lfmWsau-NxI_tm"
+                alt="Sparkling Cascara Tonic">
+              <span class="chip chip-terracotta badge-pos-tr">REFRESHING</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Sparkling Cascara Tonic</h3>
+              <span class="card-price">$5.25</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              SUN-DRIED CHERRY · MINT & LEMON
+            </span>
+            <p class="card-desc">
+              Organic coffee cherry husk tisane steeped cold, lightly carbonated with fresh lemon verbena and mountain
+              spring water.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">Low Caffeine</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Sparkling Cascara Tonic"
+                data-price="5.25" data-category="Drinks">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Section 2 Header: Hearth Pastries -->
+        <div class="section-header-row section-bordered pt-lg">
+          <div>
+            <h2 class="section-title">Fresh Bakes & Food</h2>
+            <p class="section-desc">Daily brioche, laminated croissants, and warm savory focaccia.</p>
+          </div>
+          <span class="text-mono text-xs text-tertiary font-semibold">ORGANIC LOCAL FLOUR</span>
+        </div>
+
+        <div class="grid-3">
+
+          <!-- Bake 1: Morning Knot -->
+          <article class="card card-hover" data-category="food">
+            <div class="card-image-wrap card-img-180">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuClWmJYtZ0A7dz0kvmBkrTEu4sSRDRVU8NaOhhtg-uLNTefqe3vwFRumjlG8uLgfkOzuq0QML-EqiNQ0CxMjCCXn2GkbvkacuC9OAodRyvS-rvcxWSjB873heHqZsj7nqPX4JLYfMExVH4oZ8uQpvpYdZADwfMAiVrSvZMy7Vy0pOY5qVYf8OuIVRer5tQUKmVNVyh6cCarMRliSittTBTulOMEZxmU3G3pdncf_90KG7Vuy1PnDnye"
+                alt="Cardamom Morning Knot">
+              <span class="chip chip-terracotta badge-pos-tr">DAILY BAKE</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Cardamom Morning Knot</h3>
+              <span class="card-price">$5.25</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              SOURDOUGH BRIOCHE · RAW SUGAR CRUST
+            </span>
+            <p class="card-desc">
+              Slow-fermented brioche dough rolled in freshly crushed green cardamom pods, Ceylon cinnamon, and crystal
+              raw cane sugar.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">● 9 fresh from hearth</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Cardamom Morning Knot"
+                data-price="5.25" data-category="Food">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+          <!-- Bake 2: Croissant -->
+          <article class="card card-hover" data-category="food">
+            <div class="card-image-wrap card-img-180">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOlz_YYu31c8fyQhD2JaLg0JAHR4yxk7Z2rYXPKAnFPZ2-nWClIo-MB10nPywr6ED0heEIbOQkMMrVX4uhLIUiR2sfR-G6fggNr0z0OP2KBi747CZsoDxAOOqnYBsg4d-uw2TTc4fFTSF7rpsThShb0e1eTv8RHDxAhI8T2LgTfbc6ptLewpBwOFBqpbPRcvYmagNM2mjH0laTXUMzkAT9Vzb3ThLHP5l0d9Ae_cwvkw7Ob1MsNEzq"
+                alt="Classic 72-Layer Croissant">
+              <span class="chip chip-olive badge-pos-tr">ORGANIC GRAIN</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Classic 72-Layer Croissant</h3>
+              <span class="card-price">$4.85</span>
+            </div>
+            <span class="text-mono text-xs text-secondary font-semibold text-uppercase mb-xs">
+              ISIGNY STE MÈRE BUTTER · 3-DAY LAMINATION
+            </span>
+            <p class="card-desc">
+              Shatteringly crisp honeycomb exterior giving way to an ethereal, buttery and lightly cultured sourdough
+              interior.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">● 14 remaining</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Classic 72-Layer Croissant"
+                data-price="4.85" data-category="Food">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+          <!-- Bake 3: Focaccia -->
+          <article class="card card-hover" data-category="food">
+            <div class="card-image-wrap card-img-180">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAZ_SDE-TCpdiunnsV8VVxsJhX5aGsY6ryTvuJOCQ7waeFANMgiwBeGTK6EBn9K6z7U0c46YEk9vs3LW0yJXEEhTop5aaXfAuzMsZIdnSvKgYQpGEVeu168otuj3CPJCqXT38xXBAKcux9DYG0bjfJEJQzoOu3sImacAVA8z_ASjDKJT5f7bqvooGtLSCi8X2FwsXIs9E-oToLD4jpAvXqABRuQDefsWIdmMH17hWWzs0uBqE1P3nz"
+                alt="Hearth Rosemary Olive Focaccia">
+              <span class="chip chip-coffee badge-pos-tr">SAVORY HEARTH</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Hearth Rosemary & Olive Focaccia</h3>
+              <span class="card-price">$6.00</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              84% HYDRATION · CASTELVETRANO OLIVES
+            </span>
+            <p class="card-desc">
+              Stone-baked in cast iron with garden rosemary needles, flaked Maldon sea salt, and cold-pressed Sicilian
+              olive oil.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">Warmed on request</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Hearth Rosemary & Olive Focaccia"
+                data-price="6.00" data-category="Food">
+                + Add to Order
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- In-Seat Table Delivery Service Schematic Box -->
+        <section class="table-service-box" aria-label="Table Service Selection">
+          <div class="flex-row items-start gap-sm col-span-8">
+            <div class="icon-box-primary">
+              <span class="material-symbols-outlined icon-24">table_restaurant</span>
+            </div>
+            <div class="table-service-box__info">
+
+              <span class="section-eyebrow text-secondary">TABLE SERVICE</span>
+              <h3 class="card-title text-primary">Dining or Reading In-House?</h3>
+              <p class="card-desc">
+                Enter your table number (found on the small plaque on your table) and we'll bring your order right over.
+                Or leave blank for counter pickup.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex-row items-center gap-xs flex-wrap">
+            <div class="table-input-group">
+              <label for="table-number-input" class="text-sm font-semibold text-muted">Table #</label>
+              <input type="text" id="table-number-input" placeholder="e.g. 14" maxlength="4" aria-label="Table Number">
+            </div>
+            <button class="btn btn-primary btn-lg" data-action="open-cart">
+              <span class="material-symbols-outlined icon-20">shopping_bag</span>
+              <span>Review Tray (<span class="tray-item-count">0 Items</span>)</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Slide-Over Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Review Tray">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Your Order Tray</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Tray">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="cart-drawer-items" id="cart-items-container">
+      <!-- Dynamically filled by cart.js -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Estimated Tax (8%)</span>
+        <span id="cart-tax" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line total">
+        <span>Total Due</span>
+        <span id="cart-total" class="text-mono font-bold text-primary">$0.00</span>
+      </div>
+
+      <div class="cart-drawer-actions">
+        <button class="btn btn-outline btn-sm" id="clear-cart-btn">Clear</button>
+        <button class="btn btn-primary btn-sm" id="checkout-btn">Place Order / Send to Bar</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>AFTERWORD</h4>
+          <p class="text-base text-muted mb-sm">
+            A welcoming neighborhood café, personal book collection, fresh flower studio, and community gathering space.
+          </p>
+          <span class="chip chip-coffee">EST. 2024 · COFFEE & BOOKS</span>
+        </div>
+
+        <div class="footer-col">
+          <h5>Departments</h5>
+          <div class="footer-links">
+            <a href="cafe.html">Café & Daily Bakes</a>
+            <a href="library.html">The Bookshelf</a>
+            <a href="flowers.html">Floral Studio & Stems</a>
+            <a href="events.html">Workshops & Talks</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Space & Visit</h5>
+          <div class="footer-links">
+            <div><strong class="text-main">Hours:</strong> Mon–Sun: 7:00 – 22:00</div>
+            <div><strong class="text-main">Address:</strong> 418 District Lane</div>
+            <div><strong class="text-main">Contact:</strong> hello@afterwordcafe.org</div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Table Care</h5>
+          <p class="text-sm text-muted mb-xs">
+            Seating is open and unreserved. Please return glassware to drop-off trays when concluding your stay.
+          </p>
+          <div class="flex-row gap-xs">
+            <span class="chip">@AFTERWORDCAFE</span>
+            <span class="chip">MENU JOURNAL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 AFTERWORD Community Café & Books. All rights reserved.</span>
+        <div class="flex-row gap-sm">
+          <span>ESPRESSO BAR</span>
+          <span>·</span>
+          <span>THE BOOKSHELF</span>
+          <span>·</span>
+          <span>FLORAL STUDIO</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Vanilla JavaScript Subsystems -->
+  <script src="../js/toast.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/filters.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/cafe.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+
+</html>

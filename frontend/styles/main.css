@@ -1,0 +1,13 @@
+/* ==========================================================================
+   AFTERWORD COMMUNITY HUB — MASTER STYLESHEET
+   Modular Pure Vanilla CSS Architecture
+   ========================================================================== */
+
+@import 'variables.css';
+@import 'base.css';
+@import 'layout.css';
+@import 'buttons.css';
+@import 'forms.css';
+@import 'components.css';
+@import 'modal.css';
+@import 'responsive.css';

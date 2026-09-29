@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Bookshelf — AFTERWORD</title>
+  <meta name="description"
+    content="Browse the owner's personal collection of books and manga at AFTERWORD. Read freely in-house or take one home.">
+
+  <!-- Typography & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet">
+
+  <!-- Core Design System CSS -->
+  <link rel="stylesheet" href="../../styles/main.css">
+
+  <!-- Patron Authentication & Site Gatekeeper -->
+  <script src="../js/auth.js"></script>
+</head>
+
+<body>
+
+  <!-- Top Operational System Bar -->
+  <aside class="system-status-bar" aria-label="Library Status">
+    <div class="container system-status-inner">
+      <div class="flex-row items-center gap-xs flex-wrap">
+        <span class="sys-tag">THE BOOKSHELF // OWNER'S COLLECTION</span>
+        <span>READ & COFFEE CORNER</span>
+        <span>·</span>
+        <span>5 CURATED TITLES</span>
+      </div>
+      <div class="flex-row items-center gap-sm flex-wrap">
+        <span class="text-main font-semibold">Open for Reading</span>
+        <span class="flex-row items-center gap-xs text-secondary font-semibold">
+          <span class="status-dot active"></span> Cozy Reading Room
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Site Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <a href="../../index.html" class="brand-logo" aria-label="AFTERWORD Home">AFTERWORD</a>
+        <nav class="nav-links" aria-label="Primary Navigation">
+          <a href="../../index.html" class="nav-link">Home</a>
+          <a href="cafe.html" class="nav-link">Café</a>
+          <a href="library.html" class="nav-link active">Library</a>
+          <a href="flowers.html" class="nav-link">Flowers</a>
+          <a href="events.html" class="nav-link">Events</a>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="header-search">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" placeholder="Search catalog, events..." aria-label="Search catalog or events">
+        </div>
+
+        <button class="cart-toggle-btn" aria-label="Open Order Tray">
+          <span class="material-symbols-outlined icon-18 icon-secondary">shopping_bag</span>
+          <span class="font-semibold">Tray</span>
+          <span class="cart-count-badge">0</span>
+        </button>
+
+        <a href="profile.html" class="nav-user-avatar" title="Patron Member Profile">
+          <span class="material-symbols-outlined">person</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <nav class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <a href="../../index.html" class="nav-link">Home</a>
+    <a href="cafe.html" class="nav-link">Café & Daily Bakes</a>
+    <a href="library.html" class="nav-link active">The Bookshelf</a>
+    <a href="flowers.html" class="nav-link">Floral Studio & Stems</a>
+    <a href="events.html" class="nav-link">Workshops & Events</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Title & Search Hero Section -->
+    <section class="section section-bordered bg-surface-low">
+      <div class="container">
+        <div class="flex-row items-start justify-between flex-wrap gap-sm mb-md">
+          <div class="col-span-7">
+            <span class="section-eyebrow">THE OWNER'S BOOKSHELF</span>
+            <h1 class="hero-title text-primary">The Bookshelf</h1>
+            <p class="hero-desc">
+              A personal collection of favorite paperbacks, stories, and manga from the owner's shelf. Grab a seat, pick
+              up whatever catches your eye, read with a coffee, or borrow a copy to finish at home.
+            </p>
+          </div>
+
+          <!-- Quick Search Control -->
+          <div class="col-span-5">
+            <div class="search-bar">
+              <span class="material-symbols-outlined search-icon">search</span>
+              <input type="text" id="library-search" placeholder="Search by title or author..."
+                aria-label="Search Library Catalog">
+            </div>
+            <div class="flex-row justify-between items-center mt-xs text-mono text-xs text-muted">
+              <span id="library-results-count"></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Category Tabs -->
+        <nav class="tab-bar mb-0" id="library-tabs" data-filter-target="data-category" aria-label="Library Categories">
+          <button class="tab-btn active" data-category="all">All Books</button>
+          <button class="tab-btn" data-category="novels">Novels & Stories</button>
+          <button class="tab-btn" data-category="manga">Manga</button>
+          <button class="tab-btn" data-category="essays">Essays & Memoir</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Books Catalog Grid -->
+    <section class="section">
+      <div class="container">
+
+        <div class="grid-4" id="books-grid">
+
+          <!-- Book 1: Chainsaw Man -->
+          <article class="card card-hover book-item-card" data-book-id="chainsawman" data-category="manga"
+            data-title="Chainsaw Man" data-author="Tatsuki Fujimoto" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-280" data-action="open-book-quickview" data-book-id="chainsawman"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="../../assets/images/books/chainsawman.jpg" alt="Chainsaw Man Vol. 1" onerror="this.style.display='none'; let fb=this.parentNode.querySelector('.book-fallback-cover'); if(!fb){ fb=document.createElement('div'); fb.className='book-fallback-cover'; fb.style.cssText='width:100%; height:280px; background:linear-gradient(135deg, #1c2b26 0%, #2d4038 100%); border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.25rem; text-align:center; color:#faf7f2;'; fb.innerHTML='<span class=\"material-symbols-outlined mb-xs\" style=\"font-size:40px; color:#d4a373;\">auto_stories</span><h4 class=\"font-serif font-bold text-sm mb-2xs\" style=\"color:#faf7f2; line-height:1.2;\">' + (this.alt || 'Book') + '</h4><span style=\"font-size:0.7rem; color:#d4a373; opacity:0.8;\">Afterword Collection</span>'; this.parentNode.appendChild(fb); } fb.style.display='flex';">
+              <span class="chip chip-terracotta badge-pos-tr">MANGA</span>
+            </div>
+
+            <div class="card-header">
+              <span class="chip chip-olive">Shonen / Dark Fantasy</span>
+              <span class="text-mono text-xs text-light">Vol. 1</span>
+            </div>
+
+            <h3 class="card-title">
+              <a href="book-details.html?book=chainsawman" class="book-link" data-action="open-book-quickview"
+                data-book-id="chainsawman">Chainsaw Man</a>
+            </h3>
+            <p class="text-mono text-sm text-muted mb-xs">Tatsuki Fujimoto</p>
+            <p class="card-desc text-xs text-muted mb-sm">
+              Denji's life of poverty is turned upside down when he merges with his pet devil Pochita to become Chainsaw
+              Man.
+            </p>
+
+            <div class="book-availability">
+              <span class="flex-row items-center gap-xs text-secondary font-semibold">
+                <span class="status-dot active"></span> Available (1 Copy)
+              </span>
+              <span class="text-mono text-primary font-semibold">Shelf A-01</span>
+            </div>
+
+            <div class="book-actions-grid">
+              <button class="btn btn-primary btn-sm" data-action="open-borrow-modal" data-book-title="Chainsaw Man">
+                <span class="material-symbols-outlined icon-16">bookmark_add</span>
+                <span>Borrow</span>
+              </button>
+              <button class="btn btn-outline btn-sm" data-add-to-cart data-name="Book: Chainsaw Man Vol. 1"
+                data-price="12.00" data-category="Books">
+                Buy $12
+              </button>
+            </div>
+          </article>
+
+          <!-- Book 2: Check & Mate -->
+          <article class="card card-hover book-item-card" data-book-id="checkandmate" data-category="novels"
+            data-title="Check & Mate" data-author="Ali Hazelwood" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-280" data-action="open-book-quickview" data-book-id="checkandmate"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="../../assets/images/books/check%20and%20mate.jpg" alt="Check & Mate" onerror="this.style.display='none'; let fb=this.parentNode.querySelector('.book-fallback-cover'); if(!fb){ fb=document.createElement('div'); fb.className='book-fallback-cover'; fb.style.cssText='width:100%; height:280px; background:linear-gradient(135deg, #1c2b26 0%, #2d4038 100%); border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.25rem; text-align:center; color:#faf7f2;'; fb.innerHTML='<span class=\"material-symbols-outlined mb-xs\" style=\"font-size:40px; color:#d4a373;\">auto_stories</span><h4 class=\"font-serif font-bold text-sm mb-2xs\" style=\"color:#faf7f2; line-height:1.2;\">' + (this.alt || 'Book') + '</h4><span style=\"font-size:0.7rem; color:#d4a373; opacity:0.8;\">Afterword Collection</span>'; this.parentNode.appendChild(fb); } fb.style.display='flex';">
+              <span class="chip chip-coffee badge-pos-tr">ROMANCE</span>
+            </div>
+
+            <div class="card-header">
+              <span class="chip chip-coffee">YA / Rivals to Lovers</span>
+              <span class="text-mono text-xs text-light">Hardcover</span>
+            </div>
+
+            <h3 class="card-title">
+              <a href="book-details.html?book=checkandmate" class="book-link" data-action="open-book-quickview"
+                data-book-id="checkandmate">Check & Mate</a>
+            </h3>
+            <p class="text-mono text-sm text-muted mb-xs">Ali Hazelwood</p>
+            <p class="card-desc text-xs text-muted mb-sm">
+              A witty, heartwarming rivals-to-lovers story set in the competitive world of high-stakes tournament chess.
+            </p>
+
+            <div class="book-availability">
+              <span class="flex-row items-center gap-xs text-secondary font-semibold">
+                <span class="status-dot active"></span> Available (1 Copy)
+              </span>
+              <span class="text-mono text-primary font-semibold">Shelf B-04</span>
+            </div>
+
+            <div class="book-actions-grid">
+              <button class="btn btn-primary btn-sm" data-action="open-borrow-modal" data-book-title="Check & Mate">
+                <span class="material-symbols-outlined icon-16">bookmark_add</span>
+                <span>Borrow</span>
+              </button>
+              <button class="btn btn-outline btn-sm" data-add-to-cart data-name="Book: Check & Mate" data-price="18.50"
+                data-category="Books">
+                Buy $18.50
+              </button>
+            </div>
+          </article>
+
+          <!-- Book 3: I Want to Die but I Want to Eat Tteokbokki -->
+          <article class="card card-hover book-item-card" data-book-id="tteokbokki" data-category="essays"
+            data-title="I Want to Die but I Want to Eat Tteokbokki" data-author="Baek Se-hee" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-280" data-action="open-book-quickview" data-book-id="tteokbokki"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="../../assets/images/books/I%20want%20to%20die%20But%20I%20want%20to%20eat%20Tteokbokki.jpg"
+                alt="I Want to Die but I Want to Eat Tteokbokki" onerror="this.style.display='none'; let fb=this.parentNode.querySelector('.book-fallback-cover'); if(!fb){ fb=document.createElement('div'); fb.className='book-fallback-cover'; fb.style.cssText='width:100%; height:280px; background:linear-gradient(135deg, #1c2b26 0%, #2d4038 100%); border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.25rem; text-align:center; color:#faf7f2;'; fb.innerHTML='<span class=\"material-symbols-outlined mb-xs\" style=\"font-size:40px; color:#d4a373;\">auto_stories</span><h4 class=\"font-serif font-bold text-sm mb-2xs\" style=\"color:#faf7f2; line-height:1.2;\">' + (this.alt || 'Book') + '</h4><span style=\"font-size:0.7rem; color:#d4a373; opacity:0.8;\">Afterword Collection</span>'; this.parentNode.appendChild(fb); } fb.style.display='flex';">
+              <span class="chip chip-terracotta badge-pos-tr">MEMOIR</span>
+            </div>
+
+            <div class="card-header">
+              <span class="chip chip-terracotta">Essays / Mental Health</span>
+              <span class="text-mono text-xs text-light">Paperback</span>
+            </div>
+
+            <h3 class="card-title">
+              <a href="book-details.html?book=tteokbokki" class="book-link" data-action="open-book-quickview"
+                data-book-id="tteokbokki">I Want to Die but I Want to Eat Tteokbokki</a>
+            </h3>
+            <p class="text-mono text-sm text-muted mb-xs">Baek Se-hee</p>
+            <p class="card-desc text-xs text-muted mb-sm">
+              An intimate, honest dialogue between author and therapist exploring persistent mild depression and finding
+              joy in life's small comforts.
+            </p>
+
+            <div class="book-availability">
+              <span class="flex-row items-center gap-xs text-secondary font-semibold">
+                <span class="status-dot active"></span> Available (2 Copies)
+              </span>
+              <span class="text-mono text-primary font-semibold">Shelf B-02</span>
+            </div>
+
+            <div class="book-actions-grid">
+              <button class="btn btn-primary btn-sm" data-action="open-borrow-modal"
+                data-book-title="I Want to Die but I Want to Eat Tteokbokki">
+                <span class="material-symbols-outlined icon-16">bookmark_add</span>
+                <span>Borrow</span>
+              </button>
+              <button class="btn btn-outline btn-sm" data-add-to-cart
+                data-name="Book: I Want to Die but I Want to Eat Tteokbokki" data-price="16.00" data-category="Books">
+                Buy $16
+              </button>
+            </div>
+          </article>
+
+          <!-- Book 4: The Alchemist -->
+          <article class="card card-hover book-item-card" data-book-id="alchemist" data-category="novels"
+            data-title="The Alchemist" data-author="Paulo Coelho" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-280" data-action="open-book-quickview" data-book-id="alchemist"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="../../assets/images/books/the%20alchemist.jpg" alt="The Alchemist" onerror="this.style.display='none'; let fb=this.parentNode.querySelector('.book-fallback-cover'); if(!fb){ fb=document.createElement('div'); fb.className='book-fallback-cover'; fb.style.cssText='width:100%; height:280px; background:linear-gradient(135deg, #1c2b26 0%, #2d4038 100%); border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.25rem; text-align:center; color:#faf7f2;'; fb.innerHTML='<span class=\"material-symbols-outlined mb-xs\" style=\"font-size:40px; color:#d4a373;\">auto_stories</span><h4 class=\"font-serif font-bold text-sm mb-2xs\" style=\"color:#faf7f2; line-height:1.2;\">' + (this.alt || 'Book') + '</h4><span style=\"font-size:0.7rem; color:#d4a373; opacity:0.8;\">Afterword Collection</span>'; this.parentNode.appendChild(fb); } fb.style.display='flex';">
+              <span class="chip chip-coffee badge-pos-tr">CLASSIC</span>
+            </div>
+
+            <div class="card-header">
+              <span class="chip chip-coffee">Fiction / Philosophy</span>
+              <span class="text-mono text-xs text-light">Special Edition</span>
+            </div>
+
+            <h3 class="card-title">
+              <a href="book-details.html?book=alchemist" class="book-link" data-action="open-book-quickview"
+                data-book-id="alchemist">The Alchemist</a>
+            </h3>
+            <p class="text-mono text-sm text-muted mb-xs">Paulo Coelho</p>
+            <p class="card-desc text-xs text-muted mb-sm">
+              The inspiring journey of Santiago, a shepherd boy who embarks on a quest to follow his dreams and discover
+              his Personal Legend.
+            </p>
+
+            <div class="book-availability">
+              <span class="flex-row items-center gap-xs text-secondary font-semibold">
+                <span class="status-dot active"></span> Available (1 Copy)
+              </span>
+              <span class="text-mono text-primary font-semibold">Shelf A-05</span>
+            </div>
+
+            <div class="book-actions-grid">
+              <button class="btn btn-primary btn-sm" data-action="open-borrow-modal" data-book-title="The Alchemist">
+                <span class="material-symbols-outlined icon-16">bookmark_add</span>
+                <span>Borrow</span>
+              </button>
+              <button class="btn btn-outline btn-sm" data-add-to-cart data-name="Book: The Alchemist" data-price="14.50"
+                data-category="Books">
+                Buy $14.50
+              </button>
+            </div>
+          </article>
+
+          <!-- Book 5: The Seven Year Slip -->
+          <article class="card card-hover book-item-card" data-book-id="sevenyearslip" data-category="novels"
+            data-title="The Seven Year Slip" data-author="Ashley Poston" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-280" data-action="open-book-quickview" data-book-id="sevenyearslip"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="../../assets/images/books/the%20seven%20year%20slip.jpg" alt="The Seven Year Slip" onerror="this.style.display='none'; let fb=this.parentNode.querySelector('.book-fallback-cover'); if(!fb){ fb=document.createElement('div'); fb.className='book-fallback-cover'; fb.style.cssText='width:100%; height:280px; background:linear-gradient(135deg, #1c2b26 0%, #2d4038 100%); border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.25rem; text-align:center; color:#faf7f2;'; fb.innerHTML='<span class=\"material-symbols-outlined mb-xs\" style=\"font-size:40px; color:#d4a373;\">auto_stories</span><h4 class=\"font-serif font-bold text-sm mb-2xs\" style=\"color:#faf7f2; line-height:1.2;\">' + (this.alt || 'Book') + '</h4><span style=\"font-size:0.7rem; color:#d4a373; opacity:0.8;\">Afterword Collection</span>'; this.parentNode.appendChild(fb); } fb.style.display='flex';">
+              <span class="chip chip-olive badge-pos-tr">ROMANCE</span>
+            </div>
+
+            <div class="card-header">
+              <span class="chip chip-olive">Romance / Magical Realism</span>
+              <span class="text-mono text-xs text-light">Paperback</span>
+            </div>
+
+            <h3 class="card-title">
+              <a href="book-details.html?book=sevenyearslip" class="book-link" data-action="open-book-quickview"
+                data-book-id="sevenyearslip">The Seven Year Slip</a>
+            </h3>
+            <p class="text-mono text-sm text-muted mb-xs">Ashley Poston</p>
+            <p class="card-desc text-xs text-muted mb-sm">
+              An overworked book publicist inherits an apartment that slips seven years into the past—and meets an
+              aspiring chef from another time.
+            </p>
+
+            <div class="book-availability">
+              <span class="flex-row items-center gap-xs text-secondary font-semibold">
+                <span class="status-dot active"></span> Available (1 Copy)
+              </span>
+              <span class="text-mono text-primary font-semibold">Shelf C-01</span>
+            </div>
+
+            <div class="book-actions-grid">
+              <button class="btn btn-primary btn-sm" data-action="open-borrow-modal"
+                data-book-title="The Seven Year Slip">
+                <span class="material-symbols-outlined icon-16">bookmark_add</span>
+                <span>Borrow</span>
+              </button>
+              <button class="btn btn-outline btn-sm" data-add-to-cart data-name="Book: The Seven Year Slip"
+                data-price="17.00" data-category="Books">
+                Buy $17
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Lending Guidelines & Book Donation Section -->
+        <section class="library-guidelines-box" aria-label="Borrowing Guidelines">
+          <div class="grid-12 items-center">
+            <div class="col-span-8">
+              <div class="flex-row items-center gap-xs text-mono text-xs text-secondary text-uppercase mb-xs">
+                <span class="material-symbols-outlined icon-18">menu_book</span>
+                <span>HOW BORROWING WORKS</span>
+              </div>
+              <h2 class="section-title text-primary">Borrowing from the Owner's Shelf</h2>
+
+              <div class="grid-3">
+                <div class="protocol-card">
+                  <span class="text-mono text-xs text-light">STEP 01</span>
+                  <strong class="text-primary mt-xs mb-xs d-block">Read In-House</strong>
+                  <p class="text-sm">Feel free to grab any book from the shelves and read while having your coffee. Just
+                    return it before leaving.</p>
+                </div>
+                <div class="protocol-card">
+                  <span class="text-mono text-xs text-light">STEP 02</span>
+                  <strong class="text-primary mt-xs mb-xs d-block">Borrow or Buy</strong>
+                  <p class="text-sm">Found a favorite? Borrow it for up to 14 days with a reader pass, or buy a
+                    brand-new copy to take home.</p>
+                </div>
+                <div class="protocol-card">
+                  <span class="text-mono text-xs text-light">STEP 03</span>
+                  <strong class="text-primary mt-xs mb-xs d-block">Share & Recommend</strong>
+                  <p class="text-sm">Leave a sticky note review inside the front cover or suggest books you'd love to
+                    see on the shelves next.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Patron Card Box -->
+            <div class="col-span-4 patron-card-box">
+              <div class="flex-row justify-between items-center mb-xs">
+                <span class="text-mono text-xs text-light text-uppercase">READER PASS</span>
+                <span class="chip chip-coffee">#MEM-042</span>
+              </div>
+              <h3 class="card-title">Monthly Reader Pass</h3>
+              <p class="text-sm mb-md">
+                Borrow up to 3 books at a time to take home, plus enjoy 10% off all coffee and pastries at the counter.
+              </p>
+              <button class="btn btn-primary btn-full" data-action="enroll-patron">
+                <span class="material-symbols-outlined icon-18">badge</span>
+                <span>Get a Reading Pass · $12/mo</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Book Donation Banner -->
+          <div class="card p-lg mt-lg flex-row items-center justify-between flex-wrap gap-md" style="background: linear-gradient(135deg, #1c2b26 0%, #2d4038 100%); color: #faf7f2; border-radius: 8px;">
+            <div class="flex-row items-center gap-md">
+              <div style="width: 48px; height: 48px; background: rgba(212, 163, 115, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 163, 115, 0.4);">
+                <span class="material-symbols-outlined" style="font-size: 26px; color: #d4a373;">volunteer_activism</span>
+              </div>
+              <div>
+                <h3 class="font-serif font-bold text-lg mb-2xs" style="color: #faf7f2;">Share Your Library with AFTERWORD</h3>
+                <p class="text-sm" style="color: #dfd5c9;">Have cherished books you'd love to pass on? Offer a book donation to our community shelf.</p>
+              </div>
+            </div>
+            <button class="btn btn-primary" data-action="open-donation-modal" style="background-color: #a65f45; border-color: #a65f45; color: #fff;">
+              <span class="material-symbols-outlined icon-18">book_online</span>
+              <span>Donate a Book</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Interactive Book Donation Modal Dialog -->
+  <div class="modal-scrim" id="donation-modal" role="dialog" aria-modal="true" aria-labelledby="modal-donation-title" aria-hidden="true">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="flex-row items-center gap-xs">
+          <span class="material-symbols-outlined text-secondary">volunteer_activism</span>
+          <h3 class="modal-title" id="modal-donation-title">Offer a Book Donation</h3>
+        </div>
+        <button class="cart-close-btn" data-close-modal aria-label="Close modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form id="donation-form">
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+          <p class="text-sm text-muted mb-md">
+            Have a cherished volume you'd love to share with the community? Submit your book offer below. Staff will review your proposal and reply via email!
+          </p>
+
+          <div class="grid-2 gap-sm mb-sm">
+            <div class="form-group">
+              <label class="form-label" for="donation-book-title">Book Title *</label>
+              <input type="text" id="donation-book-title" class="form-input" placeholder="e.g. The Midnight Library" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="donation-author">Author *</label>
+              <input type="text" id="donation-author" class="form-input" placeholder="e.g. Matt Haig" required>
+            </div>
+          </div>
+
+          <div class="grid-3 gap-sm mb-sm">
+            <div class="form-group">
+              <label class="form-label" for="donation-category">Category / Discipline</label>
+              <select id="donation-category" class="form-select">
+                <option value="Novels & Stories">Novels & Stories</option>
+                <option value="Manga">Manga & Graphic Novels</option>
+                <option value="Essays & Memoir">Essays & Memoir</option>
+                <option value="Philosophy">Philosophy & Thought</option>
+                <option value="General">General Fiction</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="donation-condition">Book Condition</label>
+              <select id="donation-condition" class="form-select">
+                <option value="Like New">Like New</option>
+                <option value="Very Good" selected>Very Good</option>
+                <option value="Good">Good</option>
+                <option value="Fair">Fair</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="donation-year">Year Published</label>
+              <input type="number" id="donation-year" class="form-input" placeholder="2020">
+            </div>
+          </div>
+
+          <div class="form-group mb-sm">
+            <label class="form-label" for="donation-publisher">Publisher (Optional)</label>
+            <input type="text" id="donation-publisher" class="form-input" placeholder="e.g. Viking Books">
+          </div>
+
+          <div class="form-group mb-md">
+            <label class="form-label" for="donation-summary">Brief Book Summary / Description</label>
+            <textarea id="donation-summary" class="form-textarea" rows="2" placeholder="Briefly describe what this book is about..."></textarea>
+          </div>
+
+          <div class="border-top-subtle pt-sm mt-md mb-xs">
+            <span class="text-xs font-bold text-mono text-secondary text-uppercase">DONOR INFORMATION</span>
+          </div>
+
+          <div class="grid-2 gap-sm mb-sm">
+            <div class="form-group">
+              <label class="form-label" for="donation-donor-name">Your Full Name *</label>
+              <input type="text" id="donation-donor-name" class="form-input" placeholder="e.g. Maria Santos" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="donation-donor-email">Your Email Address *</label>
+              <input type="email" id="donation-donor-email" class="form-input" placeholder="e.g. maria@example.com" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="donation-donor-note">Personal Note / Why You're Donating</label>
+            <textarea id="donation-donor-note" class="form-textarea" rows="2" placeholder="Why would you recommend this volume to our patrons?"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline btn-sm" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined icon-16">send</span>
+            <span>Submit Book Offer</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Interactive Borrow Modal Dialog -->
+  <div class="modal-scrim" id="borrow-modal" role="dialog" aria-modal="true" aria-labelledby="modal-book-title"
+    aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="flex-row items-center gap-xs">
+          <span class="material-symbols-outlined text-secondary">bookmark_add</span>
+          <h3 class="modal-title" id="modal-book-title">Reserve Book Title</h3>
+        </div>
+        <button class="cart-close-btn" data-close-modal aria-label="Close modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form id="borrow-form">
+        <div class="modal-body">
+          <p class="text-base text-muted">
+            Hold this book for pickup at our café counter. Staff will place it aside with your member ID.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="borrow-patron-id">Member Card / Phone Number</label>
+            <input type="text" id="borrow-patron-id" class="form-input" value="MEM-042" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="borrow-duration">Requested Loan Duration</label>
+            <select id="borrow-duration" class="form-select">
+              <option value="21 Days (Standard Home Loan)">21 Days (Standard Home Loan)</option>
+              <option value="7 Days (Short Research)">7 Days (Short Research)</option>
+              <option value="Day Use Only (In-Café Study)">Day Use Only (In-Café Study)</option>
+            </select>
+          </div>
+
+          <div class="modal-notice-box">
+            <div class="flex-row justify-between mb-xs">
+              <span class="text-muted">Hold Pickup Location:</span>
+              <strong class="text-primary">Café Front Counter</strong>
+            </div>
+            <div class="flex-row justify-between">
+              <span class="text-muted">Late Fee Policy:</span>
+              <strong class="text-secondary">$0.00 (Honor System)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Confirm Book Hold</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Slide-Over Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Review Tray">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Your Order Tray</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Tray">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="cart-drawer-items" id="cart-items-container">
+      <!-- Dynamically filled by cart.js -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Estimated Tax (8%)</span>
+        <span id="cart-tax" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line total">
+        <span>Total Due</span>
+        <span id="cart-total" class="text-mono font-bold text-primary">$0.00</span>
+      </div>
+
+      <div class="cart-drawer-actions">
+        <button class="btn btn-outline btn-sm" id="clear-cart-btn">Clear</button>
+        <button class="btn btn-primary btn-sm" id="checkout-btn">Place Order / Send to Bar</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>AFTERWORD</h4>
+          <p class="text-base text-muted mb-sm">
+            A welcoming neighborhood café, personal book collection, fresh flower studio, and community gathering space.
+          </p>
+          <span class="chip chip-coffee">EST. 2024 · COFFEE & BOOKS</span>
+        </div>
+
+        <div class="footer-col">
+          <h5>Departments</h5>
+          <div class="footer-links">
+            <a href="cafe.html">Café & Daily Bakes</a>
+            <a href="library.html">The Bookshelf</a>
+            <a href="flowers.html">Floral Studio & Stems</a>
+            <a href="events.html">Workshops & Talks</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Space & Visit</h5>
+          <div class="footer-links">
+            <div><strong class="text-main">Hours:</strong> Mon–Sun: 7:00 – 22:00</div>
+            <div><strong class="text-main">Address:</strong> 418 District Lane</div>
+            <div><strong class="text-main">Contact:</strong> hello@afterwordcafe.org</div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Book Care</h5>
+          <p class="text-sm text-muted mb-xs">
+            Please treat all books with care and return them to the return cart when you're finished reading.
+          </p>
+          <div class="flex-row gap-xs">
+            <span class="chip">@AFTERWORDCAFE</span>
+            <span class="chip">THE BOOKSHELF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 AFTERWORD Community Café & Books. All rights reserved.</span>
+        <div class="flex-row gap-sm">
+          <span>CRAFT COFFEE</span>
+          <span>·</span>
+          <span>THE BOOKSHELF</span>
+          <span>·</span>
+          <span>FLORAL BOTANICALS</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Vanilla JavaScript Subsystems -->
+  <script src="../js/toast.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/filters.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/cafe.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/book-details.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+
+</html>

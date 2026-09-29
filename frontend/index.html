@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AFTERWORD — Coffee, Books, Flowers & Events</title>
+  <meta name="description"
+    content="A friendly modern café with books everywhere, fresh flowers, board games, and events throughout the week. Come in, get comfortable, and stay awhile.">
+
+  <!-- Typography & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet">
+
+  <!-- Modular Design System CSS -->
+  <link rel="stylesheet" href="styles/main.css">
+
+  <!-- Patron Authentication & Site Gatekeeper -->
+  <script src="src/js/auth.js"></script>
+</head>
+
+<body>
+
+  <!-- Main Site Header / Navbar -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <a href="index.html" class="brand-logo" aria-label="AFTERWORD Home">AFTERWORD</a>
+        <nav class="nav-links" aria-label="Primary Navigation">
+          <a href="../../index.html" class="nav-link">Home</a>
+          <a href="src/pages/cafe.html" class="nav-link">Café</a>
+          <a href="src/pages/library.html" class="nav-link">Library</a>
+          <a href="src/pages/flowers.html" class="nav-link">Flowers</a>
+          <a href="src/pages/events.html" class="nav-link">Events</a>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="header-search">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" placeholder="Search coffee, books, events..." aria-label="Search catalog or events">
+        </div>
+
+        <button class="cart-toggle-btn" aria-label="Open Order Tray">
+          <span class="material-symbols-outlined icon-18 icon-secondary">shopping_bag</span>
+          <span class="font-semibold">Tray</span>
+          <span class="cart-count-badge">0</span>
+        </button>
+
+        <a href="src/pages/admin.html" class="nav-user-avatar" title="Staff Operations Console">
+          <span class="material-symbols-outlined">person</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <nav class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <a href="index.html" class="nav-link active">Home</a>
+    <a href="src/pages/cafe.html" class="nav-link">Café</a>
+    <a href="src/pages/library.html" class="nav-link">Library</a>
+    <a href="src/pages/flowers.html" class="nav-link">Flowers</a>
+    <a href="src/pages/events.html" class="nav-link">Events</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- 2. HERO SECTION -->
+    <section class="section hero-section">
+      <div class="container">
+        <div class="grid-12 items-center">
+          <!-- Hero Copy -->
+          <div class="col-span-7 hero-content">
+            <span class="chip chip-coffee">COFFEE · BOOKS · FLOWERS · WHATEVER'S HAPPENING TODAY</span>
+
+            <h1 class="hero-title">
+              Come in.<br>
+              Get comfortable.<br>
+              Stay awhile.
+            </h1>
+
+            <p class="hero-desc">
+              AFTERWORD is a café, library, flower shop, and community space all in one. Grab a coffee, find a book,
+              meet some friends, join an event, or just find a seat and stay for a while.
+            </p>
+
+            <div class="flex-row items-center gap-xs flex-wrap">
+              <a href="src/pages/cafe.html" class="btn btn-primary btn-lg">
+                <span>Explore the Café</span>
+                <span class="material-symbols-outlined icon-18">arrow_forward</span>
+              </a>
+              <a href="src/pages/events.html" class="btn btn-outline btn-lg">
+                <span>See What's Happening</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Hero Photography Card -->
+          <div class="col-span-5">
+            <div class="hero-media-wrap">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhY1z1iSYwnjefsn76tDWNuCLeFe-RAT7KopMJrRKtBVGOg6g1N9TLMZafo9AZFxQh3JW8368MFjTNHarY7jXZ5uaJd5PX6TVMG38rswK9SEDp1sqkEL7SNWTAuiv1HYD8grIBowofF82GPtZmD4DpzQSB1n81WIhcZP2MnWNFSLoLeMs3GUcXIG0-M1qiRdBkZWLd5f-AgRgrOzx5vDROUwNzVnxmSyT_bFLyyZ1p2hTK9iuhj34i"
+                alt="Cozy sunlit café interior with wooden tables, bookshelf, plants, and warm lighting">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TODAY AT AFTERWORD STRIP -->
+    <section>
+      <div class="container">
+        <div class="today-info-strip">
+          <div class="today-info-item">
+            <div class="today-info-icon-wrap">
+              <span class="material-symbols-outlined">schedule</span>
+            </div>
+            <div class="today-info-meta">
+              <span class="today-info-label">Open Today</span>
+              <span class="today-info-val">7:00 AM — 10:00 PM</span>
+              <span class="today-info-sub">Fresh pastries from 7:00 AM</span>
+            </div>
+          </div>
+
+          <div class="today-info-divider"></div>
+
+          <div class="today-info-item">
+            <div class="today-info-icon-wrap">
+              <span class="material-symbols-outlined text-secondary">table_restaurant</span>
+            </div>
+            <div class="today-info-meta">
+              <span class="today-info-label">Seating</span>
+              <span class="today-info-val">64% Available</span>
+              <span class="today-info-sub">Plenty of open tables and study spots right now</span>
+            </div>
+          </div>
+
+          <div class="today-info-divider"></div>
+
+          <div class="today-info-item">
+            <div class="today-info-icon-wrap">
+              <span class="material-symbols-outlined text-tertiary">celebration</span>
+            </div>
+            <div class="today-info-meta">
+              <span class="today-info-label">Tonight</span>
+              <span class="today-info-val">Board Game Night</span>
+              <span class="today-info-sub">Starts at 7:00 PM · Free walk-in</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. WHAT YOU'LL FIND HERE (Four Connected Cards) -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-eyebrow">ONE PLACE, FOUR PARTS</span>
+            <h2 class="section-title">What you'll find here</h2>
+          </div>
+          <span class="section-header-meta">ALL UNDER ONE ROOF</span>
+        </div>
+
+        <div class="grid-4">
+          <!-- Card 1: Café -->
+          <article class="space-pillar-card">
+<img src="assets/images/coffee/cafe photo.jpg" alt="Espresso bar and fresh baked pastries" class="space-pillar-img">
+
+            <h3 class="space-pillar-title">Café</h3>
+            <p class="space-pillar-desc">Coffee, cold drinks, and something good to eat.</p>
+            <a href="src/pages/cafe.html" class="btn btn-primary btn-sm">
+              <span>Explore Café</span>
+              <span class="material-symbols-outlined icon-16">arrow_forward</span>
+            </a>
+          </article>
+
+          <!-- Card 2: Library -->
+          <article class="space-pillar-card">
+            <img
+              src="assets/images/coffee/library.jpg"
+              alt="Cozy wooden bookshelf lined with books" class="space-pillar-img">
+            <h3 class="space-pillar-title">Library</h3>
+            <p class="space-pillar-desc">Browse the shelves, find something interesting, and borrow a book while you're
+              here.</p>
+            <a href="src/pages/library.html" class="btn btn-secondary btn-sm">
+              <span>Browse Library</span>
+              <span class="material-symbols-outlined icon-16">arrow_forward</span>
+            </a>
+          </article>
+
+          <!-- Card 3: Flowers -->
+          <article class="space-pillar-card">
+            <img
+              src="assets/images/coffee/flowers.jpg"
+              alt="Fresh flower stems in rustic vases" class="space-pillar-img">
+            <h3 class="space-pillar-title">Flowers</h3>
+            <p class="space-pillar-desc">Fresh stems, small arrangements, and flowers worth taking home.</p>
+            <a href="src/pages/flowers.html" class="btn btn-secondary btn-sm">
+              <span>See Flowers</span>
+              <span class="material-symbols-outlined icon-16">arrow_forward</span>
+            </a>
+          </article>
+
+          <!-- Card 4: Community -->
+          <article class="space-pillar-card">
+            <img
+              src="assets/images/coffee/community.jpg"
+              alt="People sitting together playing board games and drinking coffee" class="space-pillar-img">
+            <h3 class="space-pillar-title">Community</h3>
+            <p class="space-pillar-desc">There's always something going on. Games, book clubs, coffee tastings,
+              workshops, movie nights, and more.</p>
+            <a href="src/pages/events.html" class="btn btn-outline btn-sm">
+              <span>See Events</span>
+              <span class="material-symbols-outlined icon-16">arrow_forward</span>
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. WHAT'S HAPPENING (Upcoming Events) -->
+    <section class="section section-bordered bg-surface-low">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-eyebrow">THIS WEEK</span>
+            <h2 class="section-title">What's happening</h2>
+            <p class="section-desc">Come by yourself or bring friends. We have things happening throughout the week.</p>
+          </div>
+          <a href="src/pages/events.html" class="btn btn-outline btn-sm">
+            <span>View All Events</span>
+            <span class="material-symbols-outlined icon-16">arrow_forward</span>
+          </a>
+        </div>
+
+        <div class="grid-4">
+          <!-- Event 1: Monthly Book Review -->
+          <article class="card card-hover">
+            <div class="flex-row items-center justify-between mb-xs">
+              <span class="chip chip-olive">FRIDAY · 6:30 PM</span>
+              <span class="text-xs text-muted">Free</span>
+            </div>
+            <h3 class="card-title">Monthly Book Review</h3>
+            <p class="card-desc">
+              Bring your favorite book or join us to discuss our monthly community pick.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">Cozy reading circle</span>
+              <a href="src/pages/events.html" class="btn btn-primary btn-sm">View Event</a>
+            </div>
+          </article>
+
+          <!-- Event 2: Quiz Night -->
+          <article class="card card-hover">
+            <div class="flex-row items-center justify-between mb-xs">
+              <span class="chip chip-terracotta">WEDNESDAY · 7:00 PM</span>
+              <span class="text-xs text-muted">Free</span>
+            </div>
+            <h3 class="card-title">Pop Culture Quiz Night</h3>
+            <p class="card-desc">
+              Test your knowledge on movies, music, anime, and random trivia. Prizes for top teams!
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-muted">Prizes for top 3 teams</span>
+              <a href="src/pages/events.html" class="btn btn-primary btn-sm">View Event</a>
+            </div>
+          </article>
+
+          <!-- Event 3: Valorant Tournament -->
+          <article class="card card-hover">
+            <div class="flex-row items-center justify-between mb-xs">
+              <span class="chip chip-coffee">SATURDAY · 2:00 PM</span>
+              <span class="text-xs text-muted">$5</span>
+            </div>
+            <h3 class="card-title">Valorant 5v5 Tournament</h3>
+            <p class="card-desc">
+              5v5 Custom Lobby tournament & stream watch party. Bring your 5-stack or join solo!
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-muted">Stream & free iced drinks</span>
+              <a href="src/pages/events.html" class="btn btn-primary btn-sm">View Event</a>
+            </div>
+          </article>
+
+          <!-- Event 4: Friday Board Game Night -->
+          <article class="card card-hover">
+            <div class="flex-row items-center justify-between mb-xs">
+              <span class="chip chip-coffee">FRIDAY · 6:00 PM</span>
+              <span class="text-xs text-muted">Free</span>
+            </div>
+            <h3 class="card-title">Friday Board Games & Chill</h3>
+            <p class="card-desc">
+              Casual games night with Catan, Secret Hitler, Uno, Monopoly, and tabletop games.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-muted">Free snacks & tea</span>
+              <a href="src/pages/events.html" class="btn btn-primary btn-sm">View Event</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. LIBRARY FEATURE -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-eyebrow">OUR BOOKSHELVES</span>
+            <h2 class="section-title">Find something to read.</h2>
+            <p class="section-desc">Stay for a chapter. Take a book home. Find something you didn't know you were
+              looking for.</p>
+          </div>
+          <a href="src/pages/library.html" class="btn btn-outline btn-sm">
+            <span>Browse Full Library</span>
+            <span class="material-symbols-outlined icon-16">arrow_forward</span>
+          </a>
+        </div>
+
+        <div class="grid-4">
+          <!-- Book 1: Chainsaw Man -->
+          <div class="card card-hover book-item-card" data-book-id="chainsawman" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-220" data-action="open-book-quickview" data-book-id="chainsawman"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="assets/images/books/chainsawman.jpg" alt="Chainsaw Man Vol. 1 cover">
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">
+                <a href="src/pages/book-details.html?book=chainsawman" class="book-link"
+                  data-action="open-book-quickview" data-book-id="chainsawman">Chainsaw Man</a>
+              </h3>
+              <span class="chip chip-terracotta">MANGA</span>
+            </div>
+            <div class="card-author mb-xs">Tatsuki Fujimoto</div>
+            <p class="card-desc">
+              Denji's life turns upside down when he merges with devil Pochita to become Chainsaw Man.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">● Available now</span>
+              <button class="btn btn-secondary btn-sm" data-action="open-book-quickview"
+                data-book-id="chainsawman">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Book 2: Check & Mate -->
+          <div class="card card-hover book-item-card" data-book-id="checkandmate" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-220" data-action="open-book-quickview" data-book-id="checkandmate"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="assets/images/books/check and mate.jpg" alt="Check & Mate cover">
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">
+                <a href="src/pages/book-details.html?book=checkandmate" class="book-link"
+                  data-action="open-book-quickview" data-book-id="checkandmate">Check & Mate</a>
+              </h3>
+              <span class="chip chip-coffee">ROMANCE</span>
+            </div>
+            <div class="card-author mb-xs">Ali Hazelwood</div>
+            <p class="card-desc">
+              A witty, heartwarming rivals-to-lovers story set in high-stakes tournament chess.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">● 1 copy left</span>
+              <button class="btn btn-secondary btn-sm" data-action="open-book-quickview"
+                data-book-id="checkandmate">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Book 3: I Want to Die but I Want to Eat Tteokbokki -->
+          <div class="card card-hover book-item-card" data-book-id="tteokbokki" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-220" data-action="open-book-quickview" data-book-id="tteokbokki"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="assets/images/books/I want to die But I want to eat Tteokbokki.jpg"
+                alt="I Want to Die but I Want to Eat Tteokbokki cover">
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">
+                <a href="src/pages/book-details.html?book=tteokbokki" class="book-link"
+                  data-action="open-book-quickview" data-book-id="tteokbokki">I Want to Die but...</a>
+              </h3>
+              <span class="chip chip-terracotta">MEMOIR</span>
+            </div>
+            <div class="card-author mb-xs">Baek Se-hee</div>
+            <p class="card-desc">
+              An intimate, honest dialogue exploring mild depression and joy in small comforts.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">● Available now</span>
+              <button class="btn btn-secondary btn-sm" data-action="open-book-quickview" data-book-id="tteokbokki">Quick
+                View</button>
+            </div>
+          </div>
+
+          <!-- Book 4: The Seven Year Slip -->
+          <div class="card card-hover book-item-card" data-book-id="sevenyearslip" style="cursor: pointer;">
+            <div class="card-image-wrap card-img-220" data-action="open-book-quickview" data-book-id="sevenyearslip"
+              style="cursor: pointer;" title="Click to view book details">
+              <img src="assets/images/books/the seven year slip.jpg" alt="The Seven Year Slip cover">
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">
+                <a href="src/pages/book-details.html?book=sevenyearslip" class="book-link"
+                  data-action="open-book-quickview" data-book-id="sevenyearslip">The Seven Year Slip</a>
+              </h3>
+              <span class="chip chip-olive">FICTION</span>
+            </div>
+            <div class="card-author mb-xs">Ashley Poston</div>
+            <p class="card-desc">
+              An apartment slips seven years into the past—and brings a romance from another time.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">● Available now</span>
+              <button class="btn btn-secondary btn-sm" data-action="open-book-quickview"
+                data-book-id="sevenyearslip">Quick View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. FLOWERS FEATURE -->
+    <section class="section section-bordered bg-surface-low">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-eyebrow">OUR FLOWER STAND</span>
+            <h2 class="section-title">Take something home.</h2>
+            <p class="section-desc">Fresh flowers, small arrangements, and little things that make your day better.</p>
+          </div>
+          <a href="src/pages/flowers.html" class="btn btn-outline btn-sm">
+            <span>View Flower Shop</span>
+            <span class="material-symbols-outlined icon-16">arrow_forward</span>
+          </a>
+        </div>
+
+        <div class="grid-3">
+          <!-- Flower 1 -->
+          <div class="card card-hover">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA73InLxMx6nPsSws8G2VksU4MRO6ydfkLStNhXdAcQeixs2Guqyvr3auNAMOEqaCPpOhnl21nNJ6TScACHOciU1rm0jf5SxAKBQAIaQQhlavipiTuOeZVwzCD_gWN6SL7OTZwbKdYkTTVzp-o4rvBWb8COYvJknmvuggXlHcYpgTypAvAYvWJCSe_0zz2V_JDFB7792gbsEaGS-vRkfJ6zh3lmay74Y-jab596OqvNSJutE63OevdW"
+                alt="The Morning Mist Bunch">
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">The Morning Mist Bunch</h3>
+              <span class="card-price">$42.00</span>
+            </div>
+            <p class="card-desc">
+              Garden roses, feathery white astilbe, and eucalyptus wrapped in brown kraft paper.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">Fresh this morning</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="The Morning Mist Bunch"
+                data-price="42.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </div>
+
+          <!-- Flower 2 -->
+          <div class="card card-hover">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJM8RNimERRR3MBbRJG8pqsLYLa4CQ-co6OhviYfn15BUWcdcH7KmTJtn_tcDu0Q5f8T9iwyrr2D-KgrJR3LEVhkoYQ2wt5APmaYf1Lg4von5MHxvtt5NuF-WdCBqG_JQQ1pf5P0evPQsqOpCyLm3VKFGgtrY3_yWLEKa1_QdjGsTT92wrAXW97DkLetqu-FW47LuW_eSDkdEgDYZk0yQ0_BUx0n1ulM7Lo1QZorWZOWL0zwajY2cv"
+                alt="Terracotta Ranunculus arrangement">
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Terracotta Ranunculus</h3>
+              <span class="card-price">$34.00</span>
+            </div>
+            <p class="card-desc">
+              Warm bronze and apricot blooms that look great on any kitchen or coffee table.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">Lasts 7–10 days</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Terracotta Ranunculus"
+                data-price="34.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </div>
+
+          <!-- Flower 3 -->
+          <div class="card card-hover">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDw1mRtKWNOcmnYHTQqcci8KwLo7ZahmKD_J307Ak53DwKCpOsC4I_JBja3yp3Sr3JOTLqAUEiEUvjHjJFkOPOpxkOxIcGWe4GDD2v8nKAFysi9_RDcqn4rEzw_rgoOp3C5GTv-0aZ7aUX9gU-JLaKqTc4Xq99LFEek4IuV0cKIxWYdxsTvmRZ64-tiFQYxOVAnwE48onI0xcazs-JOosB3qQ8j8V-h8UzZYiBmNfB12eltY-NwVKL"
+                alt="Architectural Dried Stems bouquet">
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Architectural Dried Stems</h3>
+              <span class="card-price">$38.00</span>
+            </div>
+            <p class="card-desc">
+              Preserved eucalyptus, golden seed heads, and dried grasses that last for months.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-muted">No water needed</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Architectural Dried Stems"
+                data-price="38.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. FINAL CTA SECTION -->
+    <section class="section">
+      <div class="container">
+        <div class="final-cta-section">
+          <h2 class="final-cta-heading">
+            GRAB SOMETHING.<br>
+            FIND A SEAT.<br>
+            STAY.
+          </h2>
+
+          <p class="final-cta-text">
+            Some days you'll come for the coffee. Some days you'll come for a book. Sometimes you'll show up because
+            there's a game night. And sometimes you just need somewhere to be.<br><br>
+            That's AFTERWORD.
+          </p>
+
+          <a href="#visit" class="final-cta-btn">
+            <span>Come Visit</span>
+            <span class="material-symbols-outlined icon-18">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Slide-Over Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Review Tray">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Your Order Tray</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Tray">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="cart-drawer-items" id="cart-items-container">
+      <!-- Dynamically filled by cart.js -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Estimated Tax (8%)</span>
+        <span id="cart-tax" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line total">
+        <span>Total Due</span>
+        <span id="cart-total" class="text-mono font-bold text-primary">$0.00</span>
+      </div>
+
+      <div class="cart-drawer-actions">
+        <button class="btn btn-outline btn-sm" id="clear-cart-btn">Clear</button>
+        <button class="btn btn-primary btn-sm" id="checkout-btn">Place Order</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Friendly Neighborhood Footer -->
+  <footer class="site-footer" id="visit">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand Info -->
+        <div class="footer-brand">
+          <h4>AFTERWORD</h4>
+          <p class="text-base text-muted mb-sm">
+            Coffee, books, flowers, games, and good company. Come in, find a seat, and stay awhile.
+          </p>
+          <span class="chip chip-coffee">OPEN EVERY DAY</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <div class="footer-links">
+            <a href="src/pages/cafe.html">Café</a>
+            <a href="src/pages/library.html">Library</a>
+            <a href="src/pages/flowers.html">Flowers</a>
+            <a href="src/pages/events.html">Events</a>
+          </div>
+        </div>
+
+        <!-- Space & Visit -->
+        <div class="footer-col">
+          <h5>Visit Us</h5>
+          <div class="footer-links">
+            <div><strong class="text-main">Hours:</strong> 7:00 AM — 10:00 PM Daily</div>
+            <div><strong class="text-main">Location:</strong> 418 District Lane</div>
+            <div><strong class="text-main">Say Hello:</strong> hello@afterwordcafe.org</div>
+          </div>
+        </div>
+
+        <!-- Atmosphere Note -->
+        <div class="footer-col">
+          <h5>Good to Know</h5>
+          <p class="text-sm text-muted mb-xs">
+            Free Wi-Fi, plenty of outlets, comfortable couches, and games on the shelf. No reservations needed.
+          </p>
+          <div class="flex-row gap-xs">
+            <span class="chip">WALK-INS WELCOME</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 AFTERWORD Café & Community Space.</span>
+        <div class="flex-row gap-sm">
+          <span>COFFEE</span>
+          <span>·</span>
+          <span>BOOKS</span>
+          <span>·</span>
+          <span>FLOWERS</span>
+          <span>·</span>
+          <span>GAMES</span>
+          <span>·</span>
+          <a href="src/pages/admin.html" class="text-secondary font-semibold">Staff Console</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notifications Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Vanilla JavaScript Subsystems -->
+  <script src="src/js/toast.js"></script>
+  <script src="src/js/supabase.js"></script>
+  <script src="src/js/navigation.js"></script>
+  <script src="src/js/cart.js"></script>
+  <script src="src/js/filters.js"></script>
+  <script src="src/js/modals.js"></script>
+  <script src="src/js/cafe.js"></script>
+  <script src="src/js/book-details.js"></script>
+  <script src="src/js/main.js"></script>
+</body>
+
+</html>

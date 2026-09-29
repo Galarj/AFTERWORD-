@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events & Community Programming — AFTERWORD</title>
+  <meta name="description"
+    content="Conversational salons, board game nights, single-origin coffee workshops, and botanical crafting in North Square.">
+
+  <!-- Typography & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet">
+
+  <!-- Core Design System CSS -->
+  <link rel="stylesheet" href="../../styles/main.css">
+
+  <!-- Patron Authentication & Site Gatekeeper -->
+  <script src="../js/auth.js"></script>
+</head>
+
+<body>
+
+  <!-- Top Operational System Bar -->
+  <aside class="system-status-bar" aria-label="Events Calendar Status">
+    <div class="container system-status-inner">
+      <div class="flex-row items-center gap-xs flex-wrap">
+        <span class="sys-tag">PROGRAMMING // CALENDAR AUTUMN</span>
+        <span>LOCATION: CAFÉ MAIN ROOM & READING CORNER</span>
+        <span>·</span>
+        <span>ADMISSION: FREE & TICKETED LABS</span>
+      </div>
+      <div class="flex-row items-center gap-sm flex-wrap">
+        <span class="text-main font-semibold">Next Gathering: Oct 18 (19:00)</span>
+        <span class="flex-row items-center gap-xs text-secondary font-semibold">
+          <span class="status-dot active"></span> RSVPs Open
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Site Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <a href="../../index.html" class="brand-logo" aria-label="AFTERWORD Home">AFTERWORD</a>
+        <nav class="nav-links" aria-label="Primary Navigation">
+          <a href="../../index.html" class="nav-link">Home</a>
+          <a href="cafe.html" class="nav-link">Café</a>
+          <a href="library.html" class="nav-link">Library</a>
+          <a href="flowers.html" class="nav-link">Flowers</a>
+          <a href="events.html" class="nav-link active">Events</a>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="header-search">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" placeholder="Search catalog, events..." aria-label="Search catalog or events">
+        </div>
+
+        <button class="cart-toggle-btn" aria-label="Open Order Tray">
+          <span class="material-symbols-outlined icon-18 icon-secondary">shopping_bag</span>
+          <span class="font-semibold">Tray</span>
+          <span class="cart-count-badge">0</span>
+        </button>
+
+        <div class="nav-user-avatar" title="Patron Member Profile">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+
+        <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <nav class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <a href="../../index.html" class="nav-link">Home</a>
+    <a href="cafe.html" class="nav-link">Café & Daily Bakes</a>
+    <a href="library.html" class="nav-link">The Bookshelf</a>
+    <a href="flowers.html" class="nav-link">Floral Studio & Stems</a>
+    <a href="events.html" class="nav-link active">Workshops & Events</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Hero / Title Section -->
+    <section class="section section-bordered bg-surface-low">
+      <div class="container">
+        <div class="flex-row items-start justify-between flex-wrap gap-sm mb-md">
+          <div class="col-span-7">
+            <span class="section-eyebrow">COMMUNITY CALENDAR & EVENTS</span>
+            <h1 class="hero-title text-primary">Events & Community Programming</h1>
+            <p class="hero-desc">
+              Join us for monthly book reviews, pop culture quiz nights, community Valorant tournaments, board games, and chill hangouts right here at the café.
+            </p>
+          </div>
+
+          <!-- Quick Search Control -->
+          <div class="col-span-5">
+            <div class="search-bar">
+              <span class="material-symbols-outlined search-icon">search</span>
+              <input type="text" id="events-search" placeholder="Search events by keyword or topic..."
+                aria-label="Search Events">
+            </div>
+            <div class="flex-row justify-between items-center mt-xs text-mono text-xs text-muted">
+              <span id="events-results-count"></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Category Tabs -->
+        <nav class="tab-bar mb-0" id="events-tabs" data-filter-target="data-category" aria-label="Event Categories">
+          <button class="tab-btn active" data-category="all">All Gatherings (4)</button>
+          <button class="tab-btn" data-category="salon">Book Reviews</button>
+          <button class="tab-btn" data-category="quiz">Quiz & Trivia</button>
+          <button class="tab-btn" data-category="gaming">Valorant & Esports</button>
+          <button class="tab-btn" data-category="games">Board Games & Social</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Upcoming Events Chronological Grid -->
+    <section class="section">
+      <div class="container">
+
+        <div class="flex-col gap-md" id="events-list">
+
+          <!-- Event 1: Monthly Book Review -->
+          <article class="card card-hover event-card-item" data-category="salon"
+            data-title="Monthly Book Review Cozy Reading Circle Discussion">
+            <div class="grid-12 items-center gap-md">
+
+              <!-- Date Ribbon Column -->
+              <div class="col-span-2 event-date-col">
+                <span class="text-mono text-sm text-tertiary font-bold text-uppercase">FRIDAY</span>
+                <span class="event-date-day">17</span>
+                <span class="text-mono text-xs text-muted">OCTOBER</span>
+              </div>
+
+              <!-- Main Event Details -->
+              <div class="col-span-7">
+                <div class="flex-row items-center gap-xs mb-xs">
+                  <span class="chip chip-olive">BOOK REVIEW</span>
+                  <span class="chip">FREE ENTRY</span>
+                </div>
+                <h3 class="card-title text-primary">
+                  Monthly Book Review & Cozy Reading Circle
+                </h3>
+                <div class="flex-row gap-sm text-mono text-xs text-muted mb-xs flex-wrap">
+                  <span><strong class="text-main">Time:</strong> 18:30 – 20:30</span>
+                  <span>·</span>
+                  <span><strong class="text-main">Space:</strong> Café Reading Corner</span>
+                  <span>·</span>
+                  <span><strong class="text-secondary">Host:</strong> AFTERWORD Book Club</span>
+                </div>
+                <p class="card-desc">
+                  Bring your current favorite read or join us to review and discuss our monthly community pick! Warm drinks, cozy vibes, and great conversations.
+                </p>
+              </div>
+
+              <!-- RSVP / Capacity Column -->
+              <div class="col-span-3 event-rsvp-col">
+                <div class="text-right">
+                  <span class="text-sm font-semibold text-tertiary d-block">18 of 20 Spots Filled</span>
+                  <span class="text-mono text-xs text-light">Only 2 seats remaining</span>
+                </div>
+
+                <button class="btn btn-primary btn-sm btn-full" data-action="quick-rsvp"
+                  data-event-name="Monthly Book Review">
+                  <span>RSVP / Reserve</span>
+                </button>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- Event 2: Quiz Night -->
+          <article class="card card-hover event-card-item" data-category="quiz"
+            data-title="AFTERWORD Quiz Night Pop Culture Trivia Fun Facts">
+            <div class="grid-12 items-center gap-md">
+
+              <!-- Date Ribbon Column -->
+              <div class="col-span-2 event-date-col">
+                <span class="text-mono text-sm text-tertiary font-bold text-uppercase">WEDNESDAY</span>
+                <span class="event-date-day">22</span>
+                <span class="text-mono text-xs text-muted">OCTOBER</span>
+              </div>
+
+              <!-- Main Event Details -->
+              <div class="col-span-7">
+                <div class="flex-row items-center gap-xs mb-xs">
+                  <span class="chip chip-terracotta">TRIVIA NIGHT</span>
+                  <span class="chip chip-olive">FREE ENTRY</span>
+                </div>
+                <h3 class="card-title text-primary">
+                  AFTERWORD Quiz Night: Pop Culture & Trivia
+                </h3>
+                <div class="flex-row gap-sm text-mono text-xs text-muted mb-xs flex-wrap">
+                  <span><strong class="text-main">Time:</strong> 19:00 – 21:00</span>
+                  <span>·</span>
+                  <span><strong class="text-main">Space:</strong> Café Main Room</span>
+                  <span>·</span>
+                  <span><strong class="text-secondary">Host:</strong> Quizmaster Alex</span>
+                </div>
+                <p class="card-desc">
+                  Test your knowledge on movies, music, anime, pop culture, and random fun facts! Form a team or join one at the door. Prizes for top 3 teams!
+                </p>
+              </div>
+
+              <!-- RSVP / Capacity Column -->
+              <div class="col-span-3 event-rsvp-col">
+                <div class="text-right">
+                  <span class="text-sm font-semibold text-secondary d-block">34 of 40 Spots Filled</span>
+                  <span class="text-mono text-xs text-light">Walk-ins welcome</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-full" data-action="quick-rsvp"
+                  data-event-name="AFTERWORD Quiz Night">
+                  <span>RSVP / Reserve</span>
+                </button>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- Event 3: Valorant Tournament -->
+          <article class="card card-hover event-card-item" data-category="gaming"
+            data-title="Valorant 5v5 Community Tournament Custom Lobby Watch Party Esports">
+            <div class="grid-12 items-center gap-md">
+
+              <!-- Date Ribbon Column -->
+              <div class="col-span-2 event-date-col">
+                <span class="text-mono text-sm text-tertiary font-bold text-uppercase">SATURDAY</span>
+                <span class="event-date-day">25</span>
+                <span class="text-mono text-xs text-muted">OCTOBER</span>
+              </div>
+
+              <!-- Main Event Details -->
+              <div class="col-span-7">
+                <div class="flex-row items-center gap-xs mb-xs">
+                  <span class="chip chip-coffee">VALORANT TOURNAMENT</span>
+                  <span class="chip chip-terracotta">$5 ENTRY / PRIZE POOL</span>
+                </div>
+                <h3 class="card-title text-primary">
+                  Valorant 5v5 Community Tournament & Watch Party
+                </h3>
+                <div class="flex-row gap-sm text-mono text-xs text-muted mb-xs flex-wrap">
+                  <span><strong class="text-main">Time:</strong> 14:00 – 20:00</span>
+                  <span>·</span>
+                  <span><strong class="text-main">Space:</strong> Main Room & Gaming Lounge</span>
+                  <span>·</span>
+                  <span><strong class="text-secondary">Host:</strong> AFTERWORD Esports Guild</span>
+                </div>
+                <p class="card-desc">
+                  5v5 Swiftplay & Custom Lobby tournament! Bring your 5-stack or sign up solo to get matched. High-speed Wi-Fi, big screen stream, and free iced drinks for players.
+                </p>
+              </div>
+
+              <!-- RSVP / Capacity Column -->
+              <div class="col-span-3 event-rsvp-col">
+                <div class="text-right">
+                  <span class="text-sm font-semibold text-secondary d-block">26 of 32 Players Registered</span>
+                  <span class="text-mono text-xs text-light">Only 6 slots remaining</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-full" data-add-to-cart data-name="Ticket: Valorant 5v5 Tournament"
+                  data-price="5.00" data-category="Tournament Ticket">
+                  <span>Register · $5.00</span>
+                </button>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- Event 4: Board Game Night -->
+          <article class="card card-hover event-card-item" data-category="games"
+            data-title="Friday Board Game Chill Night Strategy Tabletop Social">
+            <div class="grid-12 items-center gap-md">
+
+              <!-- Date Ribbon Column -->
+              <div class="col-span-2 event-date-col">
+                <span class="text-mono text-sm text-tertiary font-bold text-uppercase">FRIDAY</span>
+                <span class="event-date-day">31</span>
+                <span class="text-mono text-xs text-muted">OCTOBER</span>
+              </div>
+
+              <!-- Main Event Details -->
+              <div class="col-span-7">
+                <div class="flex-row items-center gap-xs mb-xs">
+                  <span class="chip chip-coffee">OPEN COMMUNITY NIGHT</span>
+                  <span class="chip chip-olive">FREE ENTRY</span>
+                </div>
+                <h3 class="card-title text-primary">
+                  Friday Board Game & Chill Night
+                </h3>
+                <div class="flex-row gap-sm text-mono text-xs text-muted mb-xs flex-wrap">
+                  <span><strong class="text-main">Time:</strong> 18:00 – 22:00</span>
+                  <span>·</span>
+                  <span><strong class="text-main">Space:</strong> Café Main Room</span>
+                  <span>·</span>
+                  <span><strong class="text-secondary">Host:</strong> Tabletop Guild</span>
+                </div>
+                <p class="card-desc">
+                  Casual games night! Play Catan, Secret Hitler, Uno, Monopoly, Codenames, or bring your own tabletop games. Free snacks and tea provided!
+                </p>
+              </div>
+
+              <!-- RSVP / Capacity Column -->
+              <div class="col-span-3 event-rsvp-col">
+                <div class="text-right">
+                  <span class="text-sm font-semibold text-secondary d-block">28 of 35 Spots Filled</span>
+                  <span class="text-mono text-xs text-light">Walk-ins welcome</span>
+                </div>
+
+                <button class="btn btn-primary btn-sm btn-full" data-action="quick-rsvp"
+                  data-event-name="Friday Board Game Night">
+                  <span>RSVP / Reserve</span>
+                </button>
+              </div>
+
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Host an Event Community Proposal Callout Section -->
+        <section class="proposal-callout-box" aria-label="Propose an Event">
+          <div class="col-span-8">
+            <span class="section-eyebrow">GRASSROOTS CULTURE INITIATIVE</span>
+            <h2 class="section-title text-primary">
+              Have an idea for a book launch, reading group, or creative salon?
+            </h2>
+            <p class="section-desc">
+              We offer zero-cost room bookings, sound amplification, projector equipment, and café hospitality staff
+              support for neighborhood literary, cultural, and craft gatherings.
+            </p>
+          </div>
+          <div>
+            <button class="btn btn-primary btn-lg" data-action="open-event-modal">
+              <span class="material-symbols-outlined icon-20">add_circle</span>
+              <span>Submit Event Proposal</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Interactive Community Event Proposal Modal Dialog -->
+  <div class="modal-scrim" id="event-proposal-modal" role="dialog" aria-modal="true"
+    aria-labelledby="proposal-modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="flex-row items-center gap-xs">
+          <span class="material-symbols-outlined text-tertiary">campaign</span>
+          <h3 class="modal-title" id="proposal-modal-title">Submit Community Proposal</h3>
+        </div>
+        <button class="cart-close-btn" data-close-modal aria-label="Close modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form id="event-proposal-form">
+        <div class="modal-body">
+          <p class="text-base text-muted">
+            Propose an event or activity at our café. We review submissions weekly and prioritize free or low-cost
+            educational events open to all neighbors.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="organizer-name">Organizer Name or Collective</label>
+            <input type="text" id="organizer-name" class="form-input" placeholder="e.g. North Square Reading Society"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="organizer-email">Contact Email</label>
+            <input type="email" id="organizer-email" class="form-input" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="event-topic">Proposed Event Title & Concept</label>
+            <input type="text" id="event-topic" class="form-input" placeholder="e.g. Poetry in the Stacks" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="event-space">Preferred Space</label>
+            <select id="event-space" class="form-select">
+              <option value="Main Café Room (Up to 40 people)">Main Café Room (Up to 40 people)</option>
+              <option value="Reading Corner (Up to 16 people)">Reading Corner (Up to 16 people)</option>
+              <option value="Floral Studio Loft (Up to 12 people)">Floral Studio Loft (Up to 12 people)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="event-description">Brief Description & Needs</label>
+            <textarea id="event-description" class="form-textarea" rows="3"
+              placeholder="Tell us about the structure, estimated attendance, and audio/visual needs..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Send Proposal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Slide-Over Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Review Tray">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Your Order Tray</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Tray">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="cart-drawer-items" id="cart-items-container">
+      <!-- Dynamically filled by cart.js -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Estimated Tax (8%)</span>
+        <span id="cart-tax" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line total">
+        <span>Total Due</span>
+        <span id="cart-total" class="text-mono font-bold text-primary">$0.00</span>
+      </div>
+
+      <div class="cart-drawer-actions">
+        <button class="btn btn-outline btn-sm" id="clear-cart-btn">Clear</button>
+        <button class="btn btn-primary btn-sm" id="checkout-btn">Place Order / Send to Bar</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>AFTERWORD</h4>
+          <p class="text-base text-muted mb-sm">
+            A welcoming community café, cozy reading room, floral studio, and neighborhood gathering hall in North
+            Square.
+          </p>
+          <span class="chip chip-coffee">EST. 2024 · CIVIC THIRD PLACE</span>
+        </div>
+
+        <div class="footer-col">
+          <h5>Departments</h5>
+          <div class="footer-links">
+            <a href="cafe.html">Café & Daily Bakes</a>
+            <a href="library.html">The Bookshelf</a>
+            <a href="flowers.html">Floral Studio & Stems</a>
+            <a href="events.html">Workshops & Talks</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Space & Visit</h5>
+          <div class="footer-links">
+            <div><strong class="text-main">Hours:</strong> Mon–Sun: 7:00 – 22:00</div>
+            <div><strong class="text-main">Address:</strong> 418 District Lane</div>
+            <div><strong class="text-main">Contact:</strong> hello@afterwordcafe.org</div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Community Care</h5>
+          <p class="text-sm text-muted mb-xs">
+            Interested in leading a reading circle or creative workshop? Zero room-rental fees for neighborhood
+            programs.
+          </p>
+          <div class="flex-row gap-xs">
+            <span class="chip">@AFTERWORDCAFE</span>
+            <span class="chip">EVENT DISPATCH</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 AFTERWORD Community Café & Cultural Space. All rights reserved.</span>
+        <div class="flex-row gap-sm">
+          <span>CRAFT COFFEE</span>
+          <span>·</span>
+          <span>OPEN ACCESS LIBRARY</span>
+          <span>·</span>
+          <span>FLORAL BOTANICALS</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Vanilla JavaScript Subsystems -->
+  <script src="../js/toast.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/filters.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/cafe.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+
+</html>

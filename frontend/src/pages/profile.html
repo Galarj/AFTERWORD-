@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patron Profile & Activity — AFTERWORD</title>
+  <meta name="description" content="View your AFTERWORD patron identity, active book holds, in-seat coffee order history, and community workshop RSVPs.">
+  
+  <!-- Typography & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <!-- Modular Design System -->
+  <link rel="stylesheet" href="../../styles/variables.css">
+  <link rel="stylesheet" href="../../styles/base.css">
+  <link rel="stylesheet" href="../../styles/layout.css">
+  <link rel="stylesheet" href="../../styles/components.css">
+  <link rel="stylesheet" href="../../styles/buttons.css">
+  <link rel="stylesheet" href="../../styles/forms.css">
+  <link rel="stylesheet" href="../../styles/modal.css">
+  <link rel="stylesheet" href="../../styles/profile.css">
+</head>
+<body>
+
+  <!-- Top System Status Bar -->
+  <aside class="system-status-bar" aria-label="Patron Hub Status">
+    <div class="container system-status-inner">
+      <div class="flex-row items-center gap-xs flex-wrap">
+        <span class="sys-tag">AFTERWORD MEMBER SERVICES // CUSTOMER PROFILE</span>
+        <span>OPEN DAILY 7:00 AM – 9:00 PM</span>
+        <span>·</span>
+        <span>CARD ACTIVE</span>
+      </div>
+      <div class="flex-row items-center gap-sm flex-wrap">
+        <span class="text-main font-semibold">Café Front Desk</span>
+        <span class="flex-row items-center gap-xs text-secondary font-semibold">
+          <span class="status-dot active"></span> In-Seat Table Service Active
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Site Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <a href="../../index.html" class="brand-logo" aria-label="AFTERWORD Home">AFTERWORD</a>
+        <nav class="nav-links" aria-label="Primary Navigation">
+          <a href="../../index.html" class="nav-link">Home</a>
+          <a href="cafe.html" class="nav-link">Café</a>
+          <a href="library.html" class="nav-link">Library</a>
+          <a href="flowers.html" class="nav-link">Flowers</a>
+          <a href="events.html" class="nav-link">Events</a>
+          <a href="profile.html" class="nav-link active">Profile</a>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="header-search">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" placeholder="Search catalog, orders..." aria-label="Search catalog or orders">
+        </div>
+        
+        <button class="cart-toggle-btn" aria-label="Open Order Tray">
+          <span class="material-symbols-outlined icon-18 icon-secondary">shopping_bag</span>
+          <span class="font-semibold">Tray</span>
+          <span class="cart-count-badge">0</span>
+        </button>
+
+        <a href="profile.html" class="nav-user-avatar" title="Patron Member Profile">
+          <span class="material-symbols-outlined">person</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <nav class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <a href="../../index.html" class="nav-link">Home</a>
+    <a href="cafe.html" class="nav-link">Café & Daily Bakes</a>
+    <a href="library.html" class="nav-link">The Bookshelf</a>
+    <a href="flowers.html" class="nav-link">Floral Studio</a>
+    <a href="events.html" class="nav-link">Events Calendar</a>
+    <a href="profile.html" class="nav-link active">Patron Profile</a>
+    <a href="admin.html" class="nav-link">Staff Console</a>
+  </nav>
+
+  <!-- Main Profile Page Container -->
+  <main>
+    
+    <!-- 1. Hero Identity Banner -->
+    <section class="profile-hero">
+      <div class="container">
+        <div class="profile-hero-card">
+          
+          <div class="profile-identity-group">
+            <div class="profile-avatar-large" id="profile-avatar-display" aria-label="Patron Monogram">
+              ER
+            </div>
+            
+            <div class="profile-meta">
+              <div class="profile-title-row">
+                <h1 class="profile-name" id="profile-name-display">Elena Rostova</h1>
+                <span class="chip chip-coffee" id="profile-code-display">#MEM-042</span>
+              </div>
+              <p class="profile-email" id="profile-email-display">elena@afterword.hub</p>
+              
+              <div class="profile-tags-row">
+                <span class="chip chip-olive" id="profile-tier-display">Ceramic Founding Patron</span>
+                <span class="text-xs text-muted" style="color: rgba(250, 247, 242, 0.65);">· Member since Oct 2024</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-actions-group">
+            <button class="btn btn-outline btn-sm" id="btn-edit-shortcut" style="border-color: rgba(255,255,255,0.3); color: #faf7f2;" onclick="document.querySelector('[data-target-view=\'view-settings\']').click();">
+              <span class="material-symbols-outlined icon-16">edit</span>
+              <span>Edit Preferences</span>
+            </button>
+            <button class="btn btn-primary btn-sm" id="profile-logout-btn" style="background-color: #a65f45; border-color: #a65f45;">
+              <span class="material-symbols-outlined icon-16">logout</span>
+              <span>Sign Out</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Main Content & Metric Stats -->
+    <div class="container section">
+      
+      <!-- 3 Quick Metric Cards -->
+      <div class="profile-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrap book">
+            <span class="material-symbols-outlined">menu_book</span>
+          </div>
+          <div class="stat-details">
+            <span class="stat-number" id="stat-active-loans">0</span>
+            <span class="stat-label">Active Loans</span>
+          </div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrap coffee">
+            <span class="material-symbols-outlined">coffee</span>
+          </div>
+          <div class="stat-details">
+            <span class="stat-number" id="stat-orders">0</span>
+            <span class="stat-label">Table Orders</span>
+          </div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrap event">
+            <span class="material-symbols-outlined">event_available</span>
+          </div>
+          <div class="stat-details">
+            <span class="stat-number" id="stat-rsvps">0</span>
+            <span class="stat-label">RSVP Reserved</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Profile Activity Tabs -->
+      <nav class="profile-tabs-nav" role="tablist" aria-label="Patron Activities">
+        <button class="profile-tab-btn active" data-target-view="view-loans" role="tab" aria-selected="true">
+          <span class="material-symbols-outlined icon-18">book</span>
+          <span>Borrowed Books</span>
+          <span class="profile-tab-badge" id="badge-loans">0</span>
+        </button>
+
+        <button class="profile-tab-btn" data-target-view="view-orders" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined icon-18">receipt_long</span>
+          <span>Café & Table Orders</span>
+          <span class="profile-tab-badge" id="badge-orders">0</span>
+        </button>
+
+        <button class="profile-tab-btn" data-target-view="view-events" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined icon-18">celebration</span>
+          <span>Gatherings & RSVPs</span>
+          <span class="profile-tab-badge" id="badge-rsvps">0</span>
+        </button>
+
+        <button class="profile-tab-btn" data-target-view="view-settings" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined icon-18">manage_accounts</span>
+          <span>Account Preferences</span>
+        </button>
+      </nav>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- VIEW 1: BORROWED BOOKS (LOANS)                                  -->
+      <!-- --------------------------------------------------------------- -->
+      <div id="view-loans" class="profile-view-pane active" role="tabpanel">
+        <div class="flex-row items-center justify-between mb-md flex-wrap gap-sm">
+          <div>
+            <h3 class="section-title">Current Books on Loan</h3>
+            <p class="section-desc">Books checked out with your member card. Please return to the café circulation shelf.</p>
+          </div>
+          <div class="flex-row items-center gap-xs flex-wrap">
+            <button class="btn btn-outline btn-sm" id="btn-clear-returned-loans" title="Clear all returned and past loan records">
+              <span class="material-symbols-outlined icon-16">delete_sweep</span>
+              <span>Clear History</span>
+            </button>
+            <a href="library.html" class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined icon-16">search</span>
+              <span>Browse Books</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Loan Sub-Filter Tabs -->
+        <div class="flex-row items-center gap-2xs mb-md flex-wrap" id="loan-subfilter-pills" style="margin-bottom: 1.25rem;">
+          <button class="pill-tab-btn active" data-subfilter="all" style="padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; border: 1px solid var(--border-color, #ccc); background: var(--bg-card, #fff); cursor: pointer;">All Loans</button>
+          <button class="pill-tab-btn" data-subfilter="active" style="padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; border: 1px solid var(--border-color, #ccc); background: var(--bg-card, #fff); cursor: pointer;">Active Only</button>
+          <button class="pill-tab-btn" data-subfilter="history" style="padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; border: 1px solid var(--border-color, #ccc); background: var(--bg-card, #fff); cursor: pointer;">Passed & Returned History</button>
+        </div>
+
+        <div class="loan-card-grid" id="profile-loans-container">
+          <!-- Injected dynamically by profile.js -->
+        </div>
+
+        <!-- Reading Wishlist -->
+        <div class="card p-lg mb-xl" style="background-color: #faf7f2; border: 1px dashed #dfd5c9;">
+          <h4 class="font-serif text-lg font-bold text-primary mb-xs">Your Saved Reading Wishlist</h4>
+          <p class="text-sm text-muted mb-md">Titles you've saved to read during your next coffee session.</p>
+          <div class="flex-row items-center gap-md flex-wrap" id="profile-wishlist-container">
+            <!-- Injected dynamically by profile.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- VIEW 2: CAFÉ ORDER HISTORY                                      -->
+      <!-- --------------------------------------------------------------- -->
+      <div id="view-orders" class="profile-view-pane" role="tabpanel">
+        <div class="flex-row items-center justify-between mb-md flex-wrap gap-sm">
+          <div>
+            <h3 class="section-title">In-Seat Café & Bakery Orders</h3>
+            <p class="section-desc">Receipts and dispatch history for orders served at your table.</p>
+          </div>
+          <a href="cafe.html" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined icon-16">coffee</span>
+            <span>Order from Café</span>
+          </a>
+        </div>
+
+        <div class="order-history-card">
+          <table class="order-history-table">
+            <thead>
+              <tr>
+                <th>Order Ref</th>
+                <th>Items Ordered</th>
+                <th>Destination</th>
+                <th>Date & Time</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="profile-orders-table-body">
+              <!-- Injected dynamically by profile.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- VIEW 3: COMMUNITY GATHERINGS & RSVPS                            -->
+      <!-- --------------------------------------------------------------- -->
+      <div id="view-events" class="profile-view-pane" role="tabpanel">
+        <div class="flex-row items-center justify-between mb-md flex-wrap gap-sm">
+          <div>
+            <h3 class="section-title">Upcoming Event RSVPs</h3>
+            <p class="section-desc">Gatherings, book salons, and sensory workshops you have reserved.</p>
+          </div>
+          <a href="events.html" class="btn btn-outline btn-sm">
+            <span class="material-symbols-outlined icon-16">calendar_month</span>
+            <span>View All Events</span>
+          </a>
+        </div>
+
+        <div class="rsvp-card-grid" id="profile-rsvps-container">
+          <!-- Injected dynamically by profile.js -->
+        </div>
+      </div>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- VIEW 4: ACCOUNT PREFERENCES & SETTINGS                         -->
+      <!-- --------------------------------------------------------------- -->
+      <div id="view-settings" class="profile-view-pane" role="tabpanel">
+        <div class="mb-md">
+          <h3 class="section-title">Patron Preferences & Profile Settings</h3>
+          <p class="section-desc">Manage your profile details and account preferences.</p>
+        </div>
+
+        <div class="profile-settings-card">
+          <form id="profile-settings-form">
+            
+            <div class="form-group mb-md">
+              <label for="settings-name" class="form-label">Full Name</label>
+              <input type="text" id="settings-name" class="form-input" required>
+            </div>
+
+            <div class="form-group mb-lg">
+              <label for="settings-email" class="form-label">Email Address</label>
+              <input type="email" id="settings-email" class="form-input" required>
+            </div>
+
+            <div class="flex-row items-center gap-sm">
+              <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-outlined icon-16">save</span>
+                <span>Save Changes</span>
+              </button>
+              <button type="reset" class="btn btn-outline">
+                <span>Reset</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Global Slide-Over Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Review Tray">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Your Order Tray</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Tray">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    
+    <div class="cart-drawer-items" id="cart-items-container">
+      <!-- Dynamically populated by cart.js -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Estimated Tax (8%)</span>
+        <span id="cart-tax" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line total">
+        <span>Total Due</span>
+        <span id="cart-total" class="text-mono font-bold text-primary">$0.00</span>
+      </div>
+      <button class="btn btn-primary w-full" id="checkout-btn">
+        Place Order & Send to Kitchen
+      </button>
+      <button class="btn btn-text w-full text-xs text-muted" id="clear-cart-btn">
+        Clear Tray
+      </button>
+    </div>
+  </aside>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>AFTERWORD</h4>
+          <p class="text-base text-muted mb-sm">
+            A welcoming community café, cozy reading room, floral studio, and neighborhood gathering hall in North Square.
+          </p>
+          <span class="chip chip-coffee">EST. 2024 · CIVIC THIRD PLACE</span>
+        </div>
+
+        <div class="footer-col">
+          <h5>Departments</h5>
+          <div class="footer-links">
+            <a href="cafe.html">Café & Daily Bakes</a>
+            <a href="library.html">The Bookshelf</a>
+            <a href="flowers.html">Floral Studio</a>
+            <a href="events.html">Events Calendar</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Hours & Access</h5>
+          <div class="footer-hours">
+            <div><span>Mon – Fri:</span> 7:00 AM – 9:00 PM</div>
+            <div><span>Sat – Sun:</span> 8:00 AM – 10:00 PM</div>
+            <div><span>Location:</span> 140 North Square</div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Patron Account</h5>
+          <div class="footer-links">
+            <a href="profile.html">Member Profile</a>
+            <a href="../../login.html">Sign In / Switch</a>
+            <a href="admin.html">Staff Console</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 AFTERWORD Community Café & Books. All rights reserved.</span>
+        <div class="flex-row gap-sm">
+          <span>CRAFT COFFEE</span>
+          <span>·</span>
+          <span>THE BOOKSHELF</span>
+          <span>·</span>
+          <span>FLORAL BOTANICALS</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Scripts -->
+  <script src="../js/toast.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/profile.js"></script>
+</body>
+</html>

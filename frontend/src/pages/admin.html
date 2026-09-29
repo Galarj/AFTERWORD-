@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Console & Operations — AFTERWORD</title>
+  <meta name="description" content="AFTERWORD Staff Operations Console for real-time dispatch, inventory management, circulation stacks, and community programming.">
+  
+  <!-- Typography & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <!-- Admin Specialized Stylesheet -->
+  <link rel="stylesheet" href="../../styles/admin.css">
+
+  <!-- Patron Authentication & Site Gatekeeper -->
+  <script src="../js/auth.js"></script>
+</head>
+<body>
+
+  <div class="admin-app">
+    
+    <!-- Left Fixed Sidebar Navigation -->
+    <aside class="admin-sidebar" aria-label="Staff Console Navigation">
+      <div>
+        <!-- Brand & Console Identity -->
+        <div class="sidebar-header">
+          <div class="sidebar-brand-row">
+            <a href="../../index.html" class="sidebar-brand">
+              <span>AFTERWORD</span>
+            </a>
+            <span class="sidebar-badge">STAFF CONSOLE</span>
+          </div>
+          <div class="sidebar-subtext">
+            <span>CAFÉ OPERATIONS & MANAGEMENT</span>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="sidebar-nav">
+          <span class="sidebar-section-title">CORE OPERATIONS</span>
+
+          <button class="admin-nav-btn active" data-view="dashboard">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">dashboard</span>
+              <span class="nav-label">Dashboard</span>
+            </div>
+          </button>
+
+          <button class="admin-nav-btn" data-view="orders">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">receipt_long</span>
+              <span class="nav-label">Orders</span>
+            </div>
+            <span class="nav-btn-badge" id="sidebar-orders-badge">6</span>
+          </button>
+
+          <button class="admin-nav-btn" data-view="cafe">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">coffee</span>
+              <span class="nav-label">Café Menu</span>
+            </div>
+          </button>
+
+          <button class="admin-nav-btn" data-view="flowers">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">local_florist</span>
+              <span class="nav-label">Botanical Studio</span>
+            </div>
+          </button>
+
+          <button class="admin-nav-btn" data-view="library">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">auto_stories</span>
+              <span class="nav-label">Library Stacks</span>
+            </div>
+            <span class="nav-btn-badge">3</span>
+          </button>
+
+          <button class="admin-nav-btn" data-view="events">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">event</span>
+              <span class="nav-label">Events & Salons</span>
+            </div>
+          </button>
+
+          <span class="sidebar-section-title">MANAGEMENT</span>
+
+          <button class="admin-nav-btn" data-view="customers">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">group</span>
+              <span class="nav-label">Patron Directory</span>
+            </div>
+          </button>
+
+          <button class="admin-nav-btn" data-view="analytics">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">monitoring</span>
+              <span class="nav-label">Analytics</span>
+            </div>
+          </button>
+
+          <button class="admin-nav-btn" data-view="settings">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">settings</span>
+              <span class="nav-label">Console Settings</span>
+            </div>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Bottom Staff Profile Card -->
+      <div class="sidebar-footer">
+        <div class="staff-profile-card">
+          <div class="staff-info-wrap">
+            <div class="staff-avatar" title="Clara Vance — On Shift">
+              <span>CV</span>
+              <span class="staff-status-dot"></span>
+            </div>
+            <div class="staff-meta">
+              <span class="staff-name">Clara Vance</span>
+              <span class="staff-role">FLOOR DIRECTOR · SHIFT 1</span>
+            </div>
+          </div>
+          <a href="../../index.html" class="staff-store-link" title="Return to Public Customer Storefront">
+            <span class="material-symbols-outlined icon-18">open_in_new</span>
+          </a>
+          <button type="button" class="staff-store-link" id="admin-logout-btn" title="Sign Out of Staff Console" onclick="if(typeof logout === 'function') logout();">
+            <span class="material-symbols-outlined icon-18">logout</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <main class="admin-main">
+
+      <!-- Sticky Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="mobile-sidebar-toggle" aria-label="Toggle Navigation Sidebar">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div class="topbar-heading-wrap">
+            <h1 class="topbar-title" id="topbar-view-title">Dashboard</h1>
+            <span class="topbar-timestamp" id="admin-live-time">Mon, Oct 14 · 10:48 AM</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Global Search -->
+          <div class="topbar-search-wrap">
+            <span class="material-symbols-outlined topbar-search-icon">search</span>
+            <input type="text" id="admin-global-search" class="topbar-search-input" placeholder="Search orders, titles, patrons..." aria-label="Global Console Search">
+          </div>
+
+          <!-- Notification Bell -->
+          <button class="topbar-icon-btn" id="btn-admin-notifications" aria-label="View Operational Notifications">
+            <span class="material-symbols-outlined icon-20">notifications</span>
+            <span class="topbar-icon-badge"></span>
+          </button>
+
+          <!-- Storefront Quick Link -->
+          <a href="../../index.html" class="btn btn-outline btn-sm">
+            <span class="material-symbols-outlined icon-16">storefront</span>
+            <span>View Storefront</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Dynamic View Container -->
+      <div class="admin-content-wrap">
+
+        <!-- ================================================================= -->
+        <!-- VIEW 1: DASHBOARD OVERVIEW -->
+        <!-- ================================================================= -->
+        <section class="admin-view active" id="view-dashboard">
+          
+          <!-- Dashboard Time Period Filter Bar -->
+          <div class="dash-filter-bar mb-md flex-row items-center justify-between flex-wrap gap-sm" style="background: #faf7f2; padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08);">
+            <div class="flex-row items-center gap-xs">
+              <span class="material-symbols-outlined text-secondary" style="font-size: 20px;">filter_alt</span>
+              <strong class="text-sm text-primary">Time Period:</strong>
+              <span class="text-xs text-muted" id="dash-period-label">(All Time History)</span>
+            </div>
+            <div class="flex-row items-center gap-xs flex-wrap" id="dash-filter-controls">
+              <button class="btn btn-sm btn-outline dash-period-btn" data-period="today">Today</button>
+              <button class="btn btn-sm btn-outline dash-period-btn" data-period="week">This Week</button>
+              <button class="btn btn-sm btn-primary dash-period-btn active" data-period="all">All Time</button>
+              <div class="flex-row items-center gap-xs" style="margin-left: 8px;">
+                <span class="text-xs text-muted">Specific Date:</span>
+                <input type="date" id="dash-custom-date" class="form-input" style="padding: 3px 8px; font-size: 0.8rem; width: auto;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Metrics Cards (5-Grid) -->
+          <div class="metric-grid">
+            
+            <!-- Card 1: Revenue -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-card-title">Gross Revenue</span>
+                <span class="material-symbols-outlined metric-card-icon">payments</span>
+              </div>
+              <div class="metric-card-value" id="dash-revenue-val">₱0.00</div>
+              <div class="metric-card-footer">
+                <span class="metric-trend up" id="dash-revenue-trend">
+                  <span class="material-symbols-outlined icon-14">trending_up</span> Live
+                </span>
+                <span class="metric-trend-subtext" id="dash-revenue-sub">AOV: ₱0.00</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Orders -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-card-title">Total Orders</span>
+                <span class="material-symbols-outlined metric-card-icon">receipt_long</span>
+              </div>
+              <div class="metric-card-value" id="dash-orders-val">0</div>
+              <div class="metric-card-footer">
+                <span class="metric-trend up" id="dash-orders-trend">
+                  <span class="material-symbols-outlined icon-14">check_circle</span> 100%
+                </span>
+                <span class="metric-trend-subtext" id="dash-orders-sub">fulfillment</span>
+              </div>
+            </div>
+
+            <!-- Card 3: Active Book Loans -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-card-title">Active Book Loans</span>
+                <span class="material-symbols-outlined metric-card-icon">auto_stories</span>
+              </div>
+              <div class="metric-card-value" id="dash-loans-val">0</div>
+              <div class="metric-card-footer">
+                <span class="metric-trend neutral" id="dash-loans-trend">0 pending</span>
+                <span class="metric-trend-subtext" id="dash-loans-sub">0 overdue</span>
+              </div>
+            </div>
+
+            <!-- Card 4: Event Registrations -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-card-title">Event RSVPs</span>
+                <span class="material-symbols-outlined metric-card-icon">event_available</span>
+              </div>
+              <div class="metric-card-value" id="dash-events-val">0</div>
+              <div class="metric-card-footer">
+                <span class="metric-trend up" id="dash-events-trend">0 upcoming</span>
+                <span class="metric-trend-subtext" id="dash-events-sub">scheduled</span>
+              </div>
+            </div>
+
+            <!-- Card 5: Current Seating -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-card-title">Seating & Stock</span>
+                <span class="material-symbols-outlined metric-card-icon">table_restaurant</span>
+              </div>
+              <div class="metric-card-value" id="dash-seating-val">0%</div>
+              <div class="metric-card-footer">
+                <span class="metric-trend neutral" id="dash-seating-trend">0 / 12 tables</span>
+                <span class="metric-trend-subtext" id="dash-seating-sub">occupied</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Section 2: Seating & Floor Occupancy Map -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title-wrap">
+                <span class="material-symbols-outlined text-secondary">chair</span>
+                <div>
+                  <h2 class="admin-card-title">Live Floor & Seating Status</h2>
+                  <span class="admin-card-desc">Main Café Area, Reading Corner, and Garden Seating.</span>
+                </div>
+              </div>
+              <div class="flex-row items-center gap-sm">
+                <span class="flex-row items-center gap-xs text-xs text-mono">
+                  <span class="table-slot available table-slot-legend"></span> Available
+                </span>
+                <span class="flex-row items-center gap-xs text-xs text-mono">
+                  <span class="table-slot occupied table-slot-legend"></span> In Service
+                </span>
+              </div>
+            </div>
+            
+            <div class="seating-widget" id="seating-widget-container">
+              <!-- Dynamically rendered live tables T-01 to T-12 -->
+            </div>
+          </div>
+
+          <!-- Section 3: Department Breakdown & Quick Orders -->
+          <div class="grid-2">
+            
+            <!-- Department Split -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div>
+                  <h3 class="admin-card-title">Revenue by Department</h3>
+                  <span class="admin-card-desc" id="dash-dept-desc">Cumulative gross receipts breakdown</span>
+                </div>
+                <span class="chip chip-olive font-bold">LIVE DATA</span>
+              </div>
+              <div class="admin-card-body--gap-sm" id="dash-dept-breakdown">
+                <div>
+                  <div class="flex-row justify-between text-sm font-semibold mb-xs">
+                    <span>☕ Coffee & Café Drinks</span>
+                    <span class="text-mono" id="dash-dept-cafe-txt">₱0.00 (0%)</span>
+                  </div>
+                  <div class="capacity-bar-wrap"><div class="capacity-bar-fill" id="dash-dept-cafe-bar" style="width: 0%;"></div></div>
+                </div>
+
+                <div>
+                  <div class="flex-row justify-between text-sm font-semibold mb-xs">
+                    <span>🥐 Pastries & Food</span>
+                    <span class="text-mono" id="dash-dept-food-txt">₱0.00 (0%)</span>
+                  </div>
+                  <div class="capacity-bar-wrap"><div class="capacity-bar-fill" id="dash-dept-food-bar" style="width: 0%;"></div></div>
+                </div>
+
+                <div>
+                  <div class="flex-row justify-between text-sm font-semibold mb-xs">
+                    <span>🌸 Fresh Flowers & Botanicals</span>
+                    <span class="text-mono" id="dash-dept-flower-txt">₱0.00 (0%)</span>
+                  </div>
+                  <div class="capacity-bar-wrap"><div class="capacity-bar-fill" id="dash-dept-flower-bar" style="width: 0%;"></div></div>
+                </div>
+
+                <div>
+                  <div class="flex-row justify-between text-sm font-semibold mb-xs">
+                    <span>📚 Books & Library Services</span>
+                    <span class="text-mono" id="dash-dept-book-txt">₱0.00 (0%)</span>
+                  </div>
+                  <div class="capacity-bar-wrap"><div class="capacity-bar-fill" id="dash-dept-book-bar" style="width: 0%;"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Operational Alerts -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div>
+                  <h3 class="admin-card-title">Operational Attention Items</h3>
+                  <span class="admin-card-desc">Low stock alerts, pending borrows, and overdue items</span>
+                </div>
+                <span class="chip chip-terracotta" id="dash-attention-badge">0 ATTENTION</span>
+              </div>
+              <div class="admin-card-body--gap-xs" id="dash-attention-container">
+                <!-- Dynamically populated attention items -->
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 2: ORDERS MANAGEMENT -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-orders">
+          <div class="admin-card">
+            
+            <!-- Orders Header & Filters -->
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Live Orders & Service Dispatch</h2>
+                <span class="admin-card-desc">Real-time queue across Espresso Bar, Kitchen Hearth, and Botanical Bar</span>
+              </div>
+              
+              <div class="admin-toolbar flex-column gap-xs">
+                <!-- Department Filter Tabs -->
+                <div class="pill-tab-group" id="orders-dept-pills">
+                  <button class="pill-tab-btn active" data-dept="all">All Service Orders</button>
+                  <button class="pill-tab-btn" data-dept="cafe">☕ Café & Drinks</button>
+                  <button class="pill-tab-btn" data-dept="flowers">🌸 Flowers & Botanicals</button>
+                </div>
+
+                <!-- Status Filter Pills -->
+                <div class="pill-tab-group" id="orders-status-pills">
+                  <button class="pill-tab-btn active" data-status="all">All (<span class="pill-count">0</span>)</button>
+                  <button class="pill-tab-btn" data-status="pending">Pending (<span class="pill-count">0</span>)</button>
+                  <button class="pill-tab-btn" data-status="preparing">Preparing (<span class="pill-count">0</span>)</button>
+                  <button class="pill-tab-btn" data-status="ready">Ready (<span class="pill-count">0</span>)</button>
+                  <button class="pill-tab-btn" data-status="completed">Completed (<span class="pill-count">0</span>)</button>
+                  <button class="pill-tab-btn" data-status="cancelled">Cancelled (<span class="pill-count">0</span>)</button>
+                </div>
+
+                <!-- Table Search & Actions -->
+                <div class="table-search-box flex-row gap-xs items-center">
+                  <input type="text" id="orders-table-search" class="topbar-search-input" placeholder="Search orders..." aria-label="Search orders">
+                  <button class="btn btn-outline btn-sm text-danger" id="btn-clear-completed-orders" title="Clear completed and cancelled orders">
+                    <span class="material-symbols-outlined icon-16">delete</span>
+                    <span>Clear Finished</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Type</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 3: CAFÉ INVENTORY -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-cafe">
+          <div class="admin-card">
+            
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Café Offerings & Roast Inventory</h2>
+                <span class="admin-card-desc">Manage pricing, portion availability, and daily bake batches.</span>
+              </div>
+              
+              <button class="btn btn-primary btn-sm" id="btn-open-add-product">
+                <span class="material-symbols-outlined icon-18">add</span>
+                <span>+ Add Offering</span>
+              </button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock Units</th>
+                    <th>Available</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="cafe-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 4: FLOWERS & BOTANICALS -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-flowers">
+          <div class="admin-card">
+            
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Botanical Studio & Fresh Stems</h2>
+                <span class="admin-card-desc">Track morning fresh harvests, dried architectural bundles, and living greens.</span>
+              </div>
+
+              <button class="btn btn-primary btn-sm" id="btn-open-add-flower">
+                <span class="material-symbols-outlined icon-18">add</span>
+                <span>+ Receive Morning Stems</span>
+              </button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Botanical Arrangement</th>
+                    <th>Classification</th>
+                    <th>Price</th>
+                    <th>Vase Stems</th>
+                    <th>Available</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="flowers-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 5: LIBRARY STACKS & CIRCULATION -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-library">
+          
+          <!-- 1. Circulation & Active Loans Manager -->
+          <div class="admin-card mb-md">
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Circulation Desk & Active Loans</h2>
+                <span class="admin-card-desc">Track checked-out volumes, grant +14-day extensions, check-in returns, and flag missing books.</span>
+              </div>
+
+              <div class="flex-row items-center gap-xs">
+                <button class="btn btn-primary btn-sm" id="btn-open-lend-modal">
+                  <span class="material-symbols-outlined icon-18">bookmark_add</span>
+                  <span>+ Lend Book to Patron</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Loan Filter Pills -->
+            <div class="p-sm bg-surface-low border-b border-light flex-row justify-between items-center flex-wrap gap-xs">
+              <div class="pill-tab-group" id="loans-status-pills">
+                <button class="pill-tab-btn active" data-loan-filter="all">All Loans (<span id="loans-count-all">0</span>)</button>
+                <button class="pill-tab-btn" data-loan-filter="requested">Pending Approval (<span id="loans-count-requested">0</span>)</button>
+                <button class="pill-tab-btn" data-loan-filter="active">Active (<span id="loans-count-active">0</span>)</button>
+                <button class="pill-tab-btn" data-loan-filter="overdue">Overdue (<span id="loans-count-overdue">0</span>)</button>
+                <button class="pill-tab-btn" data-loan-filter="missing">Missing (<span id="loans-count-missing">0</span>)</button>
+                <button class="pill-tab-btn" data-loan-filter="returned">Returned (<span id="loans-count-returned">0</span>)</button>
+              </div>
+              <span class="text-xs text-muted">Click action buttons to update loan status instantly</span>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Loan ID & Patron</th>
+                    <th>Volume Title & Shelf</th>
+                    <th>Borrowed Date</th>
+                    <th>Due Date / Timeline</th>
+                    <th>Status</th>
+                    <th>Circulation Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="loans-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 2. Community Book Donation Requests -->
+          <div class="admin-card mb-md" id="admin-donations-section">
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title flex-row items-center gap-xs">
+                  <span class="material-symbols-outlined text-secondary">volunteer_activism</span>
+                  <span>Book Donation Requests</span>
+                </h2>
+                <span class="admin-card-desc">Review incoming patron book offers, approve & send Resend email notifications, or reject offers.</span>
+              </div>
+              <div class="flex-row items-center gap-xs">
+                <span class="chip chip-coffee text-xs" id="donations-count-badge">0 Pending</span>
+              </div>
+            </div>
+
+            <!-- Donation Filter Pills -->
+            <div class="p-sm bg-surface-low border-b border-light flex-row justify-between items-center flex-wrap gap-xs">
+              <div class="pill-tab-group" id="donations-status-pills">
+                <button class="pill-tab-btn active" data-donation-filter="all">All Offers (<span id="donations-count-all">0</span>)</button>
+                <button class="pill-tab-btn" data-donation-filter="pending">Pending Review (<span id="donations-count-pending">0</span>)</button>
+                <button class="pill-tab-btn" data-donation-filter="approved">Approved (<span id="donations-count-approved">0</span>)</button>
+                <button class="pill-tab-btn" data-donation-filter="rejected">Rejected (<span id="donations-count-rejected">0</span>)</button>
+              </div>
+              <span class="text-xs text-muted">Approval & Rejection trigger automated Resend donor emails</span>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Book Title & Author</th>
+                    <th>Donor Name & Email</th>
+                    <th>Category & Condition</th>
+                    <th>Status</th>
+                    <th>Email Status</th>
+                    <th>Staff Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="donations-table-body">
+                  <!-- Injected dynamically by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+          <!-- 2. Shelf Stacks Inventory -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div>
+                <h3 class="admin-card-title">Library Stacks Catalog Inventory</h3>
+                <span class="admin-card-desc">Shelf codes, title catalog, copy allocation, and live hold queues.</span>
+              </div>
+
+              <button class="btn btn-outline btn-sm" id="btn-open-add-book">
+                <span class="material-symbols-outlined icon-18">library_add</span>
+                <span>+ Add Book to Stacks</span>
+              </button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Volume & Author</th>
+                    <th>Discipline</th>
+                    <th>Shelf Code</th>
+                    <th>Copies in Circulation</th>
+                    <th>Status</th>
+                    <th>Hold Queue</th>
+                  </tr>
+                </thead>
+                <tbody id="library-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 6: EVENTS & COMMUNITY PROGRAMMING -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-events">
+          <div class="admin-card">
+            
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Community Programming & Gatherings</h2>
+                <span class="admin-card-desc">Evening salons, architecture readings, cupping workshops, and concerts.</span>
+              </div>
+
+              <button class="btn btn-primary btn-sm" id="btn-open-add-event">
+                <span class="material-symbols-outlined icon-18">add</span>
+                <span>+ Schedule Gathering</span>
+              </button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Gathering Title & Time</th>
+                    <th>Format</th>
+                    <th>RSVP Capacity</th>
+                    <th>Booking Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="events-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 7: PATRON DIRECTORY -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-customers">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Patron Membership Directory</h2>
+                <span class="admin-card-desc">Registered community members, ceramic card IDs, and active loan counts.</span>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-open-enroll-patron">
+                + Enroll Patron
+              </button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Patron Name</th>
+                    <th>Member Card ID</th>
+                    <th>Tier</th>
+                    <th>Active Volumes</th>
+                    <th>Lifetime Spend</th>
+                    <th>Last Visit</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body">
+                  <!-- Injected dynamically by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 8: ANALYTICS -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-analytics">
+          <div class="grid-2">
+            
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3 class="admin-card-title">Hourly Footfall & Beverage Pace</h3>
+                <span class="chip chip-olive">PEAK: 10:00 - 11:30 AM</span>
+              </div>
+              <div class="admin-card-body--gap-xs">
+                <div class="flex-row justify-between text-xs text-mono">
+                  <span>8:00 AM (Morning Hearth Opening)</span>
+                  <span>34 patrons</span>
+                </div>
+                <div class="capacity-bar-wrap"><div class="capacity-bar-fill capacity-bar-fill--45"></div></div>
+
+                <div class="flex-row justify-between text-xs text-mono mt-xs">
+                  <span>10:00 AM (Peak Espresso & Study Rush)</span>
+                  <span>78 patrons</span>
+                </div>
+                <div class="capacity-bar-wrap"><div class="capacity-bar-fill capacity-bar-fill--95"></div></div>
+
+                <div class="flex-row justify-between text-xs text-mono mt-xs">
+                  <span>12:30 PM (Midday Sourdough & Tea)</span>
+                  <span>52 patrons</span>
+                </div>
+                <div class="capacity-bar-wrap"><div class="capacity-bar-fill capacity-bar-fill--68"></div></div>
+
+                <div class="flex-row justify-between text-xs text-mono mt-xs">
+                  <span>3:00 PM (Afternoon Slow Drip & Floral)</span>
+                  <span>41 patrons</span>
+                </div>
+                <div class="capacity-bar-wrap"><div class="capacity-bar-fill capacity-bar-fill--55"></div></div>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3 class="admin-card-title">Top Dialed-In Roasts This Week</h3>
+                <span class="chip chip-coffee">COFFEE PROGRAM</span>
+              </div>
+              <div class="admin-card-body--gap-sm">
+                <div class="flex-row justify-between items-center text-sm">
+                  <div>
+                    <strong>Sidama Ethiopia Washed</strong>
+                    <div class="text-xs text-muted">Jasmine, Bergamot, Meyer Lemon</div>
+                  </div>
+                  <span class="text-mono font-bold">142 Cups</span>
+                </div>
+                <div class="flex-row justify-between items-center text-sm">
+                  <div>
+                    <strong>Colombia Huila Pink Bourbon</strong>
+                    <div class="text-xs text-muted">Wild Honey, Nectarine, Red Tea</div>
+                  </div>
+                  <span class="text-mono font-bold">118 Cups</span>
+                </div>
+                <div class="flex-row justify-between items-center text-sm">
+                  <div>
+                    <strong>House Hearth Espresso Roast</strong>
+                    <div class="text-xs text-muted">70% Guatemala / 30% Ethiopia</div>
+                  </div>
+                  <span class="text-mono font-bold">294 Cups</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 9: CONSOLE SETTINGS -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-settings">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Café Operational Configuration</h2>
+                <span class="admin-card-desc">Operating policies, tax rate, and circulation rules.</span>
+              </div>
+              <button class="btn btn-primary btn-sm" data-action="save-settings">
+                Save Changes
+              </button>
+            </div>
+            
+            <div class="admin-card-body--gap-md">
+              <div class="form-group">
+                <label for="set-hours" class="form-label">Café Opening Hours</label>
+                <input type="text" id="set-hours" class="form-input" value="Tue – Sun: 8:00 AM – 8:00 PM (Dark on Mondays)">
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="set-loan-period" class="form-label">Standard Loan Duration</label>
+                  <select id="set-loan-period" class="form-select">
+                    <option value="14">14 Days</option>
+                    <option value="21" selected>21 Days (Standard)</option>
+                    <option value="30">30 Days (Extended)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="set-max-loans" class="form-label">Max Concurrent Volumes per Patron</label>
+                  <input type="number" id="set-max-loans" class="form-input" value="3">
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="set-tax-rate" class="form-label">Sales Tax Rate (%)</label>
+                  <input type="number" id="set-tax-rate" class="form-input" value="8" step="0.5">
+                </div>
+                <div class="form-group">
+                  <label for="set-table-service" class="form-label">Table Delivery Mode</label>
+                  <select id="set-table-service" class="form-select">
+                    <option value="active" selected>Active In-Seat Dispatch</option>
+                    <option value="counter">Counter Pickup Only</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODALS -->
+  <!-- ======================================================================= -->
+
+  <!-- Modal 1: Order Inspection & Status Advancement -->
+  <div class="modal-scrim" id="order-detail-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--md">
+      <div class="modal-header">
+        <div class="flex-row items-center gap-xs">
+          <span class="material-symbols-outlined text-secondary">receipt_long</span>
+          <div>
+            <h3 class="modal-title" id="modal-ord-id">ORD-1094</h3>
+            <span class="text-xs text-muted" id="modal-ord-type">Table #04 (In-Seat)</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Order Inspector">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-sm">
+          <span class="text-mono text-xs text-light">PATRON CUSTOMER</span>
+          <div class="text-sm font-semibold text-primary" id="modal-ord-customer">Elena Rostova</div>
+        </div>
+
+        <div class="mb-sm">
+          <span class="text-mono text-xs text-light">ORDER ITEMS</span>
+          <div class="text-sm modal-items-box" id="modal-ord-items">
+            2x Hearth Cortado, 1x Cardamom Hearth Bun
+          </div>
+        </div>
+
+        <div class="mb-sm">
+          <span class="text-mono text-xs text-light">SPECIAL PREP INSTRUCTIONS</span>
+          <p class="text-xs text-muted italic" id="modal-ord-notes">Extra hot on the cortados, oat milk for both.</p>
+        </div>
+
+        <div class="modal-total-row">
+          <span class="text-mono text-xs text-light">TOTAL CHARGED</span>
+          <span class="text-mono text-lg font-bold text-primary" id="modal-ord-total">₱952 ($17.00)</span>
+        </div>
+
+        <div class="form-group">
+          <label for="modal-ord-status-select" class="form-label">Workflow Status Stage</label>
+          <select id="modal-ord-status-select" class="form-select">
+            <option value="pending">Pending (Awaiting Prep)</option>
+            <option value="preparing">Preparing (In Barista / Oven Queue)</option>
+            <option value="ready">Ready (Awaiting Runner / Customer Pickup)</option>
+            <option value="completed">Completed (Served)</option>
+            <option value="cancelled">Cancelled (Voided Ticket)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal>Close</button>
+        <button class="btn btn-primary" id="modal-save-order-status">Save & Update Status</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Book Hold Reservations Queue -->
+  <div class="modal-scrim" id="reservations-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Active Volume Hold Queue</h3>
+          <span class="text-xs text-secondary font-semibold text-mono" id="modal-res-title">A Pattern Language</span>
+        </div>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Reservations Roster">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm text-muted mb-sm">
+          Patrons currently waiting for this title. When a volume is returned to the circulation desk, the next queued patron receives an automated pickup notice.
+        </p>
+        <ul id="modal-res-list" class="modal-list-reset">
+          <!-- Injected by admin.js -->
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-full" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add Product Modal -->
+  <div class="modal-scrim" id="add-product-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Café Offering</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <form id="add-product-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="prod-name" class="form-label">Product Name</label>
+            <input type="text" id="prod-name" class="form-input" placeholder="e.g. Vanilla Bean Cardamom Latte" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="prod-category" class="form-label">Category</label>
+              <select id="prod-category" class="form-select">
+                <option value="1">Coffee</option>
+                <option value="2">Drinks</option>
+                <option value="3">Food</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prod-price" class="form-label">Price (USD)</label>
+              <input type="number" id="prod-price" class="form-input" step="0.25" placeholder="5.50" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="prod-stock" class="form-label">Initial Stock Portions</label>
+            <input type="number" id="prod-stock" class="form-input" value="24" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Add Book to Stacks -->
+  <div class="modal-scrim" id="add-book-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Volume to Library Stacks</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <form id="add-book-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="book-title" class="form-label">Book Title</label>
+            <input type="text" id="book-title" class="form-input" placeholder="e.g. Architecture of Happiness" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="book-author" class="form-label">Author</label>
+              <input type="text" id="book-author" class="form-input" placeholder="e.g. Alain de Botton" required>
+            </div>
+            <div class="form-group">
+              <label for="book-category" class="form-label">Category</label>
+              <select id="book-category" class="form-select">
+                <option value="6">Novels & Stories</option>
+                <option value="7">Manga</option>
+                <option value="8">Essays & Memoir</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="book-shelf" class="form-label">Shelf Code</label>
+              <input type="text" id="book-shelf" class="form-input" placeholder="Shelf A-03" value="Shelf B-01" required>
+            </div>
+            <div class="form-group">
+              <label for="book-copies" class="form-label">Total Copies</label>
+              <input type="number" id="book-copies" class="form-input" value="2" min="1" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="book-synopsis" class="form-label">Short Synopsis / Owner Note</label>
+            <textarea id="book-synopsis" class="form-textarea" rows="2" placeholder="Brief note on why this belongs on our café shelves..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Add to Stacks</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 5: Receive Morning Stems (Add Flower) -->
+  <div class="modal-scrim" id="add-flower-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Receive Botanical Offering</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <form id="add-flower-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="flower-name" class="form-label">Arrangement / Botanical Name</label>
+            <input type="text" id="flower-name" class="form-input" placeholder="e.g. Hearth Autumn Market Bunch" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="flower-category" class="form-label">Classification</label>
+              <select id="flower-category" class="form-select">
+                <option value="4">Fresh Cut Bouquets</option>
+                <option value="5">Botanical & Dried</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="flower-price" class="form-label">Price (USD)</label>
+              <input type="number" id="flower-price" class="form-input" step="0.50" placeholder="28.00" value="32.00" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="flower-stock" class="form-label">Vase Stems / Bunches in Stock</label>
+            <input type="number" id="flower-stock" class="form-input" value="12" min="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Receive Stems</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 6: Schedule Community Gathering (Add Event) -->
+  <div class="modal-scrim" id="add-event-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Schedule Community Gathering</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <form id="add-event-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="event-title" class="form-label">Gathering Title</label>
+            <input type="text" id="event-title" class="form-input" placeholder="e.g. Candlelit Acoustic Strings & Tea" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="event-category" class="form-label">Format / Type</label>
+              <select id="event-category" class="form-select">
+                <option value="Salon">Salon</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Reading Club">Reading Club</option>
+                <option value="Coffee Cupping">Coffee Cupping</option>
+                <option value="Concert">Concert</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="event-capacity" class="form-label">RSVP Capacity</label>
+              <input type="number" id="event-capacity" class="form-input" value="20" min="4" required>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="event-date" class="form-label">Date String</label>
+              <input type="text" id="event-date" class="form-input" placeholder="Friday, Oct 24" required>
+            </div>
+            <div class="form-group">
+              <label for="event-time" class="form-label">Time Window</label>
+              <input type="text" id="event-time" class="form-input" placeholder="7:00 PM – 9:00 PM" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Schedule Gathering</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 7: Enroll Patron -->
+  <div class="modal-scrim" id="enroll-patron-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Enroll New Community Patron</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <form id="enroll-patron-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="patron-name" class="form-label">Full Name</label>
+            <input type="text" id="patron-name" class="form-input" placeholder="e.g. Maya Lin" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="patron-card" class="form-label">Ceramic Member Card ID</label>
+              <input type="text" id="patron-card" class="form-input text-mono" value="#MEM-112" required>
+            </div>
+            <div class="form-group">
+              <label for="patron-tier" class="form-label">Membership Tier</label>
+              <select id="patron-tier" class="form-select">
+                <option value="Community Patron">Community Patron</option>
+                <option value="Ceramic Founding">Ceramic Founding</option>
+                <option value="Senior Scholar">Senior Scholar</option>
+                <option value="Resident Artist">Resident Artist</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="patron-email" class="form-label">Email Address</label>
+            <input type="email" id="patron-email" class="form-input" placeholder="patron@afterwordcafe.org">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Enroll Patron</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 8: Lend Book to Patron (Desk Checkout) -->
+  <div class="modal-scrim" id="lend-book-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Desk Circulation: Lend Volume</h3>
+          <span class="text-xs text-muted">Direct counter checkout to a registered patron</span>
+        </div>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <form id="lend-book-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="lend-patron-select" class="form-label">Registered Patron</label>
+            <select id="lend-patron-select" class="form-select" required>
+              <!-- Injected by admin.js -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="lend-book-select" class="form-label">Available Volume</label>
+            <select id="lend-book-select" class="form-select" required>
+              <!-- Injected by admin.js -->
+            </select>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="lend-days" class="form-label">Loan Duration</label>
+              <select id="lend-days" class="form-select">
+                <option value="21">21 Days (Standard Patron Loan)</option>
+                <option value="14">14 Days (Short Period)</option>
+                <option value="28">28 Days (Scholar Privilege)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lend-notes" class="form-label">Circulation Note</label>
+              <input type="text" id="lend-notes" class="form-input" placeholder="e.g. Read in café study desk">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Issue Loan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 9: Reject Book Donation with Optional Staff Note -->
+  <div class="modal-scrim" id="reject-donation-modal" role="dialog" aria-hidden="true">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Reject Book Donation Offer</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <form id="reject-donation-form">
+        <div class="modal-body">
+          <p class="text-sm text-muted mb-md">
+            You are rejecting the book offer for <strong id="reject-modal-book-title" class="text-primary">Book Title</strong> from <span id="reject-modal-donor-name" class="font-semibold">Donor</span>.
+          </p>
+
+          <div class="form-group mb-sm">
+            <label class="form-label" for="reject-admin-note">Reason / Staff Note for Donor (Optional):</label>
+            <textarea id="reject-admin-note" class="form-textarea" rows="3" placeholder="e.g. We currently have multiple copies of this volume in our collection..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary" style="background-color: #a65f45; border-color: #a65f45;">
+            <span class="material-symbols-outlined icon-16">close</span>
+            <span>Reject & Send Email</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 10: View Full Book Donation Details -->
+  <div class="modal-scrim" id="view-donation-modal" role="dialog" aria-hidden="true">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="flex-row items-center gap-xs">
+          <span class="material-symbols-outlined text-secondary">volunteer_activism</span>
+          <h3 class="modal-title" id="donation-detail-title">Donation Request Details</h3>
+        </div>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div id="donation-detail-body">
+          <!-- Injected dynamically by admin.js -->
+        </div>
+      </div>
+      <div class="modal-footer" id="donation-detail-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" class="btn btn-outline" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Scripts -->
+  <script src="../js/toast.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

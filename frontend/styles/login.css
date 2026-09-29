@@ -1,0 +1,646 @@
+/* ==========================================================================
+   AFTERWORD — COFFEE THEMED AUTHENTICATION STYLES
+   Inspired by modern warmth & communal living:
+   Rich espresso wave (#382922), artisanal latte art, floating coffee beans,
+   warm cream canvas (#FAF7F2), and elegant Literata + Plus Jakarta Sans typography.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Canvas & Backdrop
+   -------------------------------------------------------------------------- */
+body.auth-body {
+  margin: 0;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ded5cb;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(166, 95, 69, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(56, 41, 34, 0.15) 0%, transparent 45%);
+  font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+  color: var(--text-main, #252321);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   2. Main Container Card
+   -------------------------------------------------------------------------- */
+.auth-card-container {
+  width: 100%;
+  max-width: 1140px;
+  min-height: 640px;
+  background-color: #ffffff;
+  border-radius: 28px;
+  box-shadow:
+    0 25px 60px -12px rgba(56, 41, 34, 0.28),
+    0 10px 24px -6px rgba(56, 41, 34, 0.14);
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  animation: authCardFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes authCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Left Side: Coffee Wave & Visual Pane
+   -------------------------------------------------------------------------- */
+.coffee-visual-pane {
+  background-color: #382922;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(95, 66, 52, 0.4) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(30, 20, 16, 0.6) 0%, transparent 70%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.25rem 2.5rem;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Organic S-Curve Wave Divider separating Left & Right */
+.visual-wave-divider {
+  position: absolute;
+  top: 0;
+  right: -1px;
+  bottom: 0;
+  width: 130px;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.visual-wave-divider path {
+  fill: #ffffff;
+}
+
+/* Top Bar inside Coffee Visual */
+.visual-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 5;
+}
+
+.visual-brand-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #faf7f2;
+  font-family: var(--font-serif, 'Literata', serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.visual-brand-tag:hover {
+  opacity: 0.85;
+}
+
+.visual-brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(250, 247, 242, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5efe6;
+  font-size: 18px;
+}
+
+.visual-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(250, 247, 242, 0.8);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.2s ease;
+}
+
+.visual-back-btn:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
+}
+
+/* Coffee Cup Scene Container */
+.coffee-scene-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 38%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  height: 380px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.latte-art-cup-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 22px 28px rgba(18, 11, 8, 0.65)) drop-shadow(0 8px 12px rgba(18, 11, 8, 0.4));
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.coffee-visual-pane:hover .latte-art-cup-svg {
+  transform: scale(1.02) rotate(2deg);
+}
+
+/* Floating Coffee Beans */
+.floating-bean {
+  position: absolute;
+  z-index: 4;
+  opacity: 0.88;
+  filter: drop-shadow(0 4px 8px rgba(18, 11, 8, 0.5));
+  transition: transform 0.5s ease-out;
+}
+
+.bean-1 {
+  top: 18%;
+  left: 16%;
+  width: 28px;
+  transform: rotate(-35deg);
+}
+
+.bean-2 {
+  top: 28%;
+  left: 74%;
+  width: 22px;
+  transform: rotate(42deg);
+}
+
+.bean-3 {
+  top: 72%;
+  left: 18%;
+  width: 24px;
+  transform: rotate(18deg);
+}
+
+.bean-4 {
+  top: 82%;
+  left: 62%;
+  width: 26px;
+  transform: rotate(-65deg);
+}
+
+.bean-5 {
+  top: 48%;
+  left: 8%;
+  width: 20px;
+  transform: rotate(78deg);
+}
+
+.bean-6 {
+  top: 12%;
+  left: 52%;
+  width: 18px;
+  transform: rotate(-15deg);
+}
+
+.bean-7 {
+  top: 66%;
+  left: 82%;
+  width: 22px;
+  transform: rotate(115deg);
+}
+
+.coffee-visual-pane:hover .bean-1 {
+  transform: rotate(-25deg) translateY(-4px);
+}
+
+.coffee-visual-pane:hover .bean-2 {
+  transform: rotate(50deg) translateY(3px);
+}
+
+.coffee-visual-pane:hover .bean-3 {
+  transform: rotate(25deg) translateX(-3px);
+}
+
+.coffee-visual-pane:hover .bean-4 {
+  transform: rotate(-55deg) translateY(-3px);
+}
+
+/* Bottom Content in Coffee Visual */
+.visual-bottom-content {
+  position: relative;
+  z-index: 5;
+  max-width: 320px;
+}
+
+.visual-quote-headline {
+  font-family: var(--font-serif, 'Literata', serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #faf7f2;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.01em;
+}
+
+.visual-quote-body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: rgba(250, 247, 242, 0.75);
+  margin: 0 0 1rem 0;
+}
+
+.visual-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #e5cfbe;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Right Side: Authentication Form Pane
+   -------------------------------------------------------------------------- */
+.auth-form-pane {
+  background-color: #ffffff;
+  padding: 3.5rem 3.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Form Heading Group */
+.form-header-group {
+  margin-bottom: 1.75rem;
+}
+
+.auth-main-title {
+  font-family: var(--font-serif, 'Literata', serif);
+  font-size: 2.15rem;
+  font-weight: 700;
+  color: #382922;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.auth-subtitle {
+  font-size: 0.925rem;
+  color: #6a635f;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Tab Switcher (Sign In vs Create Account) */
+.auth-tab-bar {
+  display: flex;
+  background-color: #f5efe8;
+  border-radius: 9999px;
+  padding: 4px;
+  margin-bottom: 2rem;
+  border: 1px solid #e8ded3;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.65rem 1rem;
+  font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6a635f;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.auth-tab-btn.active {
+  background-color: #382922;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(56, 41, 34, 0.2);
+}
+
+.auth-tab-btn:not(.active):hover {
+  color: #382922;
+  background-color: rgba(56, 41, 34, 0.05);
+}
+
+/* Form Styles */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-field-label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #382922;
+  letter-spacing: 0.01em;
+}
+
+.input-icon-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-box .field-icon {
+  position: absolute;
+  left: 1.1rem;
+  color: #8c827c;
+  font-size: 20px;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.input-pill {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1.1rem 0.85rem 2.85rem;
+  font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.925rem;
+  color: #252321;
+  background-color: #faf7f2;
+  border: 1.5px solid #dfd5c9;
+  border-radius: 9999px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-pill::placeholder {
+  color: #9d948c;
+  font-size: 0.875rem;
+}
+
+.input-pill:focus {
+  background-color: #ffffff;
+  border-color: #382922;
+  box-shadow: 0 0 0 3px rgba(56, 41, 34, 0.12);
+}
+
+.input-icon-box:focus-within .field-icon {
+  color: #382922;
+}
+
+/* Password Toggle Button */
+.password-toggle-btn {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #8c827c;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+  color: #382922;
+}
+
+/* Form Auxiliary Row (Remember me & Forgot Password) */
+.form-aux-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.825rem;
+  margin-top: -0.25rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #554e4a;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  accent-color: #382922;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.forgot-link {
+  color: #a65f45;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.forgot-link:hover {
+  color: #7b422e;
+  text-decoration: underline;
+}
+
+/* Submit Action Button */
+.btn-submit-primary {
+  width: 100%;
+  padding: 0.95rem 1.5rem;
+  margin-top: 0.5rem;
+  background-color: #382922;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.975rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 8px 20px -4px rgba(56, 41, 34, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-submit-primary:hover {
+  background-color: #241914;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(56, 41, 34, 0.45);
+}
+
+.btn-submit-primary:active {
+  transform: translateY(0);
+}
+
+.btn-submit-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Quick Demo Evaluation Section */
+.demo-accounts-tray {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed #e8ded3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.demo-tray-label {
+  font-size: 0.775rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8c827c;
+}
+
+.demo-chips-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.demo-chip-btn {
+  background-color: #f5efe8;
+  border: 1px solid #dfd5c9;
+  color: #382922;
+  font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.775rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.demo-chip-btn:hover {
+  background-color: #68705a;
+  border-color: #68705a;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   5. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .auth-card-container {
+    grid-template-columns: 1fr;
+    max-width: 580px;
+    border-radius: 22px;
+  }
+
+  .coffee-visual-pane {
+    min-height: 280px;
+    padding: 1.75rem 2rem;
+  }
+
+  .visual-wave-divider {
+    display: none;
+  }
+
+  .coffee-scene-wrapper {
+    top: 55%;
+    left: 75%;
+    width: 260px;
+    height: 260px;
+  }
+
+  .visual-bottom-content {
+    max-width: 240px;
+  }
+
+  .visual-quote-headline {
+    font-size: 1.35rem;
+  }
+
+  .auth-form-pane {
+    padding: 2.5rem 2.25rem;
+  }
+}
+
+@media (max-width: 540px) {
+  body.auth-body {
+    padding: 1rem 0.75rem;
+  }
+
+  .coffee-visual-pane {
+    min-height: 220px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .coffee-scene-wrapper {
+    left: 80%;
+    width: 200px;
+    height: 200px;
+  }
+
+  .visual-quote-headline {
+    font-size: 1.15rem;
+  }
+
+  .visual-quote-body {
+    display: none;
+  }
+
+  .auth-form-pane {
+    padding: 2rem 1.5rem;
+  }
+
+  .auth-main-title {
+    font-size: 1.75rem;
+  }
+
+  .demo-accounts-tray {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

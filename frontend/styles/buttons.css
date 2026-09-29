@@ -1,0 +1,117 @@
+/* ==========================================================================
+   AFTERWORD — BUTTONS DESIGN SYSTEM
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: var(--transition);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--surface-low);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  background-color: var(--surface-low);
+  color: var(--primary);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--canvas);
+  border-color: var(--primary);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary);
+  border-color: var(--border);
+}
+
+.btn-outline:hover {
+  border-color: var(--primary);
+  background-color: var(--surface-low);
+}
+
+.btn-tertiary {
+  background-color: var(--tertiary);
+  color: #FFFFFF;
+  border-color: var(--tertiary);
+}
+
+.btn-tertiary:hover {
+  background-color: #8C4D36;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.btn-xs {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: var(--radius-xs);
+  line-height: 1.2;
+}
+
+.btn-lg {
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.cart-toggle-btn {
+  height: 36px;
+  padding: 0 0.85rem;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cart-toggle-btn:hover {
+  background-color: var(--surface-low);
+  border-color: var(--primary);
+}

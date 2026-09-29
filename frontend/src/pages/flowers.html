@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floral Studio & Seasonal Stems — AFTERWORD</title>
+  <meta name="description"
+    content="Fresh morning stems, architectural dried arrangements, and botanical workshops at AFTERWORD Floral Studio in North Square.">
+
+  <!-- Typography & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet">
+
+  <!-- Core Design System CSS -->
+  <link rel="stylesheet" href="../../styles/main.css">
+
+  <!-- Patron Authentication & Site Gatekeeper -->
+  <script src="../js/auth.js"></script>
+</head>
+
+<body>
+
+  <!-- Top Operational System Bar -->
+  <aside class="system-status-bar" aria-label="Floral Studio Status">
+    <div class="container system-status-inner">
+      <div class="flex-row items-center gap-xs flex-wrap">
+        <span class="sys-tag">FLORAL CORNER // CAFÉ SHOP</span>
+        <span>TODAY'S HARVEST: HUDSON VALLEY</span>
+        <span>·</span>
+        <span>STEM BAR: OPEN</span>
+      </div>
+      <div class="flex-row items-center gap-sm flex-wrap">
+        <span class="text-main font-semibold">Fresh Stems Cut at 05:30</span>
+        <span class="flex-row items-center gap-xs text-secondary font-semibold">
+          <span class="status-dot active"></span> In Stock Today
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Site Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <a href="../../index.html" class="brand-logo" aria-label="AFTERWORD Home">AFTERWORD</a>
+        <nav class="nav-links" aria-label="Primary Navigation">
+          <a href="../../index.html" class="nav-link">Home</a>
+          <a href="cafe.html" class="nav-link">Café</a>
+          <a href="library.html" class="nav-link">Library</a>
+          <a href="flowers.html" class="nav-link active">Flowers</a>
+          <a href="events.html" class="nav-link">Events</a>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="header-search">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" placeholder="Search catalog, events..." aria-label="Search catalog or events">
+        </div>
+
+        <button class="cart-toggle-btn" aria-label="Open Order Tray">
+          <span class="material-symbols-outlined icon-18 icon-secondary">shopping_bag</span>
+          <span class="font-semibold">Tray</span>
+          <span class="cart-count-badge">0</span>
+        </button>
+
+        <div class="nav-user-avatar" title="Patron Member Profile">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+
+        <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <nav class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <a href="../../index.html" class="nav-link">Home</a>
+    <a href="cafe.html" class="nav-link">Café & Daily Bakes</a>
+    <a href="library.html" class="nav-link">The Bookshelf</a>
+    <a href="flowers.html" class="nav-link active">Floral Studio & Stems</a>
+    <a href="events.html" class="nav-link">Workshops & Events</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Hero / Title Section -->
+    <section class="section section-bordered bg-surface-low">
+      <div class="container">
+        <div class="flex-row items-start justify-between flex-wrap gap-sm">
+          <div class="col-span-8">
+            <span class="section-eyebrow">BOTANICAL FLORAL STUDIO</span>
+            <h1 class="hero-title text-primary">Botanical Stems & Seasonal Gatherings</h1>
+            <p class="hero-desc">
+              Fresh morning cuts from small organic growers, wild-gathered branches, architectural dried botanicals, and
+              hand-thrown ceramic stoneware.
+            </p>
+          </div>
+          <div>
+
+            <div class="text-mono text-xs text-muted mt-xs">
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <nav class="tab-bar mt-lg mb-0" data-filter-target="data-category" aria-label="Floral Categories">
+          <button class="tab-btn active" data-category="all">All Gatherings (6)</button>
+          <button class="tab-btn" data-category="fresh">Fresh Morning Stems</button>
+          <button class="tab-btn" data-category="dried">Architectural Dried</button>
+          <button class="tab-btn" data-category="potted">Potted Living Greens</button>
+          <button class="tab-btn" data-category="posy">Café Table Posies</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Interactive Featured Banner: Build Your Bespoke Bouquet -->
+    <section class="pt-lg">
+      <div class="container">
+        <div class="card card-subtle flex-row justify-between items-center flex-wrap gap-md">
+          <div class="col-span-8">
+            <span class="chip chip-coffee mb-xs">ON-SITE STEM BAR</span>
+            <h2 class="section-title">Build Your Bespoke Table Arrangement</h2>
+            <p class="section-desc">
+              Select individual fresh flowers at our floral counter. Our barista and florist will wrap your selection
+              with a clean ribbon for your vase.
+            </p>
+          </div>
+          <div>
+            <button class="btn btn-primary btn-lg" data-action="inquire-floral">
+              <span class="material-symbols-outlined icon-20">stylus_note</span>
+              <span>Inquire at Floral Counter</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Catalog Grid (6 Cards) -->
+    <section class="section">
+      <div class="container">
+
+        <div class="section-header-row">
+          <div>
+            <h2 class="section-title">Current Studio Arrangements</h2>
+            <p class="section-desc">Curated bouquets and potted botanical companions.</p>
+          </div>
+          <span class="text-mono text-xs text-secondary font-semibold">AVAILABLE FOR PICKUP</span>
+        </div>
+
+        <div class="grid-3">
+
+          <!-- Card 1: Morning Mist Bunch -->
+          <article class="card card-hover" data-category="fresh">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80"
+                alt="The Morning Mist Bunch">
+              <span class="chip chip-olive badge-pos-tr">FRESH CUT</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">The Morning Mist Bunch</h3>
+              <span class="card-price">$42.00</span>
+            </div>
+            <span class="text-mono text-xs text-secondary font-semibold text-uppercase mb-xs">
+              WHITE ASTILBE · GARDEN ROSES · EUCALYPTUS
+            </span>
+            <p class="card-desc">
+              An airy, romantic gathering of garden roses, feathery white astilbe, silver dollar eucalyptus, and sea
+              lavender.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">Vase Life: 7–9 Days</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="The Morning Mist Bunch"
+                data-price="42.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 2: Terracotta Ranunculus -->
+          <article class="card card-hover" data-category="fresh">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80"
+                alt="Terracotta Ranunculus">
+              <span class="chip chip-terracotta badge-pos-tr">SEASONAL</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Terracotta Ranunculus</h3>
+              <span class="card-price">$34.00</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              APRICOT & BRONZE · DRIED SEED HEADS
+            </span>
+            <p class="card-desc">
+              Multi-layered ruffled Italian ranunculus blooms in tones of burnt apricot, butterscotch, and wild bronze
+              fennel.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">Vase Life: 8–10 Days</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Terracotta Ranunculus"
+                data-price="34.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 3: Olive Branch & Eucalyptus -->
+          <article class="card card-hover" data-category="dried">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
+                alt="Olive Branch and Eucalyptus">
+              <span class="chip chip-coffee badge-pos-tr">FOLIAGE BUNDLE</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Olive Branch & Eucalyptus</h3>
+              <span class="card-price">$22.00</span>
+            </div>
+            <span class="text-mono text-xs text-secondary font-semibold text-uppercase mb-xs">
+              CALIFORNIAN BABY BLUE · MEDITERRANEAN STEMS
+            </span>
+            <p class="card-desc">
+              Vibrant silvery green foliage bunch that naturally air-dries into an everlasting fragrant bouquet over
+              several weeks.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">Dries Everlasting</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Olive Branch & Eucalyptus"
+                data-price="22.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 4: Burgundy Rubber Tree -->
+          <article class="card card-hover" data-category="potted">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=600&q=80"
+                alt="Burgundy Rubber Tree">
+              <span class="chip chip-coffee badge-pos-tr">POTTED PLANT</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Burgundy Rubber Tree</h3>
+              <span class="card-price">$48.00</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              FICUS ELASTICA · HAND-THROWN CERAMIC
+            </span>
+            <p class="card-desc">
+              Healthy indoor specimen with thick, glossy dark wine leaves potted in a breathable unglazed stoneware
+              vessel with saucer.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">Includes Stoneware Pot</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Burgundy Rubber Tree"
+                data-price="48.00" data-category="Potted Plant">
+                + Add to Tray
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 5: Amber Cafe Table Posy -->
+          <article class="card card-hover" data-category="posy">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&w=600&q=80"
+                alt="Amber Café Table Posy">
+              <span class="chip chip-terracotta badge-pos-tr">TABLE BUD</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Amber Café Table Posy</h3>
+              <span class="card-price">$28.00</span>
+            </div>
+            <span class="text-mono text-xs text-secondary font-semibold text-uppercase mb-xs">
+              CHAMOMILE · CRASPEDIA · WILD YARROW
+            </span>
+            <p class="card-desc">
+              Compact posy designed for writing desks or café bistro tables. Arranged in an amber laboratory apothecary
+              bottle.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-light">Includes Glass Bottle</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="Amber Café Table Posy"
+                data-price="28.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 6: The Reading Room Bundle -->
+          <article class="card card-hover" data-category="dried">
+            <div class="card-image-wrap card-img-220">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA43MMwjC_24-2mBM2VV2gtuFAr83N-LkTLj_oYzMfip-sac8jXuJL5ccN-u8w4kt5MbLqkEtW8FXdPW8Lf-eqZu_evljvLTo425v6K-Wekgnfd-EUsYyGi85XgQhe_Ma90mvEmkDoR1AeAOa4bfaxLRkMvNfFg_BXB9WgQM3_ASo5JTrU0Qi_5a4GPuCrKiV3sjD3Z0HW_AbUEd_E8r0z5DbHpf_uBriS6nJH_38Qu3mMd11IxFJld"
+                alt="The Reading Room Bundle">
+              <span class="chip chip-coffee badge-pos-tr">STATEMENT</span>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">The Reading Room Bundle</h3>
+              <span class="card-price">$56.00</span>
+            </div>
+            <span class="text-mono text-xs text-tertiary font-semibold text-uppercase mb-xs">
+              HONESTY PODS · TALL PAMPAS · ARCHITECTURAL
+            </span>
+            <p class="card-desc">
+              A large-scale dramatic botanical arrangement of pearlescent honesty seed coins, wild rye grass, and
+              sculptural willow branches.
+            </p>
+            <div class="card-footer card-footer--bordered">
+              <span class="text-xs text-secondary font-semibold">Everlasting Stems</span>
+              <button class="btn btn-primary btn-sm" data-add-to-cart data-name="The Reading Room Bundle"
+                data-price="56.00" data-category="Floral">
+                + Add to Tray
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Care & Logistics Section -->
+        <section class="section section-bordered bg-surface-low mt-xl" aria-label="Care and Sourcing">
+          <div class="mb-md">
+            <span class="section-eyebrow">CARE & ETHICAL SOURCING</span>
+            <h3 class="section-title text-primary">Studio Stewardship & Sourcing Principles</h3>
+          </div>
+
+          <div class="grid-3">
+            <div class="border-l-secondary">
+              <h4 class="card-title mb-xs">Daily Morning Delivery</h4>
+              <p class="card-desc">
+                We partner directly with family flower farms in New York and Connecticut. Blooms are cut at dawn and
+                reach our ceramic basins by mid-morning.
+              </p>
+            </div>
+            <div class="border-l-tertiary">
+              <h4 class="card-title mb-xs">Chemical-Free Preservation</h4>
+              <p class="card-desc">
+                Our dried stems undergo zero chemical bleaching or petroleum dyeing. Everything is hang-dried in our
+                well-ventilated loft rafters.
+              </p>
+            </div>
+            <div class="border-l-primary">
+              <h4 class="card-title mb-xs">Pick-up & Packaging</h4>
+              <p class="card-desc">
+                Orders can be claimed at the floral studio counter during all operating hours. We wrap in unbleached
+                paper with an enclosed stem conditioning guide.
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Slide-Over Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Review Tray">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Your Order Tray</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Tray">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="cart-drawer-items" id="cart-items-container">
+      <!-- Dynamically filled by cart.js -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Estimated Tax (8%)</span>
+        <span id="cart-tax" class="text-mono font-semibold">$0.00</span>
+      </div>
+      <div class="cart-summary-line total">
+        <span>Total Due</span>
+        <span id="cart-total" class="text-mono font-bold text-primary">$0.00</span>
+      </div>
+
+      <div class="cart-drawer-actions">
+        <button class="btn btn-outline btn-sm" id="clear-cart-btn">Clear</button>
+        <button class="btn btn-primary btn-sm" id="checkout-btn">Place Order / Send to Bar</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>AFTERWORD</h4>
+          <p class="text-base text-muted mb-sm">
+            A welcoming community café, cozy reading room, floral studio, and neighborhood gathering hall in North
+            Square.
+          </p>
+          <span class="chip chip-coffee">EST. 2024 · CIVIC THIRD PLACE</span>
+        </div>
+
+        <div class="footer-col">
+          <h5>Departments</h5>
+          <div class="footer-links">
+            <a href="cafe.html">Café & Daily Bakes</a>
+            <a href="library.html">The Bookshelf</a>
+            <a href="flowers.html">Floral Studio & Stems</a>
+            <a href="events.html">Workshops & Talks</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Space & Visit</h5>
+          <div class="footer-links">
+            <div><strong class="text-main">Hours:</strong> Mon–Sun: 7:00 – 22:00</div>
+            <div><strong class="text-main">Address:</strong> 418 District Lane</div>
+            <div><strong class="text-main">Contact:</strong> hello@afterwordcafe.org</div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Floral Care</h5>
+          <p class="text-sm text-muted mb-xs">
+            Custom wedding posies and community floral subscriptions available upon consultation.
+          </p>
+          <div class="flex-row gap-xs">
+            <span class="chip">@AFTERWORDCAFE</span>
+            <span class="chip">FLORAL STUDIO</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 AFTERWORD Community Café & Cultural Space. All rights reserved.</span>
+        <div class="flex-row gap-sm">
+          <span>CRAFT COFFEE</span>
+          <span>·</span>
+          <span>OPEN ACCESS LIBRARY</span>
+          <span>·</span>
+          <span>FLORAL BOTANICALS</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Vanilla JavaScript Subsystems -->
+  <script src="../js/toast.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/filters.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/cafe.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+
+</html>
