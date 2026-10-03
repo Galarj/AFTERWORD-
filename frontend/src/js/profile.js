@@ -111,7 +111,31 @@ async function fetchLiveUserActivity(userId) {
     if (loansBadgeEl) loansBadgeEl.textContent = activeLoans.length;
     renderUserLoans(loans);
 
-    // 2. Fetch Orders
+    // 2. Fetch Table Reservations
+    let userReservations = [];
+    try {
+      let userEmail = '';
+      if (typeof getLoggedInUser === 'function') {
+        const u = getLoggedInUser();
+        if (u && u.email) userEmail = u.email;
+      }
+      if (!userEmail) {
+        const raw = localStorage.getItem('afterword_user');
+        if (raw) userEmail = JSON.parse(raw)?.email || '';
+      }
+      const resUrl = userEmail ? `/api/reservations?email=${encodeURIComponent(userEmail)}` : '/api/reservations';
+      const res = await fetch(resUrl);
+      if (res.ok) userReservations = await res.json();
+    } catch (e) {}
+
+    const resStatEl = document.getElementById('stat-reservations');
+    const resBadgeEl = document.getElementById('badge-reservations');
+    const activeTableRes = userReservations.filter(r => r.status !== 'Cancelled' && r.status !== 'Rejected');
+    if (resStatEl) resStatEl.textContent = activeTableRes.length;
+    if (resBadgeEl) resBadgeEl.textContent = activeTableRes.length;
+    renderUserReservations(userReservations);
+
+    // 3. Fetch Orders
     let orders = [];
     try {
       const res = await fetch(`/api/orders?user_id=${userId}`);
@@ -124,7 +148,7 @@ async function fetchLiveUserActivity(userId) {
     if (ordersBadgeEl) ordersBadgeEl.textContent = orders.length;
     renderUserOrders(orders);
 
-    // 3. Fetch RSVPs
+    // 4. Fetch RSVPs
     let rsvps = [];
     try {
       const res = await fetch(`/api/rsvps?user_id=${userId}`);
@@ -138,7 +162,7 @@ async function fetchLiveUserActivity(userId) {
     if (rsvpsBadgeEl) rsvpsBadgeEl.textContent = activeRsvps.length;
     renderUserRsvps(rsvps);
 
-    // 4. Fetch Wishlist
+    // 5. Fetch Wishlist
     let wishlist = [];
     try {
       const res = await fetch(`/api/wishlist?user_id=${userId}`);
@@ -150,6 +174,110 @@ async function fetchLiveUserActivity(userId) {
   } catch (err) {
     console.error('Error loading live user activity:', err);
   }
+}
+
+function renderUserReservations(reservations) {
+  const container = document.getElementById('profile-reservations-container');
+  if (!container) return;
+
+  if (!reservations || reservations.length === 0) {
+    container.innerHTML = `
+      <div class="card p-xl text-center" style="grid-column: 1 / -1;">
+        <span class="material-symbols-outlined text-muted" style="font-size: 48px; margin-bottom: 8px;">event_seat</span>
+        <h4 class="font-serif text-lg font-bold mb-xs">No Table Reservations Found</h4>
+        <p class="text-sm text-muted mb-md">You haven't reserved a café table yet.</p>
+        <a href="cafe.html" class="btn btn-primary btn-sm">View Floor Plan & Reserve</a>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = reservations.map(r => {
+    const isPending = r.status === 'Pending';
+    const isApproved = r.status === 'Confirmed' || r.status === 'Approved';
+    const isCancelled = r.status === 'Cancelled' || r.status === 'Rejected';
+
+    let statusChipClass = 'chip-coffee';
+    let statusIcon = 'hourglass_top';
+    let statusLabel = r.status;
+
+    if (isPending) {
+      statusChipClass = 'chip-terracotta';
+      statusIcon = 'hourglass_top';
+      statusLabel = '⏳ Pending Staff Approval';
+    } else if (isApproved) {
+      statusChipClass = 'chip-olive';
+      statusIcon = 'check_circle';
+      statusLabel = '✓ Confirmed & Approved!';
+    } else if (isCancelled) {
+      statusChipClass = 'chip-coffee';
+      statusIcon = 'cancel';
+      statusLabel = '✕ Cancelled';
+    }
+
+    return `
+      <div class="card p-lg flex-row gap-md items-start loan-book-card" style="${isCancelled ? 'opacity: 0.75;' : ''}">
+        <div style="width: 58px; height: 58px; background: #e5dfd5; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.08);">
+          <span class="material-symbols-outlined text-primary" style="font-size: 28px;">event_seat</span>
+        </div>
+
+        <div class="flex-1">
+          <div class="flex-row items-center gap-xs mb-xs flex-wrap">
+            <span class="chip ${statusChipClass} text-xs">${statusLabel}</span>
+            <span class="text-mono text-xs font-bold text-secondary">${r.guest_count} Guest(s)</span>
+          </div>
+
+          <h4 class="font-serif font-bold text-base text-primary mb-xs">Table #${r.table_number} Reservation</h4>
+          
+          <div class="text-xs text-muted mb-xs">
+            <strong>Patron:</strong> ${r.patron_name} (${r.patron_email}) ${r.patron_phone ? `· 📞 ${r.patron_phone}` : ''}
+          </div>
+
+          <p class="text-xs font-mono text-secondary mb-sm">
+            🗓️ ${r.reservation_date} at ${r.start_time ? r.start_time.slice(0, 5) : ''}
+          </p>
+
+          ${r.special_requests ? `
+            <div class="text-xs text-muted italic mb-sm p-xs" style="background: rgba(0,0,0,0.03); border-radius: 4px;">
+              <strong>Special Request:</strong> "${r.special_requests}"
+            </div>
+          ` : ''}
+
+          ${!isCancelled ? `
+            <div class="mt-xs">
+              <button class="btn btn-outline btn-xs text-terracotta" data-action="cancel-table-res" data-res-id="${r.reservation_id}">
+                Cancel Reservation
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Attach cancel reservation listeners
+  container.querySelectorAll('[data-action="cancel-table-res"]').forEach(btn => {
+    btn.onclick = async (e) => {
+      e.stopPropagation();
+      const resId = btn.getAttribute('data-res-id');
+      if (!resId || !confirm('Cancel this table reservation?')) return;
+
+      try {
+        const res = await fetch(`/api/reservations/${resId}/cancel`, { method: 'PATCH' });
+        if (res.ok) {
+          if (typeof showToast === 'function') showToast('Table reservation cancelled.', 'info');
+          const uEmail = (typeof getLoggedInUser === 'function' ? getLoggedInUser()?.email : null) || '';
+          const fetchRes = await fetch(uEmail ? `/api/reservations?email=${encodeURIComponent(uEmail)}` : '/api/reservations');
+          if (fetchRes.ok) {
+            const updatedList = await fetchRes.json();
+            renderUserReservations(updatedList);
+          }
+        }
+      } catch (err) {
+        console.error('Error cancelling reservation:', err);
+      }
+    };
+  });
 }
 
 function renderUserWishlist(wishlist) {

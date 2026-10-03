@@ -2757,6 +2757,7 @@ function renderAdminReservations() {
     r.table_number.toLowerCase().includes(query) ||
     (r.patron_name || '').toLowerCase().includes(query) ||
     (r.patron_email || '').toLowerCase().includes(query) ||
+    (r.patron_phone || '').toLowerCase().includes(query) ||
     (r.reservation_date || '').includes(query)
   );
 
@@ -2766,27 +2767,55 @@ function renderAdminReservations() {
   }
 
   tbody.innerHTML = filtered.map(r => {
-    const isCancelled = r.status === 'Cancelled';
-    const chipClass = isCancelled ? 'chip-coffee' : 'chip-olive';
+    const isPending = r.status === 'Pending';
+    const isApproved = r.status === 'Confirmed' || r.status === 'Approved';
+    const isCancelled = r.status === 'Cancelled' || r.status === 'Rejected';
+
+    let chipClass = 'chip-coffee';
+    let statusLabel = r.status;
+    if (isPending) {
+      chipClass = 'chip-terracotta';
+      statusLabel = '⏳ Pending Approval';
+    } else if (isApproved) {
+      chipClass = 'chip-olive';
+      statusLabel = '✓ Approved';
+    } else if (isCancelled) {
+      chipClass = 'chip-coffee';
+      statusLabel = '✕ Cancelled';
+    }
 
     return `
       <tr>
         <td>
-          <strong>${r.table_number}</strong>
-          <div class="text-xs text-muted">${r.patron_name}</div>
+          <div class="flex-row items-center gap-2xs mb-2xs">
+            <span class="font-bold text-primary" style="font-size: 0.95rem;">Table ${r.table_number}</span>
+          </div>
+          <div class="font-semibold text-main" style="font-size: 0.85rem;">👤 ${r.patron_name || 'Anonymous Patron'}</div>
+          <div class="text-xs text-muted">✉️ <a href="mailto:${r.patron_email}" class="text-secondary text-underline">${r.patron_email || 'No email'}</a></div>
+          <div class="text-xs text-muted">📞 ${r.patron_phone || 'No phone provided'}</div>
+          ${r.special_requests ? `<div class="text-xs text-muted italic mt-2xs" style="background: rgba(0,0,0,0.03); padding: 2px 6px; border-radius: 4px;">"${r.special_requests}"</div>` : ''}
         </td>
         <td>
-          <span class="text-mono text-xs font-bold">${r.reservation_date}</span>
-          <div class="text-xs text-secondary">${r.start_time}</div>
+          <span class="text-mono text-xs font-bold text-primary">${r.reservation_date}</span>
+          <div class="text-xs text-secondary font-mono">${r.start_time ? r.start_time.slice(0, 5) : ''}</div>
         </td>
-        <td><span class="text-mono font-bold">${r.guest_count}</span></td>
-        <td><span class="chip ${chipClass}">${r.status}</span></td>
+        <td><span class="text-mono font-bold">${r.guest_count} Seats</span></td>
+        <td><span class="chip ${chipClass} text-xs">${statusLabel}</span></td>
         <td>
-          ${!isCancelled ? `
+          ${isPending ? `
+            <div class="flex-row gap-2xs">
+              <button type="button" class="btn btn-primary btn-xs" onclick="handleAdminApproveReservation(${r.reservation_id}, '${(r.patron_name || 'Patron').replace(/'/g, "\\'")}')">
+                Approve
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="handleAdminCancelReservation(${r.reservation_id})">
+                Reject
+              </button>
+            </div>
+          ` : (isApproved ? `
             <button type="button" class="btn btn-outline btn-xs" onclick="handleAdminCancelReservation(${r.reservation_id})">
               Cancel
             </button>
-          ` : '<span class="text-xs text-muted">—</span>'}
+          ` : '<span class="text-xs text-muted">—</span>')}
         </td>
       </tr>
     `;
@@ -2813,8 +2842,30 @@ async function handleAdminTableStatusChange(tableNumber, newStatus) {
   }
 }
 
+async function handleAdminApproveReservation(reservationId, patronName) {
+  if (!confirm(`Approve reservation for ${patronName}? This will send a confirmation email.`)) return;
+
+  try {
+    const res = await fetch(`/api/reservations/${reservationId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'Confirmed' })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      showToast(`✓ Reservation for ${patronName} APPROVED! Confirmation email dispatched via Resend.`, 'check_circle');
+      loadSeatingFromBackend();
+    } else {
+      showToast(`Approval failed: ${data.error}`, 'error');
+    }
+  } catch (err) {
+    showToast(`Error: ${err.message}`, 'error');
+  }
+}
+
 async function handleAdminCancelReservation(reservationId) {
-  if (!confirm('Cancel this customer reservation?')) return;
+  if (!confirm('Cancel / Reject this table reservation?')) return;
 
   try {
     const res = await fetch(`/api/reservations/${reservationId}/cancel`, {
@@ -2823,7 +2874,7 @@ async function handleAdminCancelReservation(reservationId) {
     });
 
     if (res.ok) {
-      showToast('✓ Reservation cancelled in Supabase database.', 'info');
+      showToast('✓ Reservation cancelled / rejected in database.', 'info');
       loadSeatingFromBackend();
     } else {
       const data = await res.json();
@@ -2835,5 +2886,6 @@ async function handleAdminCancelReservation(reservationId) {
 }
 
 window.handleAdminTableStatusChange = handleAdminTableStatusChange;
+window.handleAdminApproveReservation = handleAdminApproveReservation;
 window.handleAdminCancelReservation = handleAdminCancelReservation;
 

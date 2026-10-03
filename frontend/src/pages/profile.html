@@ -136,8 +136,8 @@
     <!-- 2. Main Content & Metric Stats -->
     <div class="container section">
       
-      <!-- 3 Quick Metric Cards -->
-      <div class="profile-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+      <!-- 4 Quick Metric Cards -->
+      <div class="profile-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
         <div class="stat-metric-card">
           <div class="stat-icon-wrap book">
             <span class="material-symbols-outlined">menu_book</span>
@@ -145,6 +145,16 @@
           <div class="stat-details">
             <span class="stat-number" id="stat-active-loans">0</span>
             <span class="stat-label">Active Loans</span>
+          </div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrap coffee">
+            <span class="material-symbols-outlined">event_seat</span>
+          </div>
+          <div class="stat-details">
+            <span class="stat-number" id="stat-reservations">0</span>
+            <span class="stat-label">Table Reservations</span>
           </div>
         </div>
 
@@ -175,6 +185,12 @@
           <span class="material-symbols-outlined icon-18">book</span>
           <span>Borrowed Books</span>
           <span class="profile-tab-badge" id="badge-loans">0</span>
+        </button>
+
+        <button class="profile-tab-btn" data-target-view="view-reservations" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined icon-18">event_seat</span>
+          <span>Table Reservations</span>
+          <span class="profile-tab-badge" id="badge-reservations">0</span>
         </button>
 
         <button class="profile-tab-btn" data-target-view="view-orders" role="tab" aria-selected="false">
@@ -238,7 +254,27 @@
       </div>
 
       <!-- --------------------------------------------------------------- -->
-      <!-- VIEW 2: CAFÉ ORDER HISTORY                                      -->
+      <!-- VIEW 2: CAFÉ TABLE RESERVATIONS                                 -->
+      <!-- --------------------------------------------------------------- -->
+      <div id="view-reservations" class="profile-view-pane" role="tabpanel">
+        <div class="flex-row items-center justify-between mb-md flex-wrap gap-sm">
+          <div>
+            <h3 class="section-title">Café Table Reservations</h3>
+            <p class="section-desc">Track your reserved tables, date/time slots, guest count, and staff approval status.</p>
+          </div>
+          <a href="cafe.html" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined icon-16">event_seat</span>
+            <span>Reserve a Table</span>
+          </a>
+        </div>
+
+        <div class="loan-card-grid" id="profile-reservations-container">
+          <!-- Injected dynamically by profile.js -->
+        </div>
+      </div>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- VIEW 3: CAFÉ ORDER HISTORY                                      -->
       <!-- --------------------------------------------------------------- -->
       <div id="view-orders" class="profile-view-pane" role="tabpanel">
         <div class="flex-row items-center justify-between mb-md flex-wrap gap-sm">

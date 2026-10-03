@@ -800,7 +800,7 @@ app.get('/api/tables/availability', async (req, res) => {
 
 let localReservationsStore = [];
 
-// POST /api/reservations — Create Table Reservation with Backend Double-Booking Prevention
+// POST /api/reservations — Create Table Reservation Request (Initial status: Pending)
 app.post('/api/reservations', async (req, res) => {
   try {
     const b = req.body || {};
@@ -826,7 +826,8 @@ app.post('/api/reservations', async (req, res) => {
       r.table_number === tNum && 
       r.reservation_date === reservationDate && 
       r.start_time.slice(0, 5) === startTime.slice(0, 5) && 
-      r.status !== 'Cancelled'
+      r.status !== 'Cancelled' &&
+      r.status !== 'Rejected'
     );
 
     if (!existingConflict) {
@@ -865,7 +866,7 @@ app.post('/api/reservations', async (req, res) => {
       }
     }
 
-    // 3. Insert reservation record into Supabase
+    // 3. Insert reservation record into Supabase with initial status 'Pending' (Awaiting Staff Approval)
     const { data: reservation, error: insertErr } = await supabase
       .from('table_reservations')
       .insert([{
@@ -874,12 +875,12 @@ app.post('/api/reservations', async (req, res) => {
         user_id: userId || null,
         patron_name: patronName || 'Guest',
         patron_email: patronEmail,
-        patron_phone: patronPhone || null,
+        patron_phone: patronPhone || '',
         reservation_date: reservationDate,
         start_time: startTime,
         guest_count: gCount,
         special_requests: specialRequests || null,
-        status: 'Confirmed'
+        status: 'Pending'
       }])
       .select()
       .single();
@@ -891,12 +892,12 @@ app.post('/api/reservations', async (req, res) => {
       user_id: userId || null,
       patron_name: patronName || 'Guest',
       patron_email: patronEmail,
-      patron_phone: patronPhone || null,
+      patron_phone: patronPhone || '',
       reservation_date: reservationDate,
       start_time: startTime,
       guest_count: gCount,
       special_requests: specialRequests || null,
-      status: 'Confirmed',
+      status: 'Pending',
       created_at: new Date().toISOString()
     };
 
@@ -904,40 +905,82 @@ app.post('/api/reservations', async (req, res) => {
       localReservationsStore.push(reservationRecord);
     }
 
-    // 4. Send confirmation email via Resend
-    let emailSent = false;
-    try {
-      const emailRes = await sendTableReservationEmail({
-        patronName: patronName || 'Guest',
-        patronEmail,
-        tableNumber: tNum,
-        reservationDate,
-        startTime,
-        guestCount: gCount,
-        location: tableLocation,
-        specialRequests
-      });
-      emailSent = emailRes ? emailRes.success : false;
-    } catch (eErr) {
-      console.warn('Resend reservation email warning:', eErr.message);
-    }
-
     res.status(201).json({
-      message: `Table ${tNum} reserved successfully!`,
-      reservation: reservation || {
-        table_number: tNum,
-        reservation_date: reservationDate,
-        start_time: startTime,
-        guest_count: gCount,
-        patron_name: patronName,
-        patron_email: patronEmail,
-        status: 'Confirmed'
-      },
-      emailSent
+      message: `Table ${tNum} reservation request submitted! Awaiting staff approval.`,
+      reservation: reservationRecord,
+      emailStatus: 'Pending Approval'
     });
   } catch (err) {
     console.error('Error creating table reservation:', err);
     res.status(500).json({ error: err.message || 'Internal server error processing reservation.' });
+  }
+});
+
+// PATCH /api/reservations/:id/status — Admin Approve/Reject/Update reservation status
+app.patch('/api/reservations/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, admin_note } = req.body || {};
+
+    const validStatuses = ['Pending', 'Confirmed', 'Approved', 'Cancelled', 'Rejected'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
+    }
+
+    const normalizedStatus = (status === 'Approved' || status === 'Confirmed') ? 'Confirmed' : (status === 'Rejected' ? 'Cancelled' : status);
+
+    // Update in local store
+    const localRes = localReservationsStore.find(r => String(r.reservation_id) === String(id));
+    if (localRes) {
+      localRes.status = normalizedStatus;
+      localRes.updated_at = new Date().toISOString();
+    }
+
+    let updatedDbRes = null;
+    try {
+      const updates = { status: normalizedStatus, updated_at: new Date().toISOString() };
+      if (admin_note) updates.special_requests = admin_note;
+
+      const { data } = await supabase
+        .from('table_reservations')
+        .update(updates)
+        .eq('reservation_id', id)
+        .select()
+        .single();
+      updatedDbRes = data;
+    } catch (e) {}
+
+    const targetRes = updatedDbRes || localRes || { reservation_id: id, status: normalizedStatus };
+
+    // Dispatch confirmation email via Resend when status is Confirmed / Approved
+    let emailStatus = 'Not Sent';
+    if (normalizedStatus === 'Confirmed') {
+      try {
+        if (typeof sendTableReservationEmail === 'function') {
+          const emailRes = await sendTableReservationEmail({
+            patronName: targetRes.patron_name || 'Valued Patron',
+            patronEmail: targetRes.patron_email,
+            tableNumber: targetRes.table_number,
+            reservationDate: targetRes.reservation_date,
+            startTime: targetRes.start_time,
+            guestCount: targetRes.guest_count,
+            specialRequests: targetRes.special_requests
+          });
+          if (emailRes && emailRes.success) emailStatus = 'Sent';
+        }
+      } catch (eErr) {
+        console.warn('Table reservation approval email error:', eErr.message);
+      }
+    }
+
+    res.json({
+      message: `Reservation status updated to ${normalizedStatus}!`,
+      reservation: targetRes,
+      emailStatus
+    });
+  } catch (err) {
+    console.error('Error updating reservation status:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -1823,6 +1866,63 @@ app.get('/api/notifications/:userId', async (req, res) => {
       }
     }
 
+    // 3. Check table reservation status updates
+    try {
+      // Get user email from profiles table
+      const { data: userProf } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', userId)
+        .single();
+
+      if (userProf && userProf.email) {
+        const { data: tableResList } = await supabase
+          .from('table_reservations')
+          .select('*')
+          .eq('patron_email', userProf.email)
+          .order('created_at', { ascending: false });
+
+        if (tableResList) {
+          for (const resItem of tableResList) {
+            const timeFormatted = resItem.start_time ? resItem.start_time.slice(0, 5) : '';
+            if (resItem.status === 'Pending') {
+              notifications.push({
+                type: 'table_pending',
+                icon: 'hourglass_top',
+                title: `Table #${resItem.table_number} — Pending Approval`,
+                message: `Your reservation request for Table #${resItem.table_number} on ${resItem.reservation_date} at ${timeFormatted} is waiting for staff approval.`,
+                urgent: false,
+                reservationId: resItem.reservation_id,
+                timestamp: resItem.created_at
+              });
+            } else if (resItem.status === 'Confirmed' || resItem.status === 'Approved') {
+              notifications.push({
+                type: 'table_confirmed',
+                icon: 'event_seat',
+                title: `Table #${resItem.table_number} — Reserved & Approved!`,
+                message: `Your reservation for Table #${resItem.table_number} on ${resItem.reservation_date} at ${timeFormatted} was APPROVED by staff!`,
+                urgent: true,
+                reservationId: resItem.reservation_id,
+                timestamp: resItem.created_at
+              });
+            } else if (resItem.status === 'Cancelled' || resItem.status === 'Rejected') {
+              notifications.push({
+                type: 'table_cancelled',
+                icon: 'cancel',
+                title: `Table #${resItem.table_number} — Reservation Cancelled`,
+                message: `Your reservation request for Table #${resItem.table_number} on ${resItem.reservation_date} was cancelled or declined.`,
+                urgent: false,
+                reservationId: resItem.reservation_id,
+                timestamp: resItem.created_at
+              });
+            }
+          }
+        }
+      }
+    } catch (tblErr) {
+      console.warn('Table notifications fetch notice:', tblErr.message);
+    }
+
     res.json(notifications);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -2219,7 +2319,7 @@ app.post('/api/reservations', async (req, res) => {
       });
     }
 
-    // C. Insert Reservation into Supabase
+    // C. Insert Reservation into Supabase with initial status 'Pending' (Awaiting Staff Approval)
     const { data: newReservation, error: insertErr } = await supabase
       .from('table_reservations')
       .insert([{
@@ -2227,41 +2327,22 @@ app.post('/api/reservations', async (req, res) => {
         table_number,
         patron_name,
         patron_email,
-        patron_phone,
+        patron_phone: patron_phone || '',
         reservation_date,
         start_time,
         guest_count: parseInt(guest_count, 10) || 2,
-        status: 'Confirmed',
-        special_requests
+        status: 'Pending',
+        special_requests: special_requests || ''
       }])
       .select()
       .single();
 
     if (insertErr) throw insertErr;
 
-    // D. Dispatch confirmation email via Resend
-    let emailStatus = 'Not Sent';
-    try {
-      if (typeof sendTableReservationEmail === 'function') {
-        const emailRes = await sendTableReservationEmail({
-          patronName: patron_name,
-          patronEmail: patron_email,
-          tableNumber: table_number,
-          reservationDate: reservation_date,
-          startTime: start_time,
-          guestCount: guest_count,
-          specialRequests: special_requests
-        });
-        if (emailRes && emailRes.success) emailStatus = 'Sent';
-      }
-    } catch (eErr) {
-      console.warn('Table reservation email error:', eErr.message);
-    }
-
     res.status(201).json({
-      message: `Table ${table_number} reserved successfully!`,
+      message: `Table ${table_number} reservation request submitted! Awaiting staff approval.`,
       reservation: newReservation,
-      emailStatus
+      emailStatus: 'Pending Approval'
     });
 
   } catch (err) {
@@ -2306,7 +2387,66 @@ app.get('/api/reservations/:id', async (req, res) => {
   }
 });
 
-// 6. PATCH /api/reservations/:id/cancel — Cancel a table reservation
+// 6. PATCH /api/reservations/:id/status — Admin Approve/Reject/Update reservation status
+app.patch('/api/reservations/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, admin_note } = req.body || {};
+
+    const validStatuses = ['Pending', 'Confirmed', 'Approved', 'Cancelled', 'Rejected'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
+    }
+
+    const normalizedStatus = (status === 'Approved' || status === 'Confirmed') ? 'Confirmed' : (status === 'Rejected' ? 'Cancelled' : status);
+
+    const updates = { status: normalizedStatus };
+    if (admin_note) {
+      updates.special_requests = admin_note;
+    }
+
+    const { data: updatedRes, error: updateErr } = await supabase
+      .from('table_reservations')
+      .update(updates)
+      .eq('reservation_id', id)
+      .select()
+      .single();
+
+    if (updateErr) throw updateErr;
+
+    // Dispatch confirmation email via Resend when status is Confirmed
+    let emailStatus = 'Not Sent';
+    if (normalizedStatus === 'Confirmed') {
+      try {
+        if (typeof sendTableReservationEmail === 'function') {
+          const emailRes = await sendTableReservationEmail({
+            patronName: updatedRes.patron_name,
+            patronEmail: updatedRes.patron_email,
+            tableNumber: updatedRes.table_number,
+            reservationDate: updatedRes.reservation_date,
+            startTime: updatedRes.start_time,
+            guestCount: updatedRes.guest_count,
+            specialRequests: updatedRes.special_requests
+          });
+          if (emailRes && emailRes.success) emailStatus = 'Sent';
+        }
+      } catch (eErr) {
+        console.warn('Table reservation approval email error:', eErr.message);
+      }
+    }
+
+    res.json({
+      message: `Reservation status updated to ${normalizedStatus}!`,
+      reservation: updatedRes,
+      emailStatus
+    });
+  } catch (err) {
+    console.error('Error updating reservation status:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 7. PATCH /api/reservations/:id/cancel — Cancel a table reservation
 app.patch('/api/reservations/:id/cancel', async (req, res) => {
   try {
     const { id } = req.params;
