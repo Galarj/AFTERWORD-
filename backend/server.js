@@ -679,6 +679,25 @@ app.post('/api/flowers/order', async (req, res) => {
 // 9. Physical Café Seating Tables & Table Reservations API Endpoints
 // ---------------------------------------------------------------------------
 
+let localCafeTablesStore = [
+  { table_id: 1, table_number: 'T01', capacity: 2, location: 'Window Bay A', status: 'available', is_available: true },
+  { table_id: 2, table_number: 'T02', capacity: 2, location: 'Window Bay B', status: 'available', is_available: true },
+  { table_id: 3, table_number: 'T03', capacity: 4, location: 'Civic Reading Room', status: 'available', is_available: true },
+  { table_id: 4, table_number: 'T04', capacity: 4, location: 'Civic Reading Room', status: 'available', is_available: true },
+  { table_id: 5, table_number: 'T05', capacity: 4, location: 'North Window Corner', status: 'available', is_available: true },
+  { table_id: 6, table_number: 'T06', capacity: 2, location: 'South Alcove', status: 'available', is_available: true },
+  { table_id: 7, table_number: 'T07', capacity: 2, location: 'South Alcove', status: 'available', is_available: true },
+  { table_id: 8, table_number: 'T08', capacity: 8, location: 'Community Table', status: 'available', is_available: true },
+  { table_id: 9, table_number: 'T09', capacity: 4, location: 'Hearth Lounge', status: 'available', is_available: true },
+  { table_id: 10, table_number: 'T10', capacity: 2, location: 'Hearth Nook', status: 'available', is_available: true },
+  { table_id: 11, table_number: 'T11', capacity: 4, location: 'Botanical Courtyard Entrance', status: 'available', is_available: true },
+  { table_id: 12, table_number: 'T12', capacity: 8, location: 'Communal Study Hall', status: 'available', is_available: true },
+  { table_id: 13, table_number: 'T13', capacity: 2, location: 'Mezzanine Nook A', status: 'available', is_available: true },
+  { table_id: 14, table_number: 'T14', capacity: 2, location: 'Mezzanine Nook B', status: 'available', is_available: true },
+  { table_id: 15, table_number: 'T15', capacity: 4, location: 'Espresso Bar Front', status: 'available', is_available: true },
+  { table_id: 16, table_number: 'T16', capacity: 4, location: 'Espresso Bar Front', status: 'available', is_available: true }
+];
+
 // GET /api/tables — Fetch all 16 physical café tables
 app.get('/api/tables', async (req, res) => {
   try {
@@ -687,29 +706,22 @@ app.get('/api/tables', async (req, res) => {
       .select('*')
       .order('table_number', { ascending: true });
 
-    if (error) throw error;
-    res.json(data || []);
+    if (!error && Array.isArray(data) && data.length > 0) {
+      data.forEach(d => {
+        const local = localCafeTablesStore.find(t => t.table_number === d.table_number);
+        if (local) {
+          local.status = d.status;
+          local.is_available = d.is_available;
+          local.capacity = d.capacity;
+          local.location = d.location;
+        }
+      });
+      return res.json(data);
+    }
   } catch (err) {
     console.warn('Supabase fetch cafe_tables note:', err.message);
-    res.json([
-      { table_id: 1, table_number: 'T01', capacity: 2, location: 'Window Alcove', status: 'available', is_available: true },
-      { table_id: 2, table_number: 'T02', capacity: 4, location: 'Window Alcove', status: 'available', is_available: true },
-      { table_id: 3, table_number: 'T03', capacity: 4, location: 'Main Entrance Nook', status: 'available', is_available: true },
-      { table_id: 4, table_number: 'T04', capacity: 2, location: 'Garden Window Corner', status: 'available', is_available: true },
-      { table_id: 5, table_number: 'T05', capacity: 2, location: 'Garden Window Corner', status: 'available', is_available: true },
-      { table_id: 6, table_number: 'T06', capacity: 8, location: 'Sage Communal Table', status: 'available', is_available: true },
-      { table_id: 7, table_number: 'T07', capacity: 4, location: 'Bookshelf Partition', status: 'available', is_available: true },
-      { table_id: 8, table_number: 'T08', capacity: 8, location: 'Central Communal Table', status: 'available', is_available: true },
-      { table_id: 9, table_number: 'T09', capacity: 4, location: 'Lounge Sofa Nook', status: 'available', is_available: true },
-      { table_id: 10, table_number: 'T10', capacity: 10, location: 'Main Hall Large Communal', status: 'available', is_available: true },
-      { table_id: 11, table_number: 'T11', capacity: 4, location: 'Reading Room Nook A', status: 'available', is_available: true },
-      { table_id: 12, table_number: 'T12', capacity: 4, location: 'Reading Room Nook B', status: 'available', is_available: true },
-      { table_id: 13, table_number: 'T13', capacity: 4, location: 'Library Soft Lounge', status: 'available', is_available: true },
-      { table_id: 14, table_number: 'T14', capacity: 2, location: 'Quiet Study Corner', status: 'available', is_available: true },
-      { table_id: 15, table_number: 'T15', capacity: 2, location: 'Bar Counter Perch A', status: 'available', is_available: true },
-      { table_id: 16, table_number: 'T16', capacity: 2, location: 'Bar Counter Perch B', status: 'available', is_available: true }
-    ]);
   }
+  res.json(localCafeTablesStore);
 });
 
 // GET /api/tables/availability — Compute dynamic availability for a specific date, time, & guest count
