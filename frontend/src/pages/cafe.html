@@ -120,38 +120,210 @@
           <button class="tab-btn" data-category="drinks">Drinks</button>
           <button class="tab-btn" data-category="food">Food</button>
         </nav>
-    <!-- Live Seating & Table Occupancy Floor Map -->
-    <section class="pt-lg pb-0">
+    <!-- Interactive Café Table Reservation & Seating Map -->
+    <section class="pt-lg pb-0" id="table-reservation-section">
       <div class="container">
         <div class="card card-subtle p-md">
           <div class="flex-row items-center justify-between flex-wrap gap-sm mb-md border-b border-light pb-sm">
             <div>
-              <span class="chip chip-coffee mb-2xs">LIVE CAFÉ FLOOR PLAN</span>
-              <h2 class="section-title text-md mb-2xs">Real-Time Table Occupancy &amp; Seating Status</h2>
-              <p class="text-xs text-muted mb-0">Select an available table to lock in your in-seat coffee delivery or check live room availability.</p>
+              <span class="chip chip-coffee mb-2xs">AFTERWORD FLOOR PLAN</span>
+              <h2 class="section-title text-md mb-2xs">Find Your Table</h2>
+              <p class="text-xs text-muted mb-0">Pick a table and make yourself comfortable.</p>
             </div>
-            <div class="flex-row items-center gap-sm">
-              <span class="text-xs text-mono font-semibold" id="seating-stats-summary">8 / 12 Tables Occupied (18 Seated Patrons)</span>
+            
+            <div class="flex-row items-center gap-sm flex-wrap">
+              <button type="button" class="btn btn-outline btn-sm" id="btn-open-my-reservations">
+                <span class="material-symbols-outlined icon-16">event_seat</span>
+                <span>My Reservations</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Date, Time, and Guest Selector Controls -->
+          <div class="flex-row items-center justify-between flex-wrap gap-md p-sm mb-md rounded-sm" style="background: rgba(104, 112, 90, 0.06); border: 1px solid rgba(104, 112, 90, 0.15);">
+            <div class="flex-row items-center gap-md flex-wrap">
               <div class="flex-row items-center gap-xs">
-                <span class="chip chip-olive" style="font-size: 11px;">🟢 Available (4)</span>
-                <span class="chip chip-terracotta" style="font-size: 11px;">🔴 Occupied (6)</span>
-                <span class="chip chip-coffee" style="font-size: 11px;">🟡 Reserved (2)</span>
+                <label for="res-date-input" class="text-xs font-semibold text-secondary mb-0">Date:</label>
+                <input type="date" id="res-date-input" class="form-control text-xs" style="width: auto; padding: 4px 8px;">
+              </div>
+
+              <div class="flex-row items-center gap-xs">
+                <label for="res-time-select" class="text-xs font-semibold text-secondary mb-0">Time:</label>
+                <select id="res-time-select" class="form-control text-xs" style="width: auto; padding: 4px 8px;">
+                  <option value="07:00:00">7:00 AM</option>
+                  <option value="07:30:00">7:30 AM</option>
+                  <option value="08:00:00">8:00 AM</option>
+                  <option value="08:30:00">8:30 AM</option>
+                  <option value="09:00:00">9:00 AM</option>
+                  <option value="09:30:00">9:30 AM</option>
+                  <option value="10:00:00">10:00 AM</option>
+                  <option value="10:30:00">10:30 AM</option>
+                  <option value="11:00:00">11:00 AM</option>
+                  <option value="11:30:00">11:30 AM</option>
+                  <option value="12:00:00">12:00 PM</option>
+                  <option value="12:30:00">12:30 PM</option>
+                  <option value="13:00:00">1:00 PM</option>
+                  <option value="13:30:00">1:30 PM</option>
+                  <option value="14:00:00">2:00 PM</option>
+                  <option value="14:30:00">2:30 PM</option>
+                  <option value="15:00:00">3:00 PM</option>
+                  <option value="15:30:00">3:30 PM</option>
+                  <option value="16:00:00">4:00 PM</option>
+                  <option value="16:30:00">4:30 PM</option>
+                  <option value="17:00:00" selected>5:00 PM</option>
+                  <option value="17:30:00">5:30 PM</option>
+                  <option value="18:00:00">6:00 PM</option>
+                  <option value="18:30:00">6:30 PM</option>
+                  <option value="19:00:00">7:00 PM</option>
+                  <option value="19:30:00">7:30 PM</option>
+                  <option value="20:00:00">8:00 PM</option>
+                  <option value="20:30:00">8:30 PM</option>
+                </select>
+              </div>
+
+              <div class="flex-row items-center gap-xs">
+                <label class="text-xs font-semibold text-secondary mb-0">Guests:</label>
+                <div class="flex-row items-center border rounded-sm bg-white" style="border-color: #d8cec0;">
+                  <button type="button" class="btn btn-xs" id="btn-guests-minus" style="padding: 2px 8px; border: none; background: transparent;">-</button>
+                  <span id="guests-count-display" class="font-mono font-bold text-xs px-xs">2</span>
+                  <button type="button" class="btn btn-xs" id="btn-guests-plus" style="padding: 2px 8px; border: none; background: transparent;">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-xs text-muted" id="floorplan-status-summary">
+              Checking real-time database availability...
+            </div>
+          </div>
+
+          <!-- Floor Plan Image + HTML Table Overlay Markers -->
+          <div class="floor-plan-wrapper" id="floor-plan-container">
+            <img src="../../assets/images/cafe/floorplan.png" alt="AFTERWORD Café Floor Plan Map" class="floor-plan-img">
+            
+            <button type="button" class="table-marker table-t01" data-table="T01" title="Table T01 (2 Seats)"><span class="marker-label">T01</span><span class="marker-cap">2 Seats</span></button>
+            <button type="button" class="table-marker table-t02" data-table="T02" title="Table T02 (2 Seats)"><span class="marker-label">T02</span><span class="marker-cap">2 Seats</span></button>
+            <button type="button" class="table-marker table-t03" data-table="T03" title="Table T03 (4 Seats)"><span class="marker-label">T03</span><span class="marker-cap">4 Seats</span></button>
+            <button type="button" class="table-marker table-t04" data-table="T04" title="Table T04 (4 Seats)"><span class="marker-label">T04</span><span class="marker-cap">4 Seats</span></button>
+            <button type="button" class="table-marker table-t05" data-table="T05" title="Table T05 (4 Seats)"><span class="marker-label">T05</span><span class="marker-cap">4 Seats</span></button>
+            <button type="button" class="table-marker table-t06" data-table="T06" title="Table T06 (2 Seats)"><span class="marker-label">T06</span><span class="marker-cap">2 Seats</span></button>
+            <button type="button" class="table-marker table-t07" data-table="T07" title="Table T07 (2 Seats)"><span class="marker-label">T07</span><span class="marker-cap">2 Seats</span></button>
+            <button type="button" class="table-marker table-t08" data-table="T08" title="Table T08 (8 Seats)"><span class="marker-label">T08</span><span class="marker-cap">8 Seats</span></button>
+            <button type="button" class="table-marker table-t09" data-table="T09" title="Table T09 (4 Seats)"><span class="marker-label">T09</span><span class="marker-cap">4 Seats</span></button>
+            <button type="button" class="table-marker table-t10" data-table="T10" title="Table T10 (2 Seats)"><span class="marker-label">T10</span><span class="marker-cap">2 Seats</span></button>
+            <button type="button" class="table-marker table-t11" data-table="T11" title="Table T11 (4 Seats)"><span class="marker-label">T11</span><span class="marker-cap">4 Seats</span></button>
+            <button type="button" class="table-marker table-t12" data-table="T12" title="Table T12 (8 Seats)"><span class="marker-label">T12</span><span class="marker-cap">8 Seats</span></button>
+            <button type="button" class="table-marker table-t13" data-table="T13" title="Table T13 (2 Seats)"><span class="marker-label">T13</span><span class="marker-cap">2 Seats</span></button>
+            <button type="button" class="table-marker table-t14" data-table="T14" title="Table T14 (2 Seats)"><span class="marker-label">T14</span><span class="marker-cap">2 Seats</span></button>
+            <button type="button" class="table-marker table-t15" data-table="T15" title="Table T15 (4 Seats)"><span class="marker-label">T15</span><span class="marker-cap">4 Seats</span></button>
+            <button type="button" class="table-marker table-t16" data-table="T16" title="Table T16 (4 Seats)"><span class="marker-label">T16</span><span class="marker-cap">4 Seats</span></button>
+          </div>
+
+          <!-- Floor Plan Legend -->
+          <div class="flex-row items-center justify-center gap-md flex-wrap text-xs text-muted mt-xs mb-sm">
+            <span class="flex-row items-center gap-2xs"><span class="status-dot-sm" style="background: #68705a; display: inline-block; width: 10px; height: 10px; border-radius: 50%;"></span> <strong>● Available</strong></span>
+            <span class="flex-row items-center gap-2xs"><span class="status-dot-sm" style="background: #a65f45; display: inline-block; width: 10px; height: 10px; border-radius: 50%;"></span> <strong>● Selected</strong></span>
+            <span class="flex-row items-center gap-2xs"><span class="status-dot-sm" style="background: #3b2922; display: inline-block; width: 10px; height: 10px; border-radius: 50%;"></span> <strong>● Reserved</strong></span>
+            <span class="flex-row items-center gap-2xs"><span class="status-dot-sm" style="background: #a65f45; display: inline-block; width: 10px; height: 10px; border-radius: 50%;"></span> <strong>● Occupied</strong></span>
+            <span class="flex-row items-center gap-2xs"><span class="status-dot-sm" style="background: #8c857b; display: inline-block; width: 10px; height: 10px; border-radius: 50%;"></span> <strong>● Capacity Exceeded / Unavailable</strong></span>
+          </div>
+
+          <!-- Table Selection Notice / Active Selection Card -->
+          <div class="card p-md mt-md bg-surface-low border border-light" id="table-detail-card" style="display: none;">
+            <div class="flex-row items-start justify-between flex-wrap gap-sm mb-sm border-b border-light pb-xs">
+              <div>
+                <span class="chip chip-olive" id="card-table-status-chip">Available</span>
+                <h3 class="card-title text-md mt-2xs mb-2xs" id="card-table-title">TABLE T05</h3>
+                <p class="text-xs text-muted mb-0" id="card-table-subtitle">4 seats · Window-side table</p>
+              </div>
+              <div class="text-right">
+                <span class="text-mono text-xs font-bold text-secondary" id="card-reservation-datetime-slot">Oct 10, 2026 at 5:00 PM</span>
+              </div>
+            </div>
+
+            <form id="reservation-form" class="mt-sm">
+              <div class="grid-3 gap-sm mb-sm">
+                <div>
+                  <label for="res-patron-name" class="text-xs font-semibold text-muted mb-2xs">Your Full Name *</label>
+                  <input type="text" id="res-patron-name" class="form-control text-xs" placeholder="e.g. Roland C." required>
+                </div>
+                <div>
+                  <label for="res-patron-email" class="text-xs font-semibold text-muted mb-2xs">Email Address *</label>
+                  <input type="email" id="res-patron-email" class="form-control text-xs" placeholder="e.g. roland@example.com" required>
+                </div>
+                <div>
+                  <label for="res-patron-phone" class="text-xs font-semibold text-muted mb-2xs">Phone Number *</label>
+                  <input type="tel" id="res-patron-phone" class="form-control text-xs" placeholder="e.g. +63 917 123 4567" required>
+                </div>
+              </div>
+              <div class="mb-sm">
+                <label for="res-special-requests" class="text-xs font-semibold text-muted mb-2xs">Special Requests / Seating Notes (Optional)</label>
+                <input type="text" id="res-special-requests" class="form-control text-xs" placeholder="e.g. High chair needed, quiet reading corner, near power outlet...">
+              </div>
+
+              <div class="flex-row items-center justify-between gap-sm pt-xs border-t border-light">
+                <span class="text-xs text-muted">Clicking reserve locks your table instantly in Supabase.</span>
+                <button type="submit" class="btn btn-primary btn-md" id="btn-submit-reservation">
+                  <span class="material-symbols-outlined icon-18">event_seat</span>
+                  <span>Reserve This Table</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Reservation Confirmation Display -->
+          <div class="card p-md mt-md border border-light" id="reservation-confirmation-card" style="display: none; background: #faf7f2; border-color: #68705a;">
+            <div class="text-center py-sm">
+              <span class="material-symbols-outlined text-primary mb-xs" style="font-size: 48px; color: #68705a;">check_circle</span>
+              <span class="chip chip-olive text-xs mb-2xs">TABLE RESERVED ✓</span>
+              <h2 class="section-title text-lg text-primary mb-2xs" id="conf-table-number">Table T05</h2>
+              <p class="text-sm font-semibold text-secondary mb-sm" id="conf-table-capacity">4 seats</p>
+
+              <div class="card p-sm max-w-sm mx-auto mb-md" style="background: #ffffff; border: 1px solid #d8cec0; text-align: left;">
+                <div class="text-xs text-muted mb-2xs">Reservation Summary:</div>
+                <div class="text-sm font-mono font-bold text-primary mb-2xs" id="conf-datetime">October 10, 2026 at 6:00 PM</div>
+                <div class="text-xs text-secondary mb-2xs" id="conf-guests">Guests: 3</div>
+                <div class="text-xs text-secondary mb-2xs" id="conf-patron">Patron: Roland C. (roland@example.com)</div>
+                <div class="text-xs text-mono text-muted mt-xs pt-xs border-t border-light" id="conf-res-id">Ref ID: #RES-1001</div>
+              </div>
+
+              <p class="text-xs text-muted mb-md">Your table has been reserved. A confirmation message has been logged in Supabase.</p>
+
+              <div class="flex-row items-center justify-center gap-sm">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-done-confirmation">Done</button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-view-reservations-from-conf">View My Reservations</button>
               </div>
             </div>
           </div>
 
-          <!-- 12-Table Seating Floor Grid -->
-          <div class="grid-6 gap-xs" id="seating-floor-grid">
-            <!-- Dynamically populated / interactive tables rendered via cafe.js -->
-          </div>
-
-          <div class="flex-row items-center justify-between mt-sm pt-xs border-t border-light text-xs text-muted">
-            <span id="selected-table-notice">Current Selection: <strong>Table #4 (Selected for In-Seat Order)</strong></span>
-            <span>Click any open table above to auto-select it for in-seat delivery!</span>
-          </div>
         </div>
       </div>
     </section>
+
+    <!-- My Reservations Modal Drawer -->
+    <div class="modal-scrim" id="my-reservations-modal" style="display: none;">
+      <div class="modal-container max-w-md">
+        <div class="modal-header">
+          <div class="flex-row items-center gap-xs">
+            <span class="material-symbols-outlined icon-20 text-primary">event_seat</span>
+            <h3 class="modal-title">My Table Reservations</h3>
+          </div>
+          <button type="button" class="modal-close-btn" id="btn-close-my-reservations">&times;</button>
+        </div>
+        <div class="modal-body p-md">
+          <div class="mb-sm">
+            <label for="search-my-res-email" class="text-xs font-semibold text-muted mb-2xs">Lookup by Patron Email:</label>
+            <div class="flex-row gap-xs">
+              <input type="email" id="search-my-res-email" class="form-control text-xs" placeholder="e.g. roland@example.com">
+              <button type="button" class="btn btn-primary btn-xs" id="btn-fetch-my-reservations">Find</button>
+            </div>
+          </div>
+
+          <div id="my-reservations-list-container" class="mt-md">
+            <p class="text-xs text-muted text-center py-md">Enter your email above to view active reservations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Menu Offerings Grid -->
     <section class="section">

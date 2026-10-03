@@ -11,7 +11,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const { sendEmail, sendDonationApprovedEmail, sendDonationRejectedEmail, sendRsvpApprovedEmail, sendRsvpRejectedEmail, sendFloralOrderEmail } = require('./services/emailService');
+const { sendEmail, sendDonationApprovedEmail, sendDonationRejectedEmail, sendRsvpApprovedEmail, sendRsvpRejectedEmail, sendFloralOrderEmail, sendTableReservationEmail } = require('./services/emailService');
 const { createDonation, getDonations, getDonationById, updateDonation } = require('./donationsStore');
 
 
@@ -672,6 +672,374 @@ app.post('/api/flowers/order', async (req, res) => {
   } catch (err) {
     console.error('Error submitting floral order:', err);
     res.status(500).json({ error: err.message || 'Internal server error processing floral order.' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 9. Physical Café Seating Tables & Table Reservations API Endpoints
+// ---------------------------------------------------------------------------
+
+// GET /api/tables — Fetch all 16 physical café tables
+app.get('/api/tables', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('cafe_tables')
+      .select('*')
+      .order('table_number', { ascending: true });
+
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    console.warn('Supabase fetch cafe_tables note:', err.message);
+    res.json([
+      { table_id: 1, table_number: 'T01', capacity: 2, location: 'Window Alcove', status: 'available', is_available: true },
+      { table_id: 2, table_number: 'T02', capacity: 4, location: 'Window Alcove', status: 'available', is_available: true },
+      { table_id: 3, table_number: 'T03', capacity: 4, location: 'Main Entrance Nook', status: 'available', is_available: true },
+      { table_id: 4, table_number: 'T04', capacity: 2, location: 'Garden Window Corner', status: 'available', is_available: true },
+      { table_id: 5, table_number: 'T05', capacity: 2, location: 'Garden Window Corner', status: 'available', is_available: true },
+      { table_id: 6, table_number: 'T06', capacity: 8, location: 'Sage Communal Table', status: 'available', is_available: true },
+      { table_id: 7, table_number: 'T07', capacity: 4, location: 'Bookshelf Partition', status: 'available', is_available: true },
+      { table_id: 8, table_number: 'T08', capacity: 8, location: 'Central Communal Table', status: 'available', is_available: true },
+      { table_id: 9, table_number: 'T09', capacity: 4, location: 'Lounge Sofa Nook', status: 'available', is_available: true },
+      { table_id: 10, table_number: 'T10', capacity: 10, location: 'Main Hall Large Communal', status: 'available', is_available: true },
+      { table_id: 11, table_number: 'T11', capacity: 4, location: 'Reading Room Nook A', status: 'available', is_available: true },
+      { table_id: 12, table_number: 'T12', capacity: 4, location: 'Reading Room Nook B', status: 'available', is_available: true },
+      { table_id: 13, table_number: 'T13', capacity: 4, location: 'Library Soft Lounge', status: 'available', is_available: true },
+      { table_id: 14, table_number: 'T14', capacity: 2, location: 'Quiet Study Corner', status: 'available', is_available: true },
+      { table_id: 15, table_number: 'T15', capacity: 2, location: 'Bar Counter Perch A', status: 'available', is_available: true },
+      { table_id: 16, table_number: 'T16', capacity: 2, location: 'Bar Counter Perch B', status: 'available', is_available: true }
+    ]);
+  }
+});
+
+// GET /api/tables/availability — Compute dynamic availability for a specific date, time, & guest count
+app.get('/api/tables/availability', async (req, res) => {
+  try {
+    const { date, time, guests } = req.query;
+    const requestedDate = date || new Date().toISOString().split('T')[0];
+    const requestedTime = time || '17:00';
+    const guestCount = parseInt(guests) || 1;
+
+    // Fetch all tables
+    let tables = [];
+    const { data: dbTables } = await supabase.from('cafe_tables').select('*').order('table_number');
+    if (dbTables && dbTables.length > 0) {
+      tables = dbTables;
+    } else {
+      tables = [
+        { table_id: 1, table_number: 'T01', capacity: 2, location: 'Window Alcove', status: 'available', is_available: true },
+        { table_id: 2, table_number: 'T02', capacity: 4, location: 'Window Alcove', status: 'available', is_available: true },
+        { table_id: 3, table_number: 'T03', capacity: 4, location: 'Main Entrance Nook', status: 'available', is_available: true },
+        { table_id: 4, table_number: 'T04', capacity: 2, location: 'Garden Window Corner', status: 'available', is_available: true },
+        { table_id: 5, table_number: 'T05', capacity: 2, location: 'Garden Window Corner', status: 'available', is_available: true },
+        { table_id: 6, table_number: 'T06', capacity: 8, location: 'Sage Communal Table', status: 'available', is_available: true },
+        { table_id: 7, table_number: 'T07', capacity: 4, location: 'Bookshelf Partition', status: 'available', is_available: true },
+        { table_id: 8, table_number: 'T08', capacity: 8, location: 'Central Communal Table', status: 'available', is_available: true },
+        { table_id: 9, table_number: 'T09', capacity: 4, location: 'Lounge Sofa Nook', status: 'available', is_available: true },
+        { table_id: 10, table_number: 'T10', capacity: 10, location: 'Main Hall Large Communal', status: 'available', is_available: true },
+        { table_id: 11, table_number: 'T11', capacity: 4, location: 'Reading Room Nook A', status: 'available', is_available: true },
+        { table_id: 12, table_number: 'T12', capacity: 4, location: 'Reading Room Nook B', status: 'available', is_available: true },
+        { table_id: 13, table_number: 'T13', capacity: 4, location: 'Library Soft Lounge', status: 'available', is_available: true },
+        { table_id: 14, table_number: 'T14', capacity: 2, location: 'Quiet Study Corner', status: 'available', is_available: true },
+        { table_id: 15, table_number: 'T15', capacity: 2, location: 'Bar Counter Perch A', status: 'available', is_available: true },
+        { table_id: 16, table_number: 'T16', capacity: 2, location: 'Bar Counter Perch B', status: 'available', is_available: true }
+      ];
+    }
+
+    // Fetch existing confirmed reservations for that date & time
+    let existingReservations = [];
+    const { data: resData } = await supabase
+      .from('table_reservations')
+      .select('*')
+      .eq('reservation_date', requestedDate)
+      .neq('status', 'Cancelled');
+
+    if (resData) existingReservations = resData;
+
+    const computedTables = tables.map(t => {
+      // Check if table is occupied/disabled by admin
+      if (t.status === 'occupied') return { ...t, computed_state: 'occupied', reason: 'Currently Occupied' };
+      if (t.status === 'unavailable' || t.is_available === false) return { ...t, computed_state: 'unavailable', reason: 'Table Disabled' };
+
+      // Check capacity
+      if (t.capacity < guestCount) {
+        return { ...t, computed_state: 'capacity_exceeded', reason: `Seats ${t.capacity} (Need ${guestCount})` };
+      }
+
+      // Check double booking for date/time
+      const conflict = existingReservations.find(r => r.table_number === t.table_number && r.start_time === requestedTime);
+      if (conflict) {
+        return { ...t, computed_state: 'reserved', reason: `Reserved by ${conflict.patron_name}` };
+      }
+
+      return { ...t, computed_state: 'available', reason: 'Available' };
+    });
+
+    res.json({
+      date: requestedDate,
+      time: requestedTime,
+      guests: guestCount,
+      tables: computedTables
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+let localReservationsStore = [];
+
+// POST /api/reservations — Create Table Reservation with Backend Double-Booking Prevention
+app.post('/api/reservations', async (req, res) => {
+  try {
+    const b = req.body || {};
+    const tableNumber = b.tableNumber || b.table_number;
+    const reservationDate = b.reservationDate || b.reservation_date;
+    const startTime = b.startTime || b.start_time;
+    const guestCount = b.guestCount || b.guest_count;
+    const patronName = b.patronName || b.patron_name;
+    const patronEmail = b.patronEmail || b.patron_email;
+    const patronPhone = b.patronPhone || b.patron_phone;
+    const specialRequests = b.specialRequests || b.special_requests;
+    const userId = b.userId || b.user_id;
+
+    if (!tableNumber || !reservationDate || !startTime || !patronEmail) {
+      return res.status(400).json({ error: 'Table number, date, time, and patron email are required.' });
+    }
+
+    const tNum = (tableNumber || '').toUpperCase().trim();
+    const gCount = parseInt(guestCount) || 1;
+
+    // 1. Backend Double-Booking Guard: Check if table is already reserved for that date & time
+    let existingConflict = localReservationsStore.find(r => 
+      r.table_number === tNum && 
+      r.reservation_date === reservationDate && 
+      r.start_time.slice(0, 5) === startTime.slice(0, 5) && 
+      r.status !== 'Cancelled'
+    );
+
+    if (!existingConflict) {
+      try {
+        const { data: dbConflict } = await supabase
+          .from('table_reservations')
+          .select('reservation_id, patron_name, start_time')
+          .eq('table_number', tNum)
+          .eq('reservation_date', reservationDate)
+          .neq('status', 'Cancelled');
+
+        if (dbConflict && dbConflict.length > 0) {
+          existingConflict = dbConflict.find(r => r.start_time.slice(0, 5) === startTime.slice(0, 5));
+        }
+      } catch (e) {}
+    }
+
+    if (existingConflict) {
+      return res.status(409).json({
+        error: `Double Booking Conflict: Table ${tNum} is already reserved for ${reservationDate} at ${startTime} by ${existingConflict.patron_name || 'another patron'}. Please select another time or table.`
+      });
+    }
+
+    // 2. Fetch table details from cafe_tables
+    let tableLocation = 'AFTERWORD Main Area';
+    const { data: tableObj } = await supabase
+      .from('cafe_tables')
+      .select('*')
+      .eq('table_number', tNum)
+      .maybeSingle();
+
+    if (tableObj) {
+      tableLocation = tableObj.location;
+      if (tableObj.capacity < gCount) {
+        return res.status(400).json({ error: `Table ${tNum} only accommodates up to ${tableObj.capacity} guests.` });
+      }
+    }
+
+    // 3. Insert reservation record into Supabase
+    const { data: reservation, error: insertErr } = await supabase
+      .from('table_reservations')
+      .insert([{
+        table_number: tNum,
+        table_id: tableObj ? tableObj.table_id : null,
+        user_id: userId || null,
+        patron_name: patronName || 'Guest',
+        patron_email: patronEmail,
+        patron_phone: patronPhone || null,
+        reservation_date: reservationDate,
+        start_time: startTime,
+        guest_count: gCount,
+        special_requests: specialRequests || null,
+        status: 'Confirmed'
+      }])
+      .select()
+      .single();
+
+    const reservationRecord = reservation || {
+      reservation_id: Date.now(),
+      table_number: tNum,
+      table_id: tableObj ? tableObj.table_id : null,
+      user_id: userId || null,
+      patron_name: patronName || 'Guest',
+      patron_email: patronEmail,
+      patron_phone: patronPhone || null,
+      reservation_date: reservationDate,
+      start_time: startTime,
+      guest_count: gCount,
+      special_requests: specialRequests || null,
+      status: 'Confirmed',
+      created_at: new Date().toISOString()
+    };
+
+    if (!localReservationsStore.some(r => r.table_number === tNum && r.reservation_date === reservationDate && r.start_time === startTime && r.status !== 'Cancelled')) {
+      localReservationsStore.push(reservationRecord);
+    }
+
+    // 4. Send confirmation email via Resend
+    let emailSent = false;
+    try {
+      const emailRes = await sendTableReservationEmail({
+        patronName: patronName || 'Guest',
+        patronEmail,
+        tableNumber: tNum,
+        reservationDate,
+        startTime,
+        guestCount: gCount,
+        location: tableLocation,
+        specialRequests
+      });
+      emailSent = emailRes ? emailRes.success : false;
+    } catch (eErr) {
+      console.warn('Resend reservation email warning:', eErr.message);
+    }
+
+    res.status(201).json({
+      message: `Table ${tNum} reserved successfully!`,
+      reservation: reservation || {
+        table_number: tNum,
+        reservation_date: reservationDate,
+        start_time: startTime,
+        guest_count: gCount,
+        patron_name: patronName,
+        patron_email: patronEmail,
+        status: 'Confirmed'
+      },
+      emailSent
+    });
+  } catch (err) {
+    console.error('Error creating table reservation:', err);
+    res.status(500).json({ error: err.message || 'Internal server error processing reservation.' });
+  }
+});
+
+// GET /api/reservations — Retrieve all reservations for admin or user
+app.get('/api/reservations', async (req, res) => {
+  try {
+    const { user_id, date, email } = req.query;
+    let list = [...localReservationsStore];
+
+    try {
+      let query = supabase
+        .from('table_reservations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (user_id) query = query.eq('user_id', user_id);
+      if (email) query = query.eq('patron_email', email);
+      if (date) query = query.eq('reservation_date', date);
+
+      const { data } = await query;
+      if (data && data.length > 0) {
+        data.forEach(r => {
+          if (!list.some(lr => lr.reservation_id === r.reservation_id)) {
+            list.push(r);
+          }
+        });
+      }
+    } catch (e) {}
+
+    if (email) {
+      list = list.filter(r => (r.patron_email || '').toLowerCase() === email.toLowerCase());
+    }
+
+    if (date) {
+      list = list.filter(r => r.reservation_date === date);
+    }
+
+    res.json(list);
+  } catch (err) {
+    console.warn('Fetch reservations error:', err.message);
+    res.json(localReservationsStore);
+  }
+});
+
+// PATCH /api/reservations/:id/cancel — Cancel a reservation
+app.patch('/api/reservations/:id/cancel', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Update in local store
+    const localRes = localReservationsStore.find(r => String(r.reservation_id) === String(id));
+    if (localRes) {
+      localRes.status = 'Cancelled';
+      localRes.updated_at = new Date().toISOString();
+    }
+
+    let updatedDbRes = null;
+    try {
+      const { data } = await supabase
+        .from('table_reservations')
+        .update({ status: 'Cancelled', updated_at: new Date().toISOString() })
+        .eq('reservation_id', id)
+        .select()
+        .single();
+      updatedDbRes = data;
+    } catch (e) {}
+
+    res.json({
+      message: 'Reservation cancelled successfully',
+      reservation: updatedDbRes || localRes || { reservation_id: id, status: 'Cancelled' }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/tables/:table_number — Admin update table status or capacity
+app.patch('/api/tables/:table_number', async (req, res) => {
+  try {
+    const { table_number } = req.params;
+    const { status, is_available, capacity, location } = req.body || {};
+
+    const tNum = (table_number || '').toUpperCase().trim();
+    const localTab = localCafeTablesStore.find(t => t.table_number === tNum);
+    if (localTab) {
+      if (status !== undefined) localTab.status = status;
+      if (is_available !== undefined) localTab.is_available = is_available;
+      if (capacity !== undefined) localTab.capacity = capacity;
+      if (location !== undefined) localTab.location = location;
+    }
+
+    let dbUpdated = null;
+    try {
+      const updates = {};
+      if (status !== undefined) updates.status = status;
+      if (is_available !== undefined) updates.is_available = is_available;
+      if (capacity !== undefined) updates.capacity = capacity;
+      if (location !== undefined) updates.location = location;
+
+      const { data } = await supabase
+        .from('cafe_tables')
+        .update(updates)
+        .eq('table_number', tNum)
+        .select()
+        .single();
+      dbUpdated = data;
+    } catch (e) {}
+
+    res.json({
+      message: `Table ${tNum} updated`,
+      table: dbUpdated || localTab || { table_number: tNum, status: status || 'available' }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -1666,6 +2034,305 @@ app.post('/api/send-email', async (req, res) => {
     } else {
       res.status(500).json({ error: result.error });
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// CAFÉ TABLE RESERVATIONS & SEATING MAP API
+// ---------------------------------------------------------------------------
+
+const DEFAULT_CAFÉ_TABLE_SEEDS = [
+  { table_number: 'T01', capacity: 2, location: 'Window Bay A', status: 'available', is_available: true },
+  { table_number: 'T02', capacity: 2, location: 'Window Bay B', status: 'available', is_available: true },
+  { table_number: 'T03', capacity: 4, location: 'Civic Reading Room', status: 'available', is_available: true },
+  { table_number: 'T04', capacity: 4, location: 'Civic Reading Room', status: 'available', is_available: true },
+  { table_number: 'T05', capacity: 4, location: 'North Window Corner', status: 'available', is_available: true },
+  { table_number: 'T06', capacity: 2, location: 'South Alcove', status: 'available', is_available: true },
+  { table_number: 'T07', capacity: 2, location: 'South Alcove', status: 'available', is_available: true },
+  { table_number: 'T08', capacity: 8, location: 'Community Table', status: 'available', is_available: true },
+  { table_number: 'T09', capacity: 4, location: 'Hearth Lounge', status: 'available', is_available: true },
+  { table_number: 'T10', capacity: 2, location: 'Hearth Nook', status: 'available', is_available: true },
+  { table_number: 'T11', capacity: 4, location: 'Botanical Courtyard Entrance', status: 'available', is_available: true },
+  { table_number: 'T12', capacity: 8, location: 'Communal Study Hall', status: 'available', is_available: true },
+  { table_number: 'T13', capacity: 2, location: 'Mezzanine Nook A', status: 'available', is_available: true },
+  { table_number: 'T14', capacity: 2, location: 'Mezzanine Nook B', status: 'available', is_available: true },
+  { table_number: 'T15', capacity: 4, location: 'Espresso Bar Front', status: 'available', is_available: true },
+  { table_number: 'T16', capacity: 4, location: 'Espresso Bar Front', status: 'available', is_available: true }
+];
+
+// Helper to ensure database table is seeded
+async function getOrSeedCafeTables() {
+  const { data, error } = await supabase
+    .from('cafe_tables')
+    .select('*')
+    .order('table_number', { ascending: true });
+
+  if (!error && Array.isArray(data) && data.length > 0) {
+    return data;
+  }
+
+  // Seed default 16 tables if empty
+  try {
+    const { data: seeded } = await supabase
+      .from('cafe_tables')
+      .insert(DEFAULT_CAFÉ_TABLE_SEEDS)
+      .select();
+    if (seeded && seeded.length > 0) return seeded;
+  } catch (seedErr) {
+    console.warn('Seeding cafe_tables note:', seedErr.message);
+  }
+
+  return DEFAULT_CAFÉ_TABLE_SEEDS.map((t, idx) => ({ ...t, table_id: idx + 1 }));
+}
+
+// 1. GET /api/tables — Fetch all physical café tables
+app.get('/api/tables', async (req, res) => {
+  try {
+    const tables = await getOrSeedCafeTables();
+    res.json(tables);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 2. GET /api/tables/availability — Compute real-time availability for requested Date + Time + Guests
+app.get('/api/tables/availability', async (req, res) => {
+  try {
+    const { date, time, guests = 1 } = req.query;
+    const requestedGuestCount = parseInt(guests, 10) || 1;
+
+    const tables = await getOrSeedCafeTables();
+
+    let activeReservations = [];
+    if (date) {
+      const { data: resData } = await supabase
+        .from('table_reservations')
+        .select('*')
+        .eq('reservation_date', date)
+        .neq('status', 'Cancelled');
+
+      if (resData) activeReservations = resData;
+    }
+
+    const result = tables.map(table => {
+      let calculatedStatus = table.status || 'available';
+
+      if (!table.is_available || table.status === 'unavailable') {
+        calculatedStatus = 'unavailable';
+      } else if (table.status === 'occupied') {
+        calculatedStatus = 'occupied';
+      } else {
+        // Check if reserved for requested time
+        const matchRes = activeReservations.find(r => {
+          if (String(r.table_number) !== String(table.table_number) && String(r.table_id) !== String(table.table_id)) {
+            return false;
+          }
+          if (time && r.start_time) {
+            // Match same time slot
+            return r.start_time.slice(0, 5) === time.slice(0, 5);
+          }
+          return true;
+        });
+
+        if (matchRes) {
+          calculatedStatus = 'reserved';
+        } else if (table.capacity < requestedGuestCount) {
+          calculatedStatus = 'capacity_exceeded';
+        } else {
+          calculatedStatus = 'available';
+        }
+      }
+
+      return {
+        ...table,
+        calculated_status: calculatedStatus
+      };
+    });
+
+    res.json(result);
+  } catch (err) {
+    console.error('Error fetching table availability:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 3. POST /api/reservations — Reserve a table with backend double-booking validation guard
+app.post('/api/reservations', async (req, res) => {
+  try {
+    const {
+      table_id,
+      table_number,
+      patron_name,
+      patron_email,
+      patron_phone,
+      reservation_date,
+      start_time,
+      guest_count = 2,
+      special_requests = ''
+    } = req.body || {};
+
+    if (!table_number || !patron_name || !patron_email || !reservation_date || !start_time) {
+      return res.status(400).json({ error: 'Missing required reservation fields: table_number, patron_name, patron_email, reservation_date, start_time.' });
+    }
+
+    // A. Backend Double-Booking Guard — Check existing active reservations for same table, date & time
+    const { data: existing } = await supabase
+      .from('table_reservations')
+      .select('*')
+      .eq('table_number', table_number)
+      .eq('reservation_date', reservation_date)
+      .neq('status', 'Cancelled');
+
+    if (existing && existing.length > 0) {
+      const conflict = existing.find(r => r.start_time.slice(0, 5) === start_time.slice(0, 5));
+      if (conflict) {
+        return res.status(409).json({
+          error: `Table ${table_number} is already reserved for ${reservation_date} at ${start_time.slice(0, 5)}.`
+        });
+      }
+    }
+
+    // B. Verify Table capacity
+    const { data: targetTable } = await supabase
+      .from('cafe_tables')
+      .select('*')
+      .eq('table_number', table_number)
+      .single();
+
+    if (targetTable && targetTable.capacity < guest_count) {
+      return res.status(400).json({
+        error: `Table ${table_number} capacity is ${targetTable.capacity} guests, but ${guest_count} guests were requested.`
+      });
+    }
+
+    // C. Insert Reservation into Supabase
+    const { data: newReservation, error: insertErr } = await supabase
+      .from('table_reservations')
+      .insert([{
+        table_id: table_id || (targetTable ? targetTable.table_id : null),
+        table_number,
+        patron_name,
+        patron_email,
+        patron_phone,
+        reservation_date,
+        start_time,
+        guest_count: parseInt(guest_count, 10) || 2,
+        status: 'Confirmed',
+        special_requests
+      }])
+      .select()
+      .single();
+
+    if (insertErr) throw insertErr;
+
+    // D. Dispatch confirmation email via Resend
+    let emailStatus = 'Not Sent';
+    try {
+      if (typeof sendTableReservationEmail === 'function') {
+        const emailRes = await sendTableReservationEmail({
+          patronName: patron_name,
+          patronEmail: patron_email,
+          tableNumber: table_number,
+          reservationDate: reservation_date,
+          startTime: start_time,
+          guestCount: guest_count,
+          specialRequests: special_requests
+        });
+        if (emailRes && emailRes.success) emailStatus = 'Sent';
+      }
+    } catch (eErr) {
+      console.warn('Table reservation email error:', eErr.message);
+    }
+
+    res.status(201).json({
+      message: `Table ${table_number} reserved successfully!`,
+      reservation: newReservation,
+      emailStatus
+    });
+
+  } catch (err) {
+    console.error('Error creating table reservation:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4. GET /api/reservations — Retrieve active/all reservations
+app.get('/api/reservations', async (req, res) => {
+  try {
+    const { email } = req.query;
+    let query = supabase.from('table_reservations').select('*').order('created_at', { ascending: false });
+
+    if (email) {
+      query = query.eq('patron_email', email);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    res.json(data || []);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 5. GET /api/reservations/:id — Retrieve single reservation
+app.get('/api/reservations/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabase
+      .from('table_reservations')
+      .select('*')
+      .eq('reservation_id', id)
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 6. PATCH /api/reservations/:id/cancel — Cancel a table reservation
+app.patch('/api/reservations/:id/cancel', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabase
+      .from('table_reservations')
+      .update({ status: 'Cancelled' })
+      .eq('reservation_id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json({ message: 'Reservation cancelled successfully', reservation: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 7. PATCH /api/tables/:table_number — Admin toggle status of table
+app.patch('/api/tables/:table_number', async (req, res) => {
+  try {
+    const { table_number } = req.params;
+    const { status, is_available, capacity, location } = req.body || {};
+
+    const updates = {};
+    if (status !== undefined) updates.status = status;
+    if (is_available !== undefined) updates.is_available = is_available;
+    if (capacity !== undefined) updates.capacity = capacity;
+    if (location !== undefined) updates.location = location;
+
+    const { data, error } = await supabase
+      .from('cafe_tables')
+      .update(updates)
+      .eq('table_number', table_number)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json({ message: `Table ${table_number} updated`, table: data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

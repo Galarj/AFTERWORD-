@@ -241,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDonationsSection();
   initEventsSection();
   initCustomersSection();
+  initSeatingSection();
   initModalsController();
   initGlobalSearch();
 });
@@ -2604,4 +2605,170 @@ function closeAdminModal(modalId) {
     modal.setAttribute('aria-hidden', 'true');
   }
 }
+
+// ---------------------------------------------------------------------------
+// Café Seating & Floor Plan Management Section
+// ---------------------------------------------------------------------------
+
+let adminTablesList = [];
+let adminReservationsList = [];
+
+function initSeatingSection() {
+  loadSeatingFromBackend();
+}
+
+async function loadSeatingFromBackend() {
+  try {
+    const [tRes, rRes] = await Promise.all([
+      fetch('/api/tables'),
+      fetch('/api/reservations')
+    ]);
+
+    if (tRes.ok) adminTablesList = await tRes.json();
+    if (rRes.ok) adminReservationsList = await rRes.json();
+
+  } catch (err) {
+    console.warn('Could not load seating data in admin:', err);
+  }
+
+  renderAdminSeatingTables();
+  renderAdminReservations();
+  updateAdminFloorPlanMarkers();
+}
+
+function updateAdminFloorPlanMarkers() {
+  adminTablesList.forEach(t => {
+    const marker = document.querySelector(`[data-admin-table="${t.table_number}"]`);
+    if (!marker) return;
+
+    marker.className = `table-marker table-${t.table_number.toLowerCase()}`;
+
+    if (t.status === 'occupied') {
+      marker.classList.add('state-occupied');
+      marker.title = `${t.table_number} — Occupied`;
+    } else if (t.status === 'unavailable') {
+      marker.classList.add('state-unavailable');
+      marker.title = `${t.table_number} — Disabled / Unavailable`;
+    } else if (t.status === 'reserved') {
+      marker.classList.add('state-reserved');
+      marker.title = `${t.table_number} — Reserved`;
+    } else {
+      marker.classList.add('state-available');
+      marker.title = `${t.table_number} — Available`;
+    }
+  });
+}
+
+function renderAdminSeatingTables() {
+  const tbody = document.getElementById('admin-seating-table-body');
+  if (!tbody) return;
+
+  if (adminTablesList.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-md">No tables found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = adminTablesList.map(t => {
+    let chipClass = 'chip-olive';
+    if (t.status === 'occupied') chipClass = 'chip-terracotta';
+    else if (t.status === 'unavailable') chipClass = 'chip-coffee';
+
+    return `
+      <tr>
+        <td><strong>${t.table_number}</strong></td>
+        <td><span class="text-mono font-bold">${t.capacity} Seats</span></td>
+        <td><span class="text-xs text-muted">${t.location || 'Café'}</span></td>
+        <td><span class="chip ${chipClass}">${t.status}</span></td>
+        <td>
+          <select class="form-control text-xs" style="width: auto; padding: 2px 6px;" onchange="handleAdminTableStatusChange('${t.table_number}', this.value)">
+            <option value="available" ${t.status === 'available' ? 'selected' : ''}>Available</option>
+            <option value="occupied" ${t.status === 'occupied' ? 'selected' : ''}>Occupied</option>
+            <option value="unavailable" ${t.status === 'unavailable' ? 'selected' : ''}>Disabled</option>
+          </select>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderAdminReservations() {
+  const tbody = document.getElementById('admin-reservations-table-body');
+  if (!tbody) return;
+
+  if (adminReservationsList.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-md">No reservations logged yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = adminReservationsList.map(r => {
+    const isCancelled = r.status === 'Cancelled';
+    const chipClass = isCancelled ? 'chip-coffee' : 'chip-olive';
+
+    return `
+      <tr>
+        <td>
+          <strong>${r.table_number}</strong>
+          <div class="text-xs text-muted">${r.patron_name}</div>
+        </td>
+        <td>
+          <span class="text-mono text-xs font-bold">${r.reservation_date}</span>
+          <div class="text-xs text-secondary">${r.start_time}</div>
+        </td>
+        <td><span class="text-mono font-bold">${r.guest_count}</span></td>
+        <td><span class="chip ${chipClass}">${r.status}</span></td>
+        <td>
+          ${!isCancelled ? `
+            <button type="button" class="btn btn-outline btn-xs" onclick="handleAdminCancelReservation(${r.reservation_id})">
+              Cancel
+            </button>
+          ` : '<span class="text-xs text-muted">—</span>'}
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function handleAdminTableStatusChange(tableNumber, newStatus) {
+  try {
+    const res = await fetch(`/api/tables/${tableNumber}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus, is_available: newStatus === 'available' })
+    });
+
+    if (res.ok) {
+      showToast(`✓ Table ${tableNumber} updated to "${newStatus.toUpperCase()}"`, 'check_circle');
+      loadSeatingFromBackend();
+    } else {
+      const data = await res.json();
+      showToast(`Update failed: ${data.error}`, 'error');
+    }
+  } catch (err) {
+    showToast(`Error: ${err.message}`, 'error');
+  }
+}
+
+async function handleAdminCancelReservation(reservationId) {
+  if (!confirm('Cancel this customer reservation?')) return;
+
+  try {
+    const res = await fetch(`/api/reservations/${reservationId}/cancel`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (res.ok) {
+      showToast('✓ Reservation cancelled in Supabase database.', 'info');
+      loadSeatingFromBackend();
+    } else {
+      const data = await res.json();
+      showToast(`Cancel failed: ${data.error}`, 'error');
+    }
+  } catch (err) {
+    showToast(`Error: ${err.message}`, 'error');
+  }
+}
+
+window.handleAdminTableStatusChange = handleAdminTableStatusChange;
+window.handleAdminCancelReservation = handleAdminCancelReservation;
 

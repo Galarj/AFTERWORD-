@@ -369,11 +369,64 @@ async function sendFloralOrderEmail({ patronName, patronEmail, phone, itemsSumma
   });
 }
 
+/**
+ * Sends a Café Table Reservation Confirmation Email via Resend API
+ */
+async function sendTableReservationEmail({ patronName, patronEmail, tableNumber, reservationDate, startTime, guestCount, location, specialRequests }) {
+  const name = patronName || 'Guest';
+  const table = tableNumber || 'T01';
+  const dateStr = reservationDate ? new Date(reservationDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : 'Scheduled Date';
+  const timeStr = startTime || '5:00 PM';
+  const guests = guestCount || 2;
+  const area = location || 'AFTERWORD Café Main Floor';
+
+  const html = `
+    <div style="font-family: 'Georgia', serif; color: #1c2b26; background-color: #faf7f2; padding: 32px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #e5dfd5;">
+      <div style="border-bottom: 2px solid #a65f45; padding-bottom: 12px; margin-bottom: 24px;">
+        <h2 style="margin: 0; color: #1c2b26; font-family: 'Literata', Georgia, serif; font-size: 24px;">AFTERWORD</h2>
+        <span style="color: #a65f45; font-size: 13px; font-style: italic; font-family: sans-serif;">Café Table Reservation Confirmation</span>
+      </div>
+
+      <p style="font-size: 16px; line-height: 1.6; color: #1c2b26;">Hi ${name},</p>
+      
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        Your table reservation at <strong>AFTERWORD Café</strong> has been confirmed!
+      </p>
+
+      <div style="background: #ffffff; padding: 20px; border-radius: 6px; border: 1px solid #dfd5c9; margin: 20px 0;">
+        <h4 style="margin: 0 0 12px; color: #1c2b26; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 6px;">Reservation Details:</h4>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Table Number:</strong> ${table}</p>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Location / Area:</strong> ${area}</p>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Date:</strong> ${dateStr}</p>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Time Slot:</strong> ${timeStr}</p>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Guest Count:</strong> ${guests} Guests</p>
+        ${specialRequests ? `<p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Special Notes:</strong> "${specialRequests}"</p>` : ''}
+        <p style="margin: 12px 0 0; font-size: 14px; color: #2e7d32; font-weight: bold;">Status: Confirmed ✓</p>
+      </div>
+
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        We look forward to hosting you. Please check in with our barista counter when you arrive.
+      </p>
+
+      <p style="margin-top: 28px; font-size: 14px; color: #7f8c8d;">
+        — AFTERWORD Café &amp; Reading Room Team
+      </p>
+    </div>
+  `;
+
+  return sendRawEmail({
+    to: patronEmail,
+    subject: `Table Reserved: ${table} on ${reservationDate}`,
+    html
+  });
+}
+
 module.exports = {
   sendRawEmail,
   sendDonationApprovedEmail,
   sendDonationRejectedEmail,
   sendRsvpApprovedEmail,
   sendRsvpRejectedEmail,
-  sendFloralOrderEmail
+  sendFloralOrderEmail,
+  sendTableReservationEmail
 };

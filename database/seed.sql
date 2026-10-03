@@ -325,3 +325,25 @@ INSERT INTO public.events (title, description, category_id, event_date, event_ti
     'Scheduled'
 );
 
+-- ----------------------------------------------------------------------------
+-- 5. INSERT PHYSICAL CAFÉ TABLES (T01 - T16)
+-- ----------------------------------------------------------------------------
+INSERT INTO public.cafe_tables (table_number, capacity, location, status, is_available) VALUES
+('T01', 2, 'Window Alcove', 'available', true),
+('T02', 4, 'Window Alcove', 'available', true),
+('T03', 4, 'Main Entrance Nook', 'available', true),
+('T04', 2, 'Garden Window Corner', 'available', true),
+('T05', 2, 'Garden Window Corner', 'available', true),
+('T06', 8, 'Sage Communal Table', 'available', true),
+('T07', 4, 'Bookshelf Partition', 'available', true),
+('T08', 8, 'Central Communal Table', 'available', true),
+('T09', 4, 'Lounge Sofa Nook', 'available', true),
+('T10', 10, 'Main Hall Large Communal', 'available', true),
+('T11', 4, 'Reading Room Nook A', 'available', true),
+('T12', 4, 'Reading Room Nook B', 'available', true),
+('T13', 4, 'Library Soft Lounge', 'available', true),
+('T14', 2, 'Quiet Study Corner', 'available', true),
+('T15', 2, 'Bar Counter Perch A', 'available', true),
+('T16', 2, 'Bar Counter Perch B', 'available', true)
+ON CONFLICT (table_number) DO UPDATE SET capacity = EXCLUDED.capacity, location = EXCLUDED.location;
+

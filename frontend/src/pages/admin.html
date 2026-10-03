@@ -64,6 +64,14 @@
             </div>
           </button>
 
+          <button class="admin-nav-btn" data-view="seating">
+            <div class="nav-btn-left">
+              <span class="material-symbols-outlined icon-20">event_seat</span>
+              <span class="nav-label">Café Seating & Floor Plan</span>
+            </div>
+            <span class="nav-btn-badge" id="sidebar-seating-badge">16</span>
+          </button>
+
           <button class="admin-nav-btn" data-view="flowers">
             <div class="nav-btn-left">
               <span class="material-symbols-outlined icon-20">local_florist</span>
@@ -501,6 +509,93 @@
               </table>
             </div>
 
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW: CAFÉ SEATING & FLOOR PLAN MANAGEMENT -->
+        <!-- ================================================================= -->
+        <section class="admin-view" id="view-seating">
+          <div class="admin-card mb-md">
+            <div class="admin-card-header">
+              <div>
+                <h2 class="admin-card-title">Live Café Floor Plan & Table Status</h2>
+                <span class="admin-card-desc">Monitor real-time room occupancy, change table status, and manage reservations.</span>
+              </div>
+            </div>
+
+            <!-- Admin Interactive Floor Plan Image + Markers -->
+            <div class="p-md text-center bg-surface-low border-b border-light">
+              <div class="floor-plan-wrapper mx-auto" style="max-width: 900px;">
+                <img src="../../assets/images/cafe/floorplan.png" alt="AFTERWORD Admin Floor Plan" class="floor-plan-img">
+                
+                <button type="button" class="table-marker table-t01" data-admin-table="T01"><span class="marker-label">T01</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t02" data-admin-table="T02"><span class="marker-label">T02</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t03" data-admin-table="T03"><span class="marker-label">T03</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t04" data-admin-table="T04"><span class="marker-label">T04</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t05" data-admin-table="T05"><span class="marker-label">T05</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t06" data-admin-table="T06"><span class="marker-label">T06</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t07" data-admin-table="T07"><span class="marker-label">T07</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t08" data-admin-table="T08"><span class="marker-label">T08</span><span class="marker-cap">8 Seats</span></button>
+                <button type="button" class="table-marker table-t09" data-admin-table="T09"><span class="marker-label">T09</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t10" data-admin-table="T10"><span class="marker-label">T10</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t11" data-admin-table="T11"><span class="marker-label">T11</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t12" data-admin-table="T12"><span class="marker-label">T12</span><span class="marker-cap">8 Seats</span></button>
+                <button type="button" class="table-marker table-t13" data-admin-table="T13"><span class="marker-label">T13</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t14" data-admin-table="T14"><span class="marker-label">T14</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t15" data-admin-table="T15"><span class="marker-label">T15</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t16" data-admin-table="T16"><span class="marker-label">T16</span><span class="marker-cap">4 Seats</span></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Management & Today's Reservations Grid -->
+          <div class="grid-2 gap-md">
+            <!-- Café Tables Inventory Table -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3 class="admin-card-title">Café Tables (16 Total)</h3>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Table #</th>
+                      <th>Cap</th>
+                      <th>Location</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-seating-table-body">
+                    <!-- Dynamically populated via admin.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Active Reservations Table -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3 class="admin-card-title">All Reservations</h3>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Table & Patron</th>
+                      <th>Date & Time</th>
+                      <th>Guests</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-reservations-table-body">
+                    <!-- Dynamically populated via admin.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </section>
 
