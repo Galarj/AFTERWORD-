@@ -516,35 +516,78 @@
         <!-- VIEW: CAFÉ SEATING & FLOOR PLAN MANAGEMENT -->
         <!-- ================================================================= -->
         <section class="admin-view" id="view-seating">
+          
+          <!-- Seating KPI Metric Cards -->
+          <div class="metrics-grid mb-md">
+            <div class="metric-card">
+              <span class="metric-label">PHYSICAL TABLES</span>
+              <div class="metric-value" id="admin-stat-total-tables">16</div>
+              <span class="metric-subtext">64 Room Capacity Seats</span>
+            </div>
+
+            <div class="metric-card">
+              <span class="metric-label">AVAILABLE NOW</span>
+              <div class="metric-value text-primary" id="admin-stat-available">12</div>
+              <span class="metric-subtext text-olive font-semibold">Ready for Walk-Ins</span>
+            </div>
+
+            <div class="metric-card">
+              <span class="metric-label">OCCUPIED / DINE-IN</span>
+              <div class="metric-value text-secondary" id="admin-stat-occupied">2</div>
+              <span class="metric-subtext text-terracotta font-semibold">Active In-Seat Patrons</span>
+            </div>
+
+            <div class="metric-card">
+              <span class="metric-label">BOOKED RESERVATIONS</span>
+              <div class="metric-value text-primary" id="admin-stat-reserved">2</div>
+              <span class="metric-subtext text-secondary font-semibold">Confirmed Today</span>
+            </div>
+          </div>
+
+          <!-- Floor Plan Card with Interactive Markers & Legend -->
           <div class="admin-card mb-md">
             <div class="admin-card-header">
               <div>
-                <h2 class="admin-card-title">Live Café Floor Plan & Table Status</h2>
-                <span class="admin-card-desc">Monitor real-time room occupancy, change table status, and manage reservations.</span>
+                <h2 class="admin-card-title">Live Café Floor Plan & Interactive Map</h2>
+                <span class="admin-card-desc">Click any table button below to inspect, toggle status, or update capacity in real-time.</span>
+              </div>
+              <div class="flex-row items-center gap-xs">
+                <span class="chip chip-coffee text-xs" id="admin-floorplan-sync-tag">⚡ SYNCED WITH SUPABASE</span>
               </div>
             </div>
 
-            <!-- Admin Interactive Floor Plan Image + Markers -->
+            <!-- Floor Plan Legend -->
+            <div class="p-sm bg-surface-low border-b border-light flex-row justify-between items-center flex-wrap gap-xs text-xs">
+              <div class="flex-row items-center gap-md flex-wrap">
+                <span class="flex-row items-center gap-2xs"><span style="background: #68705a; width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span> <strong>Available</strong></span>
+                <span class="flex-row items-center gap-2xs"><span style="background: #a65f45; width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span> <strong>Occupied</strong></span>
+                <span class="flex-row items-center gap-2xs"><span style="background: #3b2922; width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span> <strong>Reserved</strong></span>
+                <span class="flex-row items-center gap-2xs"><span style="background: #8c857b; width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span> <strong>Disabled</strong></span>
+              </div>
+              <span class="text-muted">Click any table on map to quick-toggle status!</span>
+            </div>
+
+            <!-- Admin Interactive Floor Plan Image + Overlaid Buttons -->
             <div class="p-md text-center bg-surface-low border-b border-light">
               <div class="floor-plan-wrapper mx-auto" style="max-width: 900px;">
                 <img src="../../assets/images/cafe/floorplan.png" alt="AFTERWORD Admin Floor Plan" class="floor-plan-img">
                 
-                <button type="button" class="table-marker table-t01" data-admin-table="T01"><span class="marker-label">T01</span><span class="marker-cap">2 Seats</span></button>
-                <button type="button" class="table-marker table-t02" data-admin-table="T02"><span class="marker-label">T02</span><span class="marker-cap">2 Seats</span></button>
-                <button type="button" class="table-marker table-t03" data-admin-table="T03"><span class="marker-label">T03</span><span class="marker-cap">4 Seats</span></button>
-                <button type="button" class="table-marker table-t04" data-admin-table="T04"><span class="marker-label">T04</span><span class="marker-cap">4 Seats</span></button>
-                <button type="button" class="table-marker table-t05" data-admin-table="T05"><span class="marker-label">T05</span><span class="marker-cap">4 Seats</span></button>
-                <button type="button" class="table-marker table-t06" data-admin-table="T06"><span class="marker-label">T06</span><span class="marker-cap">2 Seats</span></button>
-                <button type="button" class="table-marker table-t07" data-admin-table="T07"><span class="marker-label">T07</span><span class="marker-cap">2 Seats</span></button>
-                <button type="button" class="table-marker table-t08" data-admin-table="T08"><span class="marker-label">T08</span><span class="marker-cap">8 Seats</span></button>
-                <button type="button" class="table-marker table-t09" data-admin-table="T09"><span class="marker-label">T09</span><span class="marker-cap">4 Seats</span></button>
-                <button type="button" class="table-marker table-t10" data-admin-table="T10"><span class="marker-label">T10</span><span class="marker-cap">2 Seats</span></button>
-                <button type="button" class="table-marker table-t11" data-admin-table="T11"><span class="marker-label">T11</span><span class="marker-cap">4 Seats</span></button>
-                <button type="button" class="table-marker table-t12" data-admin-table="T12"><span class="marker-label">T12</span><span class="marker-cap">8 Seats</span></button>
-                <button type="button" class="table-marker table-t13" data-admin-table="T13"><span class="marker-label">T13</span><span class="marker-cap">2 Seats</span></button>
-                <button type="button" class="table-marker table-t14" data-admin-table="T14"><span class="marker-label">T14</span><span class="marker-cap">2 Seats</span></button>
-                <button type="button" class="table-marker table-t15" data-admin-table="T15"><span class="marker-label">T15</span><span class="marker-cap">4 Seats</span></button>
-                <button type="button" class="table-marker table-t16" data-admin-table="T16"><span class="marker-label">T16</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t01" data-admin-table="T01" title="Table T01"><span class="marker-label">T01</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t02" data-admin-table="T02" title="Table T02"><span class="marker-label">T02</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t03" data-admin-table="T03" title="Table T03"><span class="marker-label">T03</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t04" data-admin-table="T04" title="Table T04"><span class="marker-label">T04</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t05" data-admin-table="T05" title="Table T05"><span class="marker-label">T05</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t06" data-admin-table="T06" title="Table T06"><span class="marker-label">T06</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t07" data-admin-table="T07" title="Table T07"><span class="marker-label">T07</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t08" data-admin-table="T08" title="Table T08"><span class="marker-label">T08</span><span class="marker-cap">8 Seats</span></button>
+                <button type="button" class="table-marker table-t09" data-admin-table="T09" title="Table T09"><span class="marker-label">T09</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t10" data-admin-table="T10" title="Table T10"><span class="marker-label">T10</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t11" data-admin-table="T11" title="Table T11"><span class="marker-label">T11</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t12" data-admin-table="T12" title="Table T12"><span class="marker-label">T12</span><span class="marker-cap">8 Seats</span></button>
+                <button type="button" class="table-marker table-t13" data-admin-table="T13" title="Table T13"><span class="marker-label">T13</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t14" data-admin-table="T14" title="Table T14"><span class="marker-label">T14</span><span class="marker-cap">2 Seats</span></button>
+                <button type="button" class="table-marker table-t15" data-admin-table="T15" title="Table T15"><span class="marker-label">T15</span><span class="marker-cap">4 Seats</span></button>
+                <button type="button" class="table-marker table-t16" data-admin-table="T16" title="Table T16"><span class="marker-label">T16</span><span class="marker-cap">4 Seats</span></button>
               </div>
             </div>
           </div>
@@ -554,17 +597,25 @@
             <!-- Café Tables Inventory Table -->
             <div class="admin-card">
               <div class="admin-card-header">
-                <h3 class="admin-card-title">Café Tables (16 Total)</h3>
+                <div>
+                  <h3 class="admin-card-title">Café Tables Inventory</h3>
+                  <span class="admin-card-desc">Quick status toggle and room location settings.</span>
+                </div>
               </div>
+
+              <div class="p-xs bg-surface-low border-b border-light">
+                <input type="text" id="admin-table-search" class="form-control text-xs" placeholder="Filter tables by number or location...">
+              </div>
+
               <div class="admin-table-wrap">
                 <table class="admin-table">
                   <thead>
                     <tr>
                       <th>Table #</th>
-                      <th>Cap</th>
+                      <th>Seats</th>
                       <th>Location</th>
                       <th>Status</th>
-                      <th>Action</th>
+                      <th>Quick Status Toggle</th>
                     </tr>
                   </thead>
                   <tbody id="admin-seating-table-body">
@@ -577,8 +628,16 @@
             <!-- Active Reservations Table -->
             <div class="admin-card">
               <div class="admin-card-header">
-                <h3 class="admin-card-title">All Reservations</h3>
+                <div>
+                  <h3 class="admin-card-title">Patron Table Reservations</h3>
+                  <span class="admin-card-desc">All confirmed & cancelled table bookings.</span>
+                </div>
               </div>
+
+              <div class="p-xs bg-surface-low border-b border-light">
+                <input type="text" id="admin-res-search" class="form-control text-xs" placeholder="Filter reservations by patron or date...">
+              </div>
+
               <div class="admin-table-wrap">
                 <table class="admin-table">
                   <thead>

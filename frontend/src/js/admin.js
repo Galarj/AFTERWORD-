@@ -2615,6 +2615,37 @@ let adminReservationsList = [];
 
 function initSeatingSection() {
   loadSeatingFromBackend();
+
+  // Search filter event listeners
+  const tableSearchInput = document.getElementById('admin-table-search');
+  const resSearchInput = document.getElementById('admin-res-search');
+
+  if (tableSearchInput) {
+    tableSearchInput.addEventListener('input', () => {
+      renderAdminSeatingTables();
+    });
+  }
+
+  if (resSearchInput) {
+    resSearchInput.addEventListener('input', () => {
+      renderAdminReservations();
+    });
+  }
+
+  // Attach floor plan map marker click events
+  const adminMarkers = document.querySelectorAll('[data-admin-table]');
+  adminMarkers.forEach(marker => {
+    marker.addEventListener('click', () => {
+      const tableNum = marker.getAttribute('data-admin-table');
+      const table = adminTablesList.find(t => t.table_number === tableNum);
+      if (table) {
+        // Cycle status: available -> occupied -> unavailable -> available
+        const statusMap = { available: 'occupied', occupied: 'unavailable', unavailable: 'available' };
+        const nextStatus = statusMap[table.status] || 'available';
+        handleAdminTableStatusChange(tableNum, nextStatus);
+      }
+    });
+  });
 }
 
 async function loadSeatingFromBackend() {
@@ -2631,9 +2662,26 @@ async function loadSeatingFromBackend() {
     console.warn('Could not load seating data in admin:', err);
   }
 
+  updateSeatingKpiMetrics();
   renderAdminSeatingTables();
   renderAdminReservations();
   updateAdminFloorPlanMarkers();
+}
+
+function updateSeatingKpiMetrics() {
+  const totalEl = document.getElementById('admin-stat-total-tables');
+  const availEl = document.getElementById('admin-stat-available');
+  const occEl = document.getElementById('admin-stat-occupied');
+  const resEl = document.getElementById('admin-stat-reserved');
+
+  const availableCount = adminTablesList.filter(t => t.status === 'available').length;
+  const occupiedCount = adminTablesList.filter(t => t.status === 'occupied').length;
+  const activeReservationsCount = adminReservationsList.filter(r => r.status !== 'Cancelled').length;
+
+  if (totalEl) totalEl.textContent = adminTablesList.length || 16;
+  if (availEl) availEl.textContent = availableCount;
+  if (occEl) occEl.textContent = occupiedCount;
+  if (resEl) resEl.textContent = activeReservationsCount;
 }
 
 function updateAdminFloorPlanMarkers() {
@@ -2661,14 +2709,22 @@ function updateAdminFloorPlanMarkers() {
 
 function renderAdminSeatingTables() {
   const tbody = document.getElementById('admin-seating-table-body');
+  const searchInput = document.getElementById('admin-table-search');
   if (!tbody) return;
 
-  if (adminTablesList.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-md">No tables found.</td></tr>';
+  const query = (searchInput?.value || '').toLowerCase().trim();
+  const filtered = adminTablesList.filter(t => 
+    t.table_number.toLowerCase().includes(query) || 
+    (t.location || '').toLowerCase().includes(query) ||
+    t.status.toLowerCase().includes(query)
+  );
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-md">No matching tables found.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = adminTablesList.map(t => {
+  tbody.innerHTML = filtered.map(t => {
     let chipClass = 'chip-olive';
     if (t.status === 'occupied') chipClass = 'chip-terracotta';
     else if (t.status === 'unavailable') chipClass = 'chip-coffee';
@@ -2681,9 +2737,9 @@ function renderAdminSeatingTables() {
         <td><span class="chip ${chipClass}">${t.status}</span></td>
         <td>
           <select class="form-control text-xs" style="width: auto; padding: 2px 6px;" onchange="handleAdminTableStatusChange('${t.table_number}', this.value)">
-            <option value="available" ${t.status === 'available' ? 'selected' : ''}>Available</option>
-            <option value="occupied" ${t.status === 'occupied' ? 'selected' : ''}>Occupied</option>
-            <option value="unavailable" ${t.status === 'unavailable' ? 'selected' : ''}>Disabled</option>
+            <option value="available" ${t.status === 'available' ? 'selected' : ''}>🟢 Available</option>
+            <option value="occupied" ${t.status === 'occupied' ? 'selected' : ''}>🔴 Occupied</option>
+            <option value="unavailable" ${t.status === 'unavailable' ? 'selected' : ''}>⚪ Disabled</option>
           </select>
         </td>
       </tr>
@@ -2693,14 +2749,23 @@ function renderAdminSeatingTables() {
 
 function renderAdminReservations() {
   const tbody = document.getElementById('admin-reservations-table-body');
+  const searchInput = document.getElementById('admin-res-search');
   if (!tbody) return;
 
-  if (adminReservationsList.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-md">No reservations logged yet.</td></tr>';
+  const query = (searchInput?.value || '').toLowerCase().trim();
+  const filtered = adminReservationsList.filter(r => 
+    r.table_number.toLowerCase().includes(query) ||
+    (r.patron_name || '').toLowerCase().includes(query) ||
+    (r.patron_email || '').toLowerCase().includes(query) ||
+    (r.reservation_date || '').includes(query)
+  );
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-md">No matching reservations found.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = adminReservationsList.map(r => {
+  tbody.innerHTML = filtered.map(r => {
     const isCancelled = r.status === 'Cancelled';
     const chipClass = isCancelled ? 'chip-coffee' : 'chip-olive';
 
