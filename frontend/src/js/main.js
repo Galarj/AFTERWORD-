@@ -148,25 +148,55 @@ function _injectNotifStyles() {
       color: #c0392b;
       background: rgba(192, 57, 43, 0.12);
     }
+    .notif-category-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+    .notif-tab-btn {
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.15);
+      background: #ffffff;
+      color: #3b2922;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .notif-tab-btn:hover {
+      background: #f5f0e8;
+      border-color: #a65f45;
+    }
+    .notif-tab-btn.active {
+      background: #3b2922 !important;
+      color: #faf7f2 !important;
+      border-color: #3b2922 !important;
+    }
   `;
   document.head.appendChild(style);
 }
 
+/** Active notification filter tab: 'all' | 'reservations' | 'orders' | 'library' */
+let _activeNotifCategory = 'all';
+
 /**
  * Initializes the notification bell icon in the header and starts
- * background polling for loan status changes and order readiness.
+ * background polling for loan status changes, reservations, and order readiness.
  */
 function initNotificationSystem() {
   _injectNotifStyles();
-  const user = _getLoggedInUserSafe();
-  if (!user || !user.id) return;
 
-  // Inject notification bell into ALL header-right sections
+  // Inject notification bell into ALL header-right and topbar-right sections
   injectNotificationBell();
 
-  // Initial fetch + periodic polling every 8 seconds
-  fetchAndRenderNotifications(user.id);
-  setInterval(() => fetchAndRenderNotifications(user.id), 8000);
+  // Initial fetch + periodic polling every 6 seconds
+  fetchAndRenderNotifications();
+  setInterval(() => fetchAndRenderNotifications(), 6000);
 }
 
 /**
@@ -177,7 +207,7 @@ function _getLoggedInUserSafe() {
   try {
     if (typeof getLoggedInUser === 'function') {
       const u = getLoggedInUser();
-      if (u && u.id) return u;
+      if (u) return u;
     }
     const raw = localStorage.getItem('afterword_user');
     if (raw) return JSON.parse(raw);
@@ -186,15 +216,14 @@ function _getLoggedInUserSafe() {
 }
 
 /**
- * Injects the notification bell button into the site header (before the profile icon).
+ * Injects the notification bell button into site header and admin topbar.
  */
 function injectNotificationBell() {
-  const headerRights = document.querySelectorAll('.header-right');
-  headerRights.forEach(headerRight => {
-    // Avoid duplicate injection
-    if (headerRight.querySelector('.notif-bell-wrap')) return;
+  const containers = document.querySelectorAll('.header-right, .topbar-right');
+  containers.forEach(container => {
+    if (container.querySelector('.notif-bell-wrap')) return;
 
-    const profileLink = headerRight.querySelector('.nav-user-avatar');
+    const profileLink = container.querySelector('.nav-user-avatar, .staff-profile-card, #admin-staff-avatar');
 
     const bellWrap = document.createElement('div');
     bellWrap.className = 'notif-bell-wrap';
@@ -205,14 +234,25 @@ function injectNotificationBell() {
       </button>
       <div class="notif-dropdown" id="notif-dropdown">
         <div class="notif-dropdown-header">
-          <div class="notif-hdr-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px;">
-            <span style="font-weight: 700; color: #1c2b26; font-size: 0.9rem;">Notifications</span>
-            <span class="notif-count-label" style="font-size: 0.75rem; color: #777;">0 unread</span>
+          <div class="notif-hdr-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined text-primary" style="font-size: 18px;">notifications</span>
+              <span style="font-weight: 700; color: #3b2922; font-size: 0.95rem;">Notifications</span>
+            </div>
+            <span class="notif-count-label" style="font-size: 0.75rem; color: #68705a; background: #e5dfd5; padding: 2px 8px; border-radius: 12px; font-weight: 700;">0 unread</span>
           </div>
+
+          <!-- Messenger-Style Category Tabs -->
+          <div class="notif-category-tabs">
+            <button type="button" class="notif-tab-btn active" data-notif-tab="all">All</button>
+            <button type="button" class="notif-tab-btn" data-notif-tab="reservations">Reservations</button>
+            <button type="button" class="notif-tab-btn" data-notif-tab="orders">Orders</button>
+            <button type="button" class="notif-tab-btn" data-notif-tab="library">Library</button>
+          </div>
+
           <div class="notif-hdr-actions" style="display: flex; gap: 6px; align-items: center; width: 100%; flex-wrap: wrap;">
-            <button class="notif-hdr-btn" id="notif-select-all-btn" title="Select or deselect all items">Select All</button>
-            <button class="notif-hdr-btn danger" id="notif-delete-selected-btn" style="display: none;" title="Delete selected notifications">Delete Selected (<span id="notif-selected-count">0</span>)</button>
-            <button class="notif-hdr-btn danger" id="notif-clear-all-btn" title="Delete all notifications">Delete All</button>
+            <button type="button" class="notif-hdr-btn" id="notif-mark-read-btn" title="Mark all notifications as read">Mark All Read</button>
+            <button type="button" class="notif-hdr-btn danger" id="notif-clear-all-btn" title="Delete all notifications">Clear All</button>
           </div>
         </div>
         <div id="notif-list"></div>
@@ -220,9 +260,9 @@ function injectNotificationBell() {
     `;
 
     if (profileLink) {
-      headerRight.insertBefore(bellWrap, profileLink);
+      container.insertBefore(bellWrap, profileLink);
     } else {
-      headerRight.appendChild(bellWrap);
+      container.appendChild(bellWrap);
     }
 
     // Toggle dropdown on bell click
@@ -234,69 +274,48 @@ function injectNotificationBell() {
       dropdown.classList.toggle('open');
     });
 
+    // Category Tabs handler
+    bellWrap.querySelectorAll('.notif-tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        bellWrap.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        _activeNotifCategory = btn.getAttribute('data-notif-tab') || 'all';
+        fetchAndRenderNotifications();
+      });
+    });
+
+    // Mark all read button handler
+    const markReadBtn = bellWrap.querySelector('#notif-mark-read-btn');
+    if (markReadBtn) {
+      markReadBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        bellWrap.querySelectorAll('.notif-item').forEach(item => {
+          const key = item.getAttribute('data-notif-key');
+          if (key) _readNotifKeys.add(key);
+        });
+        _saveReadNotifs();
+        fetchAndRenderNotifications();
+        if (typeof showToast === 'function') {
+          showToast('All notifications marked as read', 'check_circle');
+        }
+      });
+    }
+
     // Delete all button handler
     const clearBtn = bellWrap.querySelector('#notif-clear-all-btn');
     if (clearBtn) {
       clearBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const user = _getLoggedInUserSafe();
-        if (user && user.id) {
-          const api = window.AfterwordAPI;
-          if (api && typeof api.getNotifications === 'function') {
-            api.getNotifications(user.id).then(notifs => {
-              if (Array.isArray(notifs)) {
-                notifs.forEach(n => {
-                  const key = `${n.type}:${n.loanId || n.orderId}`;
-                  _deletedNotifKeys.add(key);
-                });
-                _saveDeletedNotifs();
-                fetchAndRenderNotifications(user.id);
-                if (typeof showToast === 'function') {
-                  showToast('All notifications deleted!', 'delete');
-                }
-              }
-            });
-          }
-        }
-      });
-    }
-
-    // Delete selected button handler
-    const delSelectedBtn = bellWrap.querySelector('#notif-delete-selected-btn');
-    if (delSelectedBtn) {
-      delSelectedBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const checkedBoxes = bellWrap.querySelectorAll('.notif-checkbox:checked');
-        if (checkedBoxes.length === 0) return;
-
-        checkedBoxes.forEach(cb => {
-          const key = cb.getAttribute('data-notif-key');
+        bellWrap.querySelectorAll('.notif-item').forEach(item => {
+          const key = item.getAttribute('data-notif-key');
           if (key) _deletedNotifKeys.add(key);
         });
         _saveDeletedNotifs();
-
-        const user = _getLoggedInUserSafe();
-        if (user && user.id) fetchAndRenderNotifications(user.id);
-
+        fetchAndRenderNotifications();
         if (typeof showToast === 'function') {
-          showToast(`Deleted ${checkedBoxes.length} selected notification(s)!`, 'delete_outline');
+          showToast('All notifications cleared!', 'delete');
         }
-      });
-    }
-
-    // Select all button handler
-    const selectAllBtn = bellWrap.querySelector('#notif-select-all-btn');
-    if (selectAllBtn) {
-      selectAllBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const boxes = bellWrap.querySelectorAll('.notif-checkbox');
-        if (boxes.length === 0) return;
-
-        const allChecked = Array.from(boxes).every(b => b.checked);
-        boxes.forEach(b => b.checked = !allChecked);
-
-        // Update selected button
-        _updateSelectedNotifCount(bellWrap);
       });
     }
 
@@ -310,64 +329,108 @@ function injectNotificationBell() {
 }
 
 /**
- * Updates the visibility and count of the "Delete Selected" button.
+ * Fetches notifications (reservations, orders, loans) and renders them in dropdown.
  */
-function _updateSelectedNotifCount(container = document) {
-  const checkedBoxes = container.querySelectorAll('.notif-checkbox:checked');
-  const count = checkedBoxes.length;
-
-  container.querySelectorAll('#notif-delete-selected-btn').forEach(btn => {
-    btn.style.display = count > 0 ? 'inline-block' : 'none';
-  });
-  container.querySelectorAll('#notif-selected-count').forEach(span => {
-    span.textContent = count;
-  });
-}
-
-/**
- * Fetches notifications from the backend and renders them in the dropdown.
- * Also fires toasts for new urgent notifications (order ready, loan denied, etc.)
- * @param {string} userId - The logged-in user's UUID.
- */
-async function fetchAndRenderNotifications(userId) {
+async function fetchAndRenderNotifications() {
   try {
-    const api = window.AfterwordAPI;
-    if (!api || typeof api.getNotifications !== 'function') return;
+    const user = _getLoggedInUserSafe();
+    const userId = user?.id || null;
+    const userEmail = user?.email || (localStorage.getItem('afterword_user') ? JSON.parse(localStorage.getItem('afterword_user'))?.email : '') || 'patron@afterword.hub';
 
-    const notifications = await api.getNotifications(userId);
-    if (!Array.isArray(notifications)) return;
+    let allNotifs = [];
 
-    // Filter out deleted notifications first
-    const activeNotifications = notifications.filter(n => {
-      const key = `${n.type}:${n.loanId || n.orderId}`;
-      return !_deletedNotifKeys.has(key);
+    // 1. Fetch backend notifications if userId exists
+    if (userId && window.AfterwordAPI && typeof window.AfterwordAPI.getNotifications === 'function') {
+      try {
+        const dbNotifs = await window.AfterwordAPI.getNotifications(userId);
+        if (Array.isArray(dbNotifs)) {
+          dbNotifs.forEach(n => {
+            let cat = 'library';
+            if (n.type.includes('meal') || n.type.includes('order') || n.type.includes('flower')) cat = 'orders';
+            if (n.type.includes('table')) cat = 'reservations';
+            allNotifs.push({
+              key: `${n.type}:${n.loanId || n.orderId || n.reservationId}`,
+              category: cat,
+              ...n
+            });
+          });
+        }
+      } catch (e) {}
+    }
+
+    // 2. Fetch Table Reservations for current patron email
+    try {
+      const resUrl = userEmail ? `/api/reservations?email=${encodeURIComponent(userEmail)}` : '/api/reservations';
+      const rRes = await fetch(resUrl);
+      if (rRes.ok) {
+        const reservations = await rRes.json();
+        if (Array.isArray(reservations)) {
+          reservations.forEach(r => {
+            const timeStr = r.start_time ? r.start_time.slice(0, 5) : '';
+            const key = `table_res:${r.reservation_id}:${r.status}`;
+
+            if (r.status === 'Pending') {
+              allNotifs.push({
+                key,
+                type: 'table_pending',
+                category: 'reservations',
+                icon: 'hourglass_top',
+                title: `Table #${r.table_number} — Pending Approval`,
+                message: `Booking for ${r.reservation_date} at ${timeStr} (${r.guest_count} guests) is waiting for staff approval.`,
+                urgent: false,
+                timestamp: r.created_at
+              });
+            } else if (r.status === 'Confirmed' || r.status === 'Approved') {
+              allNotifs.push({
+                key,
+                type: 'table_confirmed',
+                category: 'reservations',
+                icon: 'event_seat',
+                title: `Table #${r.table_number} — Reserved & Approved!`,
+                message: `Your reservation for Table #${r.table_number} on ${r.reservation_date} at ${timeStr} was APPROVED by staff!`,
+                urgent: true,
+                timestamp: r.created_at
+              });
+            } else if (r.status === 'Cancelled' || r.status === 'Rejected') {
+              allNotifs.push({
+                key,
+                type: 'table_cancelled',
+                category: 'reservations',
+                icon: 'cancel',
+                title: `Table #${r.table_number} — Reservation Cancelled`,
+                message: `Your reservation for Table #${r.table_number} on ${r.reservation_date} was cancelled.`,
+                urgent: false,
+                timestamp: r.created_at
+              });
+            }
+          });
+        }
+      }
+    } catch (rErr) {}
+
+    // Deduplicate notifications by key
+    const notifMap = new Map();
+    allNotifs.forEach(n => {
+      if (!n.key) n.key = `${n.type}:${n.timestamp || Date.now()}`;
+      if (!notifMap.has(n.key)) notifMap.set(n.key, n);
     });
 
-    // Build a hash to detect changes
-    const hash = JSON.stringify(activeNotifications.map(n => `${n.type}:${n.loanId || n.orderId}:${n.message}`));
+    const mergedNotifs = Array.from(notifMap.values());
+
+    // Filter out deleted notifications
+    const activeNotifications = mergedNotifs.filter(n => !_deletedNotifKeys.has(n.key));
+
+    // Detect new notifications & fire toasts
+    const hash = JSON.stringify(activeNotifications.map(n => n.key));
     const isFirstLoad = _lastNotifHash === '';
 
-    // Show toasts for NEW notifications only (not on first load)
     if (!isFirstLoad && hash !== _lastNotifHash) {
       for (const notif of activeNotifications) {
-        const key = `${notif.type}:${notif.loanId || notif.orderId}`;
-        if (!_shownNotifKeys.has(key)) {
-          _shownNotifKeys.add(key);
-
-          // Fire toast for important notifications
-          if (notif.type === 'meal_ready' || notif.type === 'flower_ready') {
+        if (!_shownNotifKeys.has(notif.key)) {
+          _shownNotifKeys.add(notif.key);
+          if (notif.type === 'table_confirmed' || notif.type === 'meal_ready' || notif.type === 'flower_ready') {
             if (typeof showToast === 'function') {
-              showToast(notif.title + ' ' + notif.message, notif.icon || 'restaurant');
-            }
-          }
-          if (notif.type === 'loan_denied') {
-            if (typeof showToast === 'function') {
-              showToast(notif.title + ' ' + notif.message, 'block');
-            }
-          }
-          if (notif.type === 'loan_active' && notif.daysLeft <= 3 && notif.daysLeft > 0) {
-            if (typeof showToast === 'function') {
-              showToast(`⚠️ "${notif.title}" — Only ${notif.daysLeft} day(s) left!`, 'schedule');
+              showToast(`${notif.title} — ${notif.message}`, notif.icon || 'check_circle');
             }
           }
         }
@@ -375,20 +438,12 @@ async function fetchAndRenderNotifications(userId) {
     }
     _lastNotifHash = hash;
 
-    // Mark first-load keys to avoid spam
     if (isFirstLoad) {
-      for (const notif of activeNotifications) {
-        const key = `${notif.type}:${notif.loanId || notif.orderId}`;
-        _shownNotifKeys.add(key);
-      }
+      activeNotifications.forEach(n => _shownNotifKeys.add(n.key));
     }
 
-    // Filter unread notifications count
-    const unreadNotifs = activeNotifications.filter(n => {
-      const key = `${n.type}:${n.loanId || n.orderId}`;
-      return !_readNotifKeys.has(key);
-    });
-
+    // Calculate unread count across ALL active notifications
+    const unreadNotifs = activeNotifications.filter(n => !_readNotifKeys.has(n.key));
     const unreadCount = unreadNotifs.length;
 
     document.querySelectorAll('.notif-badge').forEach(badge => {
@@ -400,78 +455,59 @@ async function fetchAndRenderNotifications(userId) {
       lbl.textContent = `${unreadCount} unread`;
     });
 
-    // Render notification items
+    // Filter by active Category Tab
+    let filteredCategoryNotifs = activeNotifications;
+    if (_activeNotifCategory !== 'all') {
+      filteredCategoryNotifs = activeNotifications.filter(n => n.category === _activeNotifCategory);
+    }
+
+    // Render list HTML
     const listEl = document.getElementById('notif-list');
     if (!listEl) return;
 
-    if (activeNotifications.length === 0) {
+    if (filteredCategoryNotifs.length === 0) {
       listEl.innerHTML = `
         <div class="notif-empty" style="padding: 24px; text-align: center; color: #888;">
           <span class="material-symbols-outlined" style="font-size: 36px; color: #ccc;">notifications_off</span>
-          <p style="margin-top: 8px; font-size: 0.85rem;">All clear! No notifications right now.</p>
+          <p style="margin-top: 8px; font-size: 0.85rem;">No ${_activeNotifCategory !== 'all' ? _activeNotifCategory : ''} notifications right now.</p>
         </div>
       `;
-      _updateSelectedNotifCount();
       return;
     }
 
-    listEl.innerHTML = activeNotifications.map(notif => {
-      const key = `${notif.type}:${notif.loanId || notif.orderId}`;
-      const isRead = _readNotifKeys.has(key);
+    listEl.innerHTML = filteredCategoryNotifs.map(notif => {
+      const isRead = _readNotifKeys.has(notif.key);
 
       let iconClass = 'loan';
       let extraClass = isRead ? 'read' : '';
 
-      if (notif.type.includes('meal') || notif.type.includes('order')) iconClass = 'order';
+      if (notif.category === 'orders' || notif.type.includes('meal')) iconClass = 'order';
       if (notif.type.includes('flower')) iconClass = 'flower';
-      if (notif.type.includes('denied')) iconClass = 'denied';
-      if (notif.type.includes('overdue')) iconClass = 'overdue';
-      if (notif.type.includes('pending')) iconClass = 'pending';
+      if (notif.category === 'reservations' || notif.type.includes('table')) iconClass = 'pending';
+      if (notif.type === 'table_confirmed') iconClass = 'order';
+      if (notif.type.includes('denied') || notif.type.includes('cancelled')) iconClass = 'denied';
 
       if (notif.urgent && !isRead) extraClass += ' urgent';
-      if (notif.type.includes('ready') && !isRead) extraClass += ' ready';
-
-      let daysLeftBadge = '';
-      if (notif.daysLeft !== undefined) {
-        const cls = notif.daysLeft <= 0 ? 'danger' : (notif.daysLeft <= 3 ? 'warning' : 'good');
-        const label = notif.daysLeft <= 0
-          ? `OVERDUE ${Math.abs(notif.daysLeft)}d`
-          : `${notif.daysLeft}d left`;
-        daysLeftBadge = `<span class="days-left-badge ${cls}">${label}</span>`;
-      }
 
       return `
-        <div class="notif-item ${extraClass.trim()}" data-notif-key="${key}">
-          <input type="checkbox" class="notif-checkbox" data-notif-key="${key}" title="Select notification">
+        <div class="notif-item ${extraClass.trim()}" data-notif-key="${notif.key}">
           <div class="notif-icon-wrap ${iconClass}">
             <span class="material-symbols-outlined">${notif.icon || 'info'}</span>
           </div>
           <div class="notif-content" style="flex: 1; min-width: 0;">
-            <div class="notif-title">${notif.title} ${daysLeftBadge}</div>
-            <div class="notif-message">${notif.message}</div>
+            <div class="notif-title" style="font-weight: 700; color: #3b2922; font-size: 0.85rem;">${notif.title}</div>
+            <div class="notif-message" style="font-size: 0.78rem; color: #666; margin-top: 2px;">${notif.message}</div>
           </div>
-          <button class="notif-delete-single" data-notif-key="${key}" title="Delete notification">✕</button>
+          <button type="button" class="notif-delete-single" data-notif-key="${notif.key}" title="Delete notification">✕</button>
         </div>
       `;
     }).join('');
 
-    _updateSelectedNotifCount();
-
-    // Attach click listeners to notification items
+    // Attach click listeners
     listEl.querySelectorAll('.notif-item').forEach(itemEl => {
       const key = itemEl.getAttribute('data-notif-key');
 
-      // Checkbox click
-      const cb = itemEl.querySelector('.notif-checkbox');
-      if (cb) {
-        cb.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const wrap = itemEl.closest('.notif-bell-wrap') || document;
-          _updateSelectedNotifCount(wrap);
-        });
-      }
-
-      // Single delete button click
+      // Single delete button
       const delBtn = itemEl.querySelector('.notif-delete-single');
       if (delBtn) {
         delBtn.addEventListener('click', (e) => {
@@ -479,26 +515,25 @@ async function fetchAndRenderNotifications(userId) {
           if (key) {
             _deletedNotifKeys.add(key);
             _saveDeletedNotifs();
-            fetchAndRenderNotifications(userId);
+            fetchAndRenderNotifications();
             if (typeof showToast === 'function') {
-              showToast('Notification deleted', 'delete');
+              showToast('Notification cleared', 'delete');
             }
           }
         });
       }
 
-      // Item click (mark as read / gray out)
+      // Mark as read click
       itemEl.addEventListener('click', (e) => {
-        if (e.target.classList.contains('notif-checkbox') || e.target.classList.contains('notif-delete-single')) return;
+        if (e.target.classList.contains('notif-delete-single')) return;
 
         if (key) {
           _readNotifKeys.add(key);
           _saveReadNotifs();
           itemEl.classList.add('read');
-          itemEl.classList.remove('urgent', 'ready');
+          itemEl.classList.remove('urgent');
 
-          // Recount unread
-          const remainingUnread = activeNotifications.filter(n => !_readNotifKeys.has(`${n.type}:${n.loanId || n.orderId}`)).length;
+          const remainingUnread = activeNotifications.filter(n => !_readNotifKeys.has(n.key)).length;
           document.querySelectorAll('.notif-badge').forEach(badge => {
             badge.textContent = remainingUnread;
             badge.classList.toggle('hidden', remainingUnread === 0);
@@ -511,7 +546,6 @@ async function fetchAndRenderNotifications(userId) {
     });
 
   } catch (err) {
-    // Silent fail for notification polling
     console.debug('Notification poll notice:', err.message);
   }
 }
