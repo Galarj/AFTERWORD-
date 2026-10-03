@@ -341,6 +341,11 @@ function initHeaderAuth() {
       }
     });
   }
+
+  // Ensure notification bell is injected next to patron badge
+  if (typeof injectNotificationBell === 'function') {
+    injectNotificationBell();
+  }
 }
 
 // Initialize header badge when DOM is ready

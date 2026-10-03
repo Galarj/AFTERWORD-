@@ -223,7 +223,8 @@ function injectNotificationBell() {
   containers.forEach(container => {
     if (container.querySelector('.notif-bell-wrap')) return;
 
-    const profileLink = container.querySelector('.nav-user-avatar, .staff-profile-card, #admin-staff-avatar');
+    // Prefer inserting before header patron badge, generic avatar, or staff profile card
+    const anchor = container.querySelector('.header-patron-badge, .nav-user-avatar, .staff-profile-card, #admin-staff-avatar');
 
     const bellWrap = document.createElement('div');
     bellWrap.className = 'notif-bell-wrap';
@@ -259,8 +260,8 @@ function injectNotificationBell() {
       </div>
     `;
 
-    if (profileLink) {
-      container.insertBefore(bellWrap, profileLink);
+    if (anchor) {
+      container.insertBefore(bellWrap, anchor);
     } else {
       container.appendChild(bellWrap);
     }
