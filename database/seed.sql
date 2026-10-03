@@ -5,23 +5,23 @@
 -- ----------------------------------------------------------------------------
 -- 1. INSERT CATEGORIES
 -- ----------------------------------------------------------------------------
-INSERT INTO public.categories (name, slug, type) VALUES
+INSERT INTO public.categories (name, type) VALUES
 -- Cafe Categories
-('Coffee', 'coffee', 'cafe'),
-('Drinks', 'drinks', 'cafe'),
-('Food', 'food', 'cafe'),
+('Coffee', 'cafe'),
+('Drinks', 'cafe'),
+('Food', 'cafe'),
 -- Flower Categories
-('Fresh Cut Bouquets', 'fresh', 'flowers'),
-('Botanical & Dried', 'dried', 'flowers'),
+('Fresh Cut Bouquets', 'flowers'),
+('Botanical & Dried', 'flowers'),
 -- Library Categories
-('Novels & Stories', 'novels', 'books'),
-('Manga', 'manga', 'books'),
-('Essays & Memoir', 'essays', 'books'),
+('Novels & Stories', 'books'),
+('Manga', 'books'),
+('Essays & Memoir', 'books'),
 -- Event Categories
-('Tabletop Games', 'games', 'events'),
-('Book Reviews & Salons', 'salon', 'events'),
-('Quiz & Trivia', 'quiz', 'events'),
-('Gaming & Esports', 'gaming', 'events');
+('Tabletop Games', 'events'),
+('Book Reviews & Salons', 'events'),
+('Quiz & Trivia', 'events'),
+('Gaming & Esports', 'events');
 
 -- ----------------------------------------------------------------------------
 -- 2. INSERT BOOKS (Matches library.html catalog)
@@ -32,7 +32,7 @@ INSERT INTO public.books (isbn, title, author, description, category_id, publish
     'Chainsaw Man',
     'Tatsuki Fujimoto',
     'Denji''s life of poverty is turned upside down when he merges with his pet devil Pochita to become Chainsaw Man.',
-    (SELECT category_id FROM public.categories WHERE slug = 'manga'),
+    (SELECT category_id FROM public.categories WHERE type = 'books' AND name = 'Manga'),
     'VIZ Media',
     2020,
     'Shelf A-01',
@@ -45,7 +45,7 @@ INSERT INTO public.books (isbn, title, author, description, category_id, publish
     'Check & Mate',
     'Ali Hazelwood',
     'A witty, heartwarming rivals-to-lovers story set in the competitive world of high-stakes tournament chess.',
-    (SELECT category_id FROM public.categories WHERE slug = 'novels'),
+    (SELECT category_id FROM public.categories WHERE type = 'books' AND name = 'Novels & Stories'),
     'G.P. Putnam''s Sons',
     2023,
     'Shelf B-04',
@@ -58,7 +58,7 @@ INSERT INTO public.books (isbn, title, author, description, category_id, publish
     'I Want to Die but I Want to Eat Tteokbokki',
     'Baek Se-hee',
     'An intimate, honest dialogue between author and therapist exploring persistent mild depression and finding joy in life''s small comforts.',
-    (SELECT category_id FROM public.categories WHERE slug = 'essays'),
+    (SELECT category_id FROM public.categories WHERE type = 'books' AND name = 'Essays & Memoir'),
     'Bloomsbury Publishing',
     2022,
     'Shelf B-02',
@@ -71,7 +71,7 @@ INSERT INTO public.books (isbn, title, author, description, category_id, publish
     'The Alchemist',
     'Paulo Coelho',
     'The inspiring journey of Santiago, a shepherd boy who embarks on a quest to follow his dreams and discover his Personal Legend.',
-    (SELECT category_id FROM public.categories WHERE slug = 'novels'),
+    (SELECT category_id FROM public.categories WHERE type = 'books' AND name = 'Novels & Stories'),
     'HarperOne',
     1988,
     'Shelf A-05',
@@ -84,7 +84,7 @@ INSERT INTO public.books (isbn, title, author, description, category_id, publish
     'The Seven Year Slip',
     'Ashley Poston',
     'An overworked book publicist inherits an apartment that slips seven years into the past—and meets an aspiring chef from another time.',
-    (SELECT category_id FROM public.categories WHERE slug = 'novels'),
+    (SELECT category_id FROM public.categories WHERE type = 'books' AND name = 'Novels & Stories'),
     'Berkley',
     2023,
     'Shelf C-01',
@@ -104,7 +104,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     110.00,
     100,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Coffee'),
     'assets/images/coffee/americano.jpg'
 ),
 (
@@ -113,7 +113,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     125.00,
     80,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Coffee'),
     'assets/images/coffee/cappuccino.jpg'
 ),
 (
@@ -122,7 +122,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     135.00,
     90,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Coffee'),
     'assets/images/coffee/latte.jpg'
 ),
 (
@@ -131,7 +131,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     145.00,
     70,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'coffee'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Coffee'),
     'assets/images/coffee/mocha.jpg'
 ),
 (
@@ -140,7 +140,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     150.00,
     35,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'drinks'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Drinks'),
     'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=600&q=80'
 ),
 (
@@ -149,7 +149,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     130.00,
     40,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'drinks'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Drinks'),
     'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=600&q=80'
 ),
 (
@@ -158,7 +158,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     120.00,
     20,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'food'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Food'),
     'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80'
 ),
 (
@@ -167,7 +167,7 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     115.00,
     25,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'food'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Food'),
     'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80'
 ),
 (
@@ -176,36 +176,108 @@ INSERT INTO public.products (name, description, price, stock, is_available, cate
     140.00,
     15,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'food'),
+    (SELECT category_id FROM public.categories WHERE type = 'cafe' AND name = 'Food'),
     'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&w=600&q=80'
 ),
 -- Floral Studio Items
 (
-    'The Morning Mist Bunch',
-    'An airy, romantic gathering of garden roses, feathery white astilbe, silver dollar eucalyptus, and sea lavender.',
+    'Three Red Roses',
+    'A classic bouquet of three fresh red roses, symbolizing love and admiration.',
     450.00,
+    20,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/3roses.jpg'
+),
+(
+    'Paper Roses',
+    'Cute Paper Roses for any occassion, it can be for your friends or loved ones.',
+    600.00,
     15,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'fresh'),
-    'https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80'
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/flower2.jpg'
 ),
 (
-    'Terracotta Ranunculus',
-    'Warm autumnal bunch featuring apricot ranunculus, copper chrysanthemum, dried bunny tails, and golden wheat.',
-    380.00,
+    'Lavender Bunch',
+    'A fragrant bouquet of lavender, perfect for relaxation and aesthetic decor.',
+    350.00,
+    25,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/lavender.jpg'
+),
+(
+    'Mixed Flower Arrangement',
+    'A stunning mix of fresh seasonal flowers, ideal for any celebration.',
+    700.00,
+    18,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/flower6.jpg'
+),
+(
+    'Chocolate & Rose Gift Set',
+    'A perfect romantic gift with premium chocolates and red roses.',
+    1200.00,
+    10,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/chocolate.jpg'
+),
+(
+    'Crimson & Gold Roses',
+    'A luxurious combination of crimson red and golden roses for elegance.',
+    1500.00,
     12,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'fresh'),
-    'https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80'
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/CrimsonGold.jpg'
 ),
 (
-    'The Archival Dried Cloche',
-    'Everlasting botanical arrangement enclosed under handblown bell jar glass with preserved pampas and lunaria.',
-    550.00,
-    8,
+    'Blue Tulips',
+    'Rare and exotic blue tulips, perfect for a unique and thoughtful gift.',
+    1000.00,
+    10,
     TRUE,
-    (SELECT category_id FROM public.categories WHERE slug = 'dried'),
-    'https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&w=600&q=80'
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/bluetulips.jpg'
+),
+(
+    'Korean-Style Bouquet',
+    'A trendy and minimalistic flower arrangement inspired by Korean aesthetics.',
+    800.00,
+    15,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/korean.jpg'
+),
+(
+    'Pink Peonies',
+    'Soft and delicate pink peonies, symbolizing prosperity and romance.',
+    900.00,
+    14,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/PinkFlowers.jpg'
+),
+(
+    'Crochet Flowers',
+    'Handmade crochet flowers that last forever—perfect for a heartfelt gift.',
+    500.00,
+    30,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/crochet.jpg'
+),
+(
+    'LEGO Roses',
+    'A creative and unique bouquet of LEGO roses for flower and toy enthusiasts.',
+    1100.00,
+    12,
+    TRUE,
+    (SELECT category_id FROM public.categories WHERE type = 'flowers'),
+    'assets/images/flowers/legoRoses.jpg'
 );
 
 -- ----------------------------------------------------------------------------
@@ -215,7 +287,7 @@ INSERT INTO public.events (title, description, category_id, event_date, event_ti
 (
     'Monthly Book Review & Cozy Reading Circle',
     'Bring your current favorite read or join us to review and discuss our monthly community pick! Warm drinks, cozy vibes, and great conversations.',
-    (SELECT category_id FROM public.categories WHERE slug = 'salon'),
+    (SELECT category_id FROM public.categories WHERE type = 'events'),
     '2026-10-17',
     '18:30:00',
     20,
@@ -225,7 +297,7 @@ INSERT INTO public.events (title, description, category_id, event_date, event_ti
 (
     'AFTERWORD Quiz Night: Pop Culture & Trivia',
     'Test your knowledge on movies, music, anime, pop culture, and random fun facts! Form a team or join one at the door. Prizes for top 3 teams!',
-    (SELECT category_id FROM public.categories WHERE slug = 'quiz'),
+    (SELECT category_id FROM public.categories WHERE type = 'events'),
     '2026-10-22',
     '19:00:00',
     40,
@@ -235,7 +307,7 @@ INSERT INTO public.events (title, description, category_id, event_date, event_ti
 (
     'Valorant 5v5 Community Tournament & Watch Party',
     '5v5 Swiftplay & Custom Lobby tournament! Bring your 5-stack or sign up solo to get matched. High-speed Wi-Fi, big screen stream, and free iced drinks for players.',
-    (SELECT category_id FROM public.categories WHERE slug = 'gaming'),
+    (SELECT category_id FROM public.categories WHERE type = 'events'),
     '2026-10-25',
     '14:00:00',
     32,
@@ -245,7 +317,7 @@ INSERT INTO public.events (title, description, category_id, event_date, event_ti
 (
     'Friday Board Game & Chill Night',
     'Casual games night! Play Catan, Secret Hitler, Uno, Monopoly, Codenames, or bring your own tabletop games. Free snacks and tea provided!',
-    (SELECT category_id FROM public.categories WHERE slug = 'games'),
+    (SELECT category_id FROM public.categories WHERE type = 'events'),
     '2026-10-31',
     '18:00:00',
     35,

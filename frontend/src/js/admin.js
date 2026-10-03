@@ -82,6 +82,21 @@ async function loadCafeFromBackend() {
   renderDynamicDashboard();
 }
 
+function getDefaultFlowerInventory() {
+  return [
+    { id: 'flw-1', name: 'Fresh Red Rose Stem', category: 'Fresh Stems', price: 60, stock: 50, maxStock: 100, available: true, image: 'assets/images/flowers/3roses.jpg' },
+    { id: 'flw-2', name: 'Exotic Blue Tulip Stem', category: 'Fresh Stems', price: 120, stock: 35, maxStock: 70, available: true, image: 'assets/images/flowers/bluetulips.jpg' },
+    { id: 'flw-3', name: 'Soft Pink Peony Stem', category: 'Fresh Stems', price: 110, stock: 40, maxStock: 80, available: true, image: 'assets/images/flowers/PinkFlowers.jpg' },
+    { id: 'flw-4', name: 'French Lavender Sprig', category: 'Fresh Stems', price: 40, stock: 60, maxStock: 120, available: true, image: 'assets/images/flowers/lavender.jpg' },
+    { id: 'flw-5', name: 'Fresh White Lily Stem', category: 'Fresh Stems', price: 90, stock: 30, maxStock: 60, available: true, image: 'assets/images/flowers/flower1.jpg' },
+    { id: 'flw-6', name: 'Silver Dollar Eucalyptus', category: 'Foliage & Fillers', price: 45, stock: 80, maxStock: 150, available: true, image: 'assets/images/flowers/flower5.jpg' },
+    { id: 'flw-7', name: "Baby's Breath Sprig", category: 'Foliage & Fillers', price: 35, stock: 75, maxStock: 150, available: true, image: 'assets/images/flowers/flower6.jpg' },
+    { id: 'flw-8', name: 'Paper Rose Stem', category: 'Artisanal Stems', price: 75, stock: 45, maxStock: 90, available: true, image: 'assets/images/flowers/flower2.jpg' },
+    { id: 'flw-9', name: 'Crochet Flower Stem', category: 'Artisanal Stems', price: 80, stock: 40, maxStock: 80, available: true, image: 'assets/images/flowers/crochet.jpg' },
+    { id: 'flw-10', name: 'LEGO Rose Stem', category: 'Artisanal Stems', price: 100, stock: 25, maxStock: 50, available: true, image: 'assets/images/flowers/legoRoses.jpg' }
+  ];
+}
+
 async function loadFlowersFromBackend() {
   try {
     const products = await window.AfterwordAPI.getProducts('flowers');
@@ -89,16 +104,19 @@ async function loadFlowersFromBackend() {
       flowerInventory = products.map(p => ({
         id: String(p.product_id),
         name: p.name,
-        category: p.categories?.name || 'Botanicals',
+        category: p.categories?.name || 'Fresh Cut Bouquets',
         price: Number(p.price),
         stock: p.stock || 0,
         maxStock: (p.stock || 0) * 2 || 20,
         available: p.is_available,
         image: formatAdminImageUrl(p.image_url, 'flowers')
       }));
+    } else {
+      flowerInventory = getDefaultFlowerInventory();
     }
   } catch (err) {
     console.warn('Could not load flower products:', err);
+    flowerInventory = getDefaultFlowerInventory();
   }
   renderFlowersTable();
   renderDynamicDashboard();
@@ -130,18 +148,30 @@ async function loadLibraryFromBackend() {
 async function loadEventsFromBackend() {
   try {
     const events = await window.AfterwordAPI.getEvents();
+    let allRsvps = [];
+    try {
+      const rRes = await fetch('/api/rsvps');
+      if (rRes.ok) allRsvps = await rRes.json();
+    } catch (rErr) {
+      console.warn('RSVP pre-fetch note:', rErr.message);
+    }
+
     if (Array.isArray(events) && events.length > 0) {
-      eventsProgram = events.map(ev => ({
-        id: String(ev.event_id),
-        name: ev.title,
-        date: new Date(ev.event_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-        time: ev.event_time ? ev.event_time.slice(0, 5) : '',
-        category: ev.categories?.name || 'Gathering',
-        capacity: ev.capacity,
-        registered: 0,
-        status: ev.status === 'Scheduled' ? 'open' : ev.status?.toLowerCase(),
-        image: formatAdminImageUrl(ev.image_url || '', 'events')
-      }));
+      eventsProgram = events.map(ev => {
+        const evRsvps = allRsvps.filter(r => String(r.event_id) === String(ev.event_id) && r.status !== 'Cancelled');
+        const totalGuests = evRsvps.reduce((sum, r) => sum + (Number(r.guest_count) || 1), 0);
+        return {
+          id: String(ev.event_id),
+          name: ev.title,
+          date: new Date(ev.event_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+          time: ev.event_time ? ev.event_time.slice(0, 5) : '',
+          category: ev.categories?.name || 'Gathering',
+          capacity: ev.capacity,
+          registered: totalGuests,
+          status: ev.status === 'Scheduled' ? 'open' : ev.status?.toLowerCase(),
+          image: formatAdminImageUrl(ev.image_url || '', 'events')
+        };
+      });
     }
   } catch (err) {
     console.warn('Could not load events:', err);
@@ -200,6 +230,7 @@ async function loadCustomersFromBackend() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initTopbarClock();
+  initStaffProfileCard();
   initAdminNavigation();
   initMobileSidebar();
   initDashboardController();
@@ -213,6 +244,56 @@ document.addEventListener('DOMContentLoaded', () => {
   initModalsController();
   initGlobalSearch();
 });
+
+/**
+ * Dynamically populates the sidebar staff profile card with active logged-in user details.
+ */
+function initStaffProfileCard() {
+  let user = null;
+  if (typeof getLoggedInUser === 'function') {
+    user = getLoggedInUser();
+  }
+  if (!user) {
+    try {
+      const raw = localStorage.getItem('afterword_user');
+      if (raw) user = JSON.parse(raw);
+    } catch (err) {
+      console.warn('Could not parse afterword_user session:', err);
+    }
+  }
+
+  const nameEl = document.getElementById('admin-staff-name') || document.querySelector('.staff-profile-card .staff-name');
+  const roleEl = document.getElementById('admin-staff-role') || document.querySelector('.staff-profile-card .staff-role');
+  const avatarEl = document.getElementById('admin-staff-avatar') || document.querySelector('.staff-profile-card .staff-avatar');
+  const avatarSpan = document.getElementById('admin-staff-initials') || (avatarEl ? avatarEl.querySelector('span:not(.staff-status-dot)') : null);
+
+  const userName = user?.name || user?.email || 'Staff Member';
+  let initials = 'SU';
+
+  if (userName) {
+    const parts = userName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    } else {
+      initials = userName.substring(0, 2).toUpperCase();
+    }
+  }
+
+  const roleUpper = (user?.role || 'staff').toUpperCase();
+  let roleText = 'STAFF MEMBER · SHIFT 1';
+  if (user?.role === 'admin') {
+    roleText = 'STORE MANAGER · SHIFT 1';
+  } else if (user?.role === 'staff') {
+    roleText = 'STORE STAFF · SHIFT 1';
+  } else if (user?.role) {
+    roleText = `${roleUpper} · SHIFT 1`;
+  }
+
+  if (nameEl) nameEl.textContent = userName;
+  if (roleEl) roleEl.textContent = roleText;
+  if (avatarSpan) avatarSpan.textContent = initials;
+  if (avatarEl) avatarEl.title = `${userName} — On Shift`;
+}
 
 /**
  * Updates topbar live timestamp and date every minute.
@@ -1152,6 +1233,10 @@ function renderFlowersTable() {
   const tableBody = document.getElementById('flowers-table-body');
   if (!tableBody) return;
 
+  if (!flowerInventory || flowerInventory.length === 0) {
+    flowerInventory = getDefaultFlowerInventory();
+  }
+
   tableBody.innerHTML = flowerInventory.map(item => `
     <tr>
       <td>
@@ -1164,7 +1249,7 @@ function renderFlowersTable() {
         </div>
       </td>
       <td><span class="chip chip-olive">${item.category}</span></td>
-      <td><span class="text-mono font-semibold">₱${(item.price * 56).toFixed(0)}</span></td>
+      <td><span class="text-mono font-semibold">₱${Number(item.price >= 100 ? item.price : item.price * 56).toFixed(2)}</span></td>
       <td>
         <div class="stock-counter">
           <button class="stock-btn" data-stock-action="dec" data-item-id="${item.id}">−</button>
@@ -1661,12 +1746,111 @@ function initEventsSection() {
       const rosterBtn = e.target.closest('[data-event-action="roster"]');
       if (rosterBtn) {
         const evId = rosterBtn.getAttribute('data-event-id');
-        const ev = eventsProgram.find(i => i.id === evId);
-        showToast(`Printed attendee roster for "${ev ? ev.name : 'Event'}"`, 'print');
+        showEventRosterModal(evId);
       }
     });
   }
 }
+
+async function showEventRosterModal(eventId) {
+  const modal = document.getElementById('view-roster-modal');
+  if (!modal) return;
+
+  const eventItem = eventsProgram.find(e => String(e.id) === String(eventId));
+  const titleEl = document.getElementById('roster-modal-event-title');
+  const metaEl = document.getElementById('roster-modal-event-meta');
+  const summaryCountEl = document.getElementById('roster-summary-count');
+  const spotsLeftEl = document.getElementById('roster-spots-left');
+  const tbody = document.getElementById('roster-table-body');
+
+  if (titleEl) titleEl.textContent = eventItem ? `Roster: ${eventItem.name}` : 'Event Attendee Roster';
+  if (metaEl) metaEl.textContent = eventItem ? `${eventItem.date} at ${eventItem.time} · Capacity: ${eventItem.capacity}` : 'Manage patron reservations';
+
+  if (tbody) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center p-md text-muted">Loading event reservations...</td></tr>`;
+  }
+
+  modal.classList.add('open');
+
+  try {
+    const res = await fetch(`/api/rsvps?event_id=${eventId}`);
+    if (!res.ok) throw new Error('Failed to load roster');
+    const rsvps = await res.json();
+
+    const activeRsvps = rsvps.filter(r => r.status !== 'Cancelled');
+    const totalGuests = activeRsvps.reduce((sum, r) => sum + (Number(r.guest_count) || 1), 0);
+    const capacity = eventItem ? eventItem.capacity : 20;
+    const spotsLeft = Math.max(0, capacity - totalGuests);
+
+    if (summaryCountEl) summaryCountEl.textContent = `${totalGuests} Registered Attendees (${activeRsvps.length} Bookings)`;
+    if (spotsLeftEl) spotsLeftEl.textContent = `${spotsLeft} Spots Available`;
+
+    if (rsvps.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center p-md text-muted">No reservations recorded yet for this gathering.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rsvps.map(r => {
+      const patronName = r.profiles?.full_name || r.name || 'Patron';
+      const patronEmail = r.profiles?.email || r.email || 'N/A';
+      const rsvpDate = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
+      
+      let badgeClass = 'status-badge--completed';
+      let statusText = r.status || 'Confirmed';
+      if (r.status === 'Cancelled') badgeClass = 'status-badge--missing';
+      else if (r.status === 'Waitlist') badgeClass = 'status-badge--pending';
+
+      return `
+        <tr>
+          <td>
+            <div>
+              <strong class="text-sm font-semibold">${patronName}</strong>
+              <div class="text-xs text-muted">${patronEmail}</div>
+            </div>
+          </td>
+          <td><span class="text-mono font-bold">${r.guest_count || 1} guest(s)</span></td>
+          <td><span class="text-xs text-muted text-mono">${rsvpDate}</span></td>
+          <td><span class="status-badge ${badgeClass}">${statusText}</span></td>
+          <td>
+            <div class="flex-row items-center gap-2xs">
+              ${r.status !== 'Confirmed' && r.status !== 'Approved' ? `
+                <button class="btn btn-primary btn-xs" onclick="window.updateAdminRsvpStatus(${r.rsvp_id}, 'Confirmed', '${eventId}')">
+                  Approve ✓
+                </button>
+              ` : ''}
+              ${r.status !== 'Cancelled' ? `
+                <button class="btn btn-outline btn-xs text-danger" onclick="window.updateAdminRsvpStatus(${r.rsvp_id}, 'Cancelled', '${eventId}')">
+                  Cancel ✕
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch (err) {
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center p-md text-danger">Error: ${err.message}</td></tr>`;
+    }
+  }
+}
+
+async function updateAdminRsvpStatus(rsvpId, newStatus, eventId) {
+  try {
+    const res = await fetch(`/api/rsvps/${rsvpId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    if (!res.ok) throw new Error('Failed to update status');
+    showToast(`✓ RSVP status updated to ${newStatus}`, 'check_circle');
+    await showEventRosterModal(eventId);
+    await loadEventsFromBackend();
+  } catch (err) {
+    showToast(`Could not update RSVP: ${err.message}`, 'warning');
+  }
+}
+window.updateAdminRsvpStatus = updateAdminRsvpStatus;
 
 function renderEventsTable() {
   const tableBody = document.getElementById('events-table-body');

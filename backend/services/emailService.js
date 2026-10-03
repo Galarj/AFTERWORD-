@@ -211,8 +211,169 @@ async function sendDonationRejectedEmail({ donorName, donorEmail, bookTitle, adm
   });
 }
 
+/**
+ * Sends an Event RSVP Approved email to the patron
+ */
+async function sendRsvpApprovedEmail({ patronName, patronEmail, eventTitle, eventDate, eventTime, location, guestCount, adminNote }) {
+  const name = patronName || 'Patron';
+  const title = eventTitle || 'Community Gathering';
+  const dateStr = eventDate ? new Date(eventDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : 'Scheduled Date';
+  const timeStr = eventTime || 'See event schedule';
+  const locStr = location || 'AFTERWORD Community Gathering Space';
+  const noteSection = adminNote ? `
+    <div style="background-color: #f4efe6; border-left: 3px solid #a65f45; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+      <strong style="color: #1c2b26; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Staff Note:</strong>
+      <p style="margin: 4px 0 0; color: #2c3e35; font-size: 0.95rem;">${adminNote}</p>
+    </div>
+  ` : '';
+
+  const html = `
+    <div style="font-family: 'Georgia', serif; color: #1c2b26; background-color: #faf7f2; padding: 32px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #e5dfd5;">
+      <div style="border-bottom: 2px solid #a65f45; padding-bottom: 12px; margin-bottom: 24px;">
+        <h2 style="margin: 0; color: #1c2b26; font-family: 'Literata', Georgia, serif; font-size: 24px;">AFTERWORD</h2>
+        <span style="color: #a65f45; font-size: 13px; font-style: italic; font-family: sans-serif;">Community Gathering Space</span>
+      </div>
+
+      <p style="font-size: 16px; line-height: 1.6; color: #1c2b26;">Hi ${name},</p>
+      
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        Great news! Your event reservation for <strong>"${title}"</strong> has been approved!
+      </p>
+
+      ${noteSection}
+
+      <div style="background: #ffffff; padding: 20px; border-radius: 6px; border: 1px solid #dfd5c9; margin: 20px 0;">
+        <h4 style="margin: 0 0 12px; color: #1c2b26; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 6px;">Reservation Details:</h4>
+        <p style="margin: 4px 0; font-size: 14px; color: #444;"><strong>Event:</strong> ${title}</p>
+        <p style="margin: 4px 0; font-size: 14px; color: #444;"><strong>Date:</strong> ${dateStr}</p>
+        <p style="margin: 4px 0; font-size: 14px; color: #444;"><strong>Time:</strong> ${timeStr}</p>
+        <p style="margin: 4px 0; font-size: 14px; color: #444;"><strong>Location:</strong> ${locStr}</p>
+        <p style="margin: 4px 0; font-size: 14px; color: #444;"><strong>Seats Reserved:</strong> ${guestCount || 1} Guest(s)</p>
+        <p style="margin: 4px 0; font-size: 14px; color: #2e7d32;"><strong>Reservation Status:</strong> Confirmed ✓</p>
+      </div>
+
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        You can view your confirmed reservation anytime on your profile dashboard. We look forward to seeing you at the gathering!
+      </p>
+
+      <p style="margin-top: 28px; font-size: 14px; color: #7f8c8d;">
+        — AFTERWORD Community Team
+      </p>
+    </div>
+  `;
+
+  return sendRawEmail({
+    to: patronEmail,
+    subject: `RSVP Approved: ${title}`,
+    html
+  });
+}
+
+/**
+ * Sends an Event RSVP Rejection email to the patron
+ */
+async function sendRsvpRejectedEmail({ patronName, patronEmail, eventTitle, adminNote }) {
+  const name = patronName || 'Patron';
+  const title = eventTitle || 'Community Gathering';
+  const noteSection = adminNote ? `
+    <div style="background-color: #f4efe6; border-left: 3px solid #7f8c8d; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+      <strong style="color: #1c2b26; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Staff Note:</strong>
+      <p style="margin: 4px 0 0; color: #2c3e35; font-size: 0.95rem;">${adminNote}</p>
+    </div>
+  ` : '';
+
+  const html = `
+    <div style="font-family: 'Georgia', serif; color: #1c2b26; background-color: #faf7f2; padding: 32px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #e5dfd5;">
+      <div style="border-bottom: 2px solid #a65f45; padding-bottom: 12px; margin-bottom: 24px;">
+        <h2 style="margin: 0; color: #1c2b26; font-family: 'Literata', Georgia, serif; font-size: 24px;">AFTERWORD</h2>
+        <span style="color: #a65f45; font-size: 13px; font-style: italic; font-family: sans-serif;">Community Gathering Space</span>
+      </div>
+
+      <p style="font-size: 16px; line-height: 1.6; color: #1c2b26;">Hi ${name},</p>
+
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        Regarding your reservation request for <strong>"${title}"</strong>:
+      </p>
+
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        We're unable to confirm your reservation for this gathering at this time due to venue capacity constraints.
+      </p>
+
+      ${noteSection}
+
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        Please feel free to check our event schedule for upcoming workshops and future dates!
+      </p>
+
+      <p style="margin-top: 28px; font-size: 14px; color: #7f8c8d;">
+        — AFTERWORD Community Team
+      </p>
+    </div>
+  `;
+
+  return sendRawEmail({
+    to: patronEmail,
+    subject: `Update on your reservation for ${title}`,
+    html
+  });
+}
+
+/**
+ * Sends a Floral Stem Bar / Custom Bouquet Confirmation Email via Resend API
+ */
+async function sendFloralOrderEmail({ patronName, patronEmail, phone, itemsSummary, wrapStyle, pickupTime, notes, totalAmount }) {
+  const name = patronName || 'Flower Enthusiast';
+  const email = patronEmail;
+  const items = itemsSummary || 'Custom Stem Arrangement';
+  const wrap = wrapStyle || 'Standard Unbleached Kraft Paper';
+  const pickup = pickupTime || 'Counter Pickup';
+  const total = typeof totalAmount === 'number' ? `₱${totalAmount.toFixed(2)}` : totalAmount;
+
+  const html = `
+    <div style="font-family: 'Georgia', serif; color: #1c2b26; background-color: #faf7f2; padding: 32px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #e5dfd5;">
+      <div style="border-bottom: 2px solid #a65f45; padding-bottom: 12px; margin-bottom: 24px;">
+        <h2 style="margin: 0; color: #1c2b26; font-family: 'Literata', Georgia, serif; font-size: 24px;">AFTERWORD</h2>
+        <span style="color: #a65f45; font-size: 13px; font-style: italic; font-family: sans-serif;">Botanical Floral Studio &amp; Stem Bar</span>
+      </div>
+
+      <p style="font-size: 16px; line-height: 1.6; color: #1c2b26;">Hi ${name},</p>
+      
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        Thank you for your custom bouquet order at the <strong>AFTERWORD DIY Stem Bar</strong>!
+      </p>
+
+      <div style="background: #ffffff; padding: 20px; border-radius: 6px; border: 1px solid #dfd5c9; margin: 20px 0;">
+        <h4 style="margin: 0 0 12px; color: #1c2b26; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 6px;">Bespoke Bouquet Summary:</h4>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Selected Stems:</strong> ${items}</p>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Vessel / Wrapping:</strong> ${wrap}</p>
+        <p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Pickup / Table #:</strong> ${pickup}</p>
+        ${phone ? `<p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Contact Phone:</strong> ${phone}</p>` : ''}
+        ${notes ? `<p style="margin: 6px 0; font-size: 14px; color: #444;"><strong>Card Note / Ribbon:</strong> "${notes}"</p>` : ''}
+        <p style="margin: 12px 0 0; font-size: 16px; color: #a65f45; font-weight: bold;"><strong>Total Calculated:</strong> ${total}</p>
+      </div>
+
+      <p style="font-size: 15px; line-height: 1.6; color: #2c3e35;">
+        Our barista and florist are crafting your floral arrangement with fresh morning cuts and ribbon. You can pick it up at the floral counter!
+      </p>
+
+      <p style="margin-top: 28px; font-size: 14px; color: #7f8c8d;">
+        — AFTERWORD Botanical Team
+      </p>
+    </div>
+  `;
+
+  return sendRawEmail({
+    to: email,
+    subject: `Your AFTERWORD Custom Floral Order Confirmation`,
+    html
+  });
+}
+
 module.exports = {
   sendRawEmail,
   sendDonationApprovedEmail,
-  sendDonationRejectedEmail
+  sendDonationRejectedEmail,
+  sendRsvpApprovedEmail,
+  sendRsvpRejectedEmail,
+  sendFloralOrderEmail
 };

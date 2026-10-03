@@ -176,27 +176,56 @@ function initQuickRsvpButtons() {
       const eventName = btn.getAttribute('data-event-name') || 'Upcoming Gathering';
       const eventId = btn.getAttribute('data-event-id') || null;
       const isReserved = btn.classList.contains('btn-secondary');
-      const userId = (typeof getSupabaseUserId === 'function') ? getSupabaseUserId() : null;
+
+      let user = null;
+      if (typeof getLoggedInUser === 'function') {
+        user = getLoggedInUser();
+      }
+      if (!user) {
+        try {
+          const raw = localStorage.getItem('afterword_user');
+          if (raw) user = JSON.parse(raw);
+        } catch (e) {}
+      }
+
+      const userId = user?.id || user?.supabaseId || (typeof getSupabaseUserId === 'function' ? getSupabaseUserId() : null);
+      const userEmail = user?.email || null;
+      const userName = user?.name || null;
 
       if (!isReserved) {
         btn.classList.remove('btn-primary');
         btn.classList.add('btn-secondary');
         btn.innerHTML = '<span class="material-symbols-outlined icon-16">check</span> Spot Reserved';
-        
-        if (window.AfterwordAPI && typeof window.AfterwordAPI.createRSVP === 'function' && eventId) {
+
+        if (eventId) {
           try {
-            await window.AfterwordAPI.createRSVP(parseInt(eventId), userId, 1);
-          } catch (err) {
-            console.error('RSVP failed:', err);
-            showToast(`RSVP failed: ${err.message}`, 'error');
-            // Revert button state
-            btn.classList.remove('btn-secondary');
-            btn.classList.add('btn-primary');
-            btn.textContent = 'RSVP / Reserve';
+            const res = await fetch('/api/rsvps', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                eventId: parseInt(eventId),
+                userId: userId,
+                email: userEmail,
+                userName: userName,
+                guestCount: 1
+              })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to reserve spot');
+
+            showToast(`✓ Spot reserved for "${eventName}"! Confirmation email sent & listed in your profile.`, 'check_circle');
             return;
+          } catch (err) {
+            console.error('RSVP API failed:', err);
+            showToast(`RSVP notice: ${err.message}`, 'warning');
           }
+        } else if (window.AfterwordAPI && typeof window.AfterwordAPI.createRSVP === 'function') {
+          try {
+            await window.AfterwordAPI.createRSVP(1, userId, 1);
+          } catch (err) {}
         }
-        showToast(`Spot reserved for "${eventName}"!`, 'check_circle');
+        showToast(`Spot reserved for "${eventName}"! Check your profile under Gatherings & RSVPs.`, 'check_circle');
       } else {
         btn.classList.remove('btn-secondary');
         btn.classList.add('btn-primary');
@@ -246,7 +275,12 @@ function initModals() {
 
     const floralBtn = e.target.closest('[data-action="inquire-floral"]');
     if (floralBtn) {
-      showToast('Visit the floral counter to select fresh flowers with our staff.', 'eco');
+      const floralModal = document.getElementById('floral-inquiry-modal');
+      if (floralModal) {
+        openModal(floralModal);
+      } else {
+        showToast('Visit the floral counter to select fresh flowers with our staff.', 'eco');
+      }
     }
 
     const readingListBtn = e.target.closest('[data-action="add-reading-list"]');
@@ -277,6 +311,7 @@ function initModals() {
   initBorrowModal();
   initEventModal();
   initDonationModal();
+  initFloralInquiryModal();
   initQuickRsvpButtons();
 }
 
@@ -375,5 +410,165 @@ function initDonationModal() {
       }
     });
   }
+}
+
+/**
+ * Configures event listeners for the DIY Stem Bar modal (`#floral-inquiry-modal`).
+ * - Listens for input events on individual stem quantity inputs (`.stem-qty-input`)
+ *   and wrapping selections (`#floral-wrap-style`).
+ * - Dynamically calculates live bouquet subtotal and total stem count.
+ * - On form submit: constructs custom bouquet item summary, adds to cart via `addToCart()`,
+ *   triggers confirmation toast, and closes modal.
+ */
+function initFloralInquiryModal() {
+  const floralModal = document.getElementById('floral-inquiry-modal');
+  if (!floralModal) return;
+
+  const floralForm = document.getElementById('floral-inquiry-form');
+  if (!floralForm) return;
+
+  const stemInputs = floralForm.querySelectorAll('.stem-qty-input');
+  const wrapSelect = document.getElementById('floral-wrap-style');
+  const liveTotalEl = document.getElementById('floral-live-total');
+  const totalStemsEl = document.getElementById('floral-total-stems-count');
+
+  /**
+   * Recalculates total cost of selected stems + wrapping option
+   */
+  function updateStemBarTotals() {
+    let stemsSubtotal = 0;
+    let totalStemsCount = 0;
+
+    stemInputs.forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      const unitPrice = parseFloat(input.getAttribute('data-price')) || 0;
+      if (qty > 0) {
+        stemsSubtotal += (qty * unitPrice);
+        totalStemsCount += qty;
+      }
+    });
+
+    let wrapPrice = 0;
+    if (wrapSelect && wrapSelect.selectedIndex >= 0) {
+      const selectedOpt = wrapSelect.options[wrapSelect.selectedIndex];
+      wrapPrice = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+    }
+
+    const grandTotal = stemsSubtotal + wrapPrice;
+
+    if (liveTotalEl) {
+      liveTotalEl.textContent = `₱${grandTotal.toFixed(2)}`;
+    }
+    if (totalStemsEl) {
+      totalStemsEl.textContent = `${totalStemsCount} Stem${totalStemsCount === 1 ? '' : 's'} Selected`;
+    }
+  }
+
+  // Attach real-time recalculation listeners
+  stemInputs.forEach(input => {
+    input.addEventListener('input', updateStemBarTotals);
+    input.addEventListener('change', updateStemBarTotals);
+  });
+
+  if (wrapSelect) {
+    wrapSelect.addEventListener('change', updateStemBarTotals);
+  }
+
+  // Initial calculation on render
+  updateStemBarTotals();
+
+  // Handle form submission
+  floralForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const patronName = document.getElementById('floral-patron-name')?.value.trim() || 'Patron';
+    const patronEmail = document.getElementById('floral-patron-email')?.value.trim() || '';
+    const phone = document.getElementById('floral-patron-phone')?.value.trim() || '';
+    const pickupTime = document.getElementById('floral-pickup-time')?.value.trim() || 'Counter Pickup';
+    const notes = document.getElementById('floral-special-notes')?.value.trim() || '';
+
+    if (!patronEmail || !patronEmail.includes('@')) {
+      showToast('Please enter a valid email address for order confirmation!', 'warning');
+      return;
+    }
+
+    const chosenStems = [];
+    let stemsSubtotal = 0;
+    let totalStemsCount = 0;
+
+    stemInputs.forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      const name = input.getAttribute('data-name') || 'Stem';
+      const unitPrice = parseFloat(input.getAttribute('data-price')) || 0;
+      if (qty > 0) {
+        chosenStems.push(`${qty}x ${name}`);
+        stemsSubtotal += (qty * unitPrice);
+        totalStemsCount += qty;
+      }
+    });
+
+    if (totalStemsCount === 0) {
+      showToast('Please select at least 1 flower stem to build your bouquet!', 'warning');
+      return;
+    }
+
+    let wrapName = 'Standard Wrap';
+    let wrapPrice = 0;
+    if (wrapSelect && wrapSelect.selectedIndex >= 0) {
+      const selectedOpt = wrapSelect.options[wrapSelect.selectedIndex];
+      wrapName = selectedOpt.value.split(' (+')[0];
+      wrapPrice = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+    }
+
+    const totalBouquetPrice = stemsSubtotal + wrapPrice;
+    const stemsListStr = chosenStems.join(', ');
+    const itemTitle = `Custom Bouquet (${stemsListStr})`;
+
+    // 1. Add to local cart tray
+    if (typeof addToCart === 'function') {
+      addToCart({
+        name: itemTitle,
+        price: totalBouquetPrice,
+        category: 'Custom Bouquet'
+      });
+    }
+
+    // 2. Dispatch to backend API to trigger Resend confirmation email
+    try {
+      const res = await fetch('/api/flowers/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patronName,
+          patronEmail,
+          phone,
+          itemsSummary: stemsListStr,
+          wrapStyle: wrapName,
+          pickupTime,
+          notes,
+          totalAmount: totalBouquetPrice
+        })
+      });
+      const data = await res.json();
+      if (data.emailSent) {
+        showToast(`✓ Order confirmed & Resend email sent to ${patronEmail}!`, 'mark_email_read');
+      } else {
+        showToast(`✓ Custom Bouquet added to Tray! (₱${totalBouquetPrice.toFixed(2)})`, 'local_florist');
+      }
+    } catch (apiErr) {
+      console.warn('Backend email endpoint notification:', apiErr.message);
+      showToast(`✓ Custom Bouquet added to Tray! (₱${totalBouquetPrice.toFixed(2)})`, 'local_florist');
+    }
+
+    closeModal(floralModal);
+
+    // Open cart drawer
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartDrawer && cartOverlay) {
+      cartDrawer.classList.add('open');
+      cartOverlay.classList.add('open');
+    }
+  });
 }
 

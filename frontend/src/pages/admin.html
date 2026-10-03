@@ -115,13 +115,13 @@
       <div class="sidebar-footer">
         <div class="staff-profile-card">
           <div class="staff-info-wrap">
-            <div class="staff-avatar" title="Clara Vance — On Shift">
-              <span>CV</span>
+            <div class="staff-avatar" id="admin-staff-avatar" title="Staff User — On Shift">
+              <span id="admin-staff-initials">SU</span>
               <span class="staff-status-dot"></span>
             </div>
             <div class="staff-meta">
-              <span class="staff-name">Clara Vance</span>
-              <span class="staff-role">FLOOR DIRECTOR · SHIFT 1</span>
+              <span class="staff-name" id="admin-staff-name">Staff User</span>
+              <span class="staff-role" id="admin-staff-role">STAFF MEMBER · SHIFT 1</span>
             </div>
           </div>
           <a href="../../index.html" class="staff-store-link" title="Return to Public Customer Storefront">
@@ -1235,6 +1235,44 @@
       </div>
       <div class="modal-footer" id="donation-detail-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn btn-outline" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 11: View Event Roster & Manage RSVPs -->
+  <div class="modal-scrim" id="view-roster-modal" role="dialog" aria-hidden="true">
+    <div class="modal-content" style="max-width: 640px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="roster-modal-event-title">Event Attendee Roster</h3>
+          <span class="text-xs text-muted" id="roster-modal-event-meta">Manage patron reservations and approval statuses</span>
+        </div>
+        <button class="modal-close-btn" data-close-modal aria-label="Close Modal">✕</button>
+      </div>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="p-xs mb-sm bg-surface-low border border-light rounded flex-row justify-between items-center">
+          <span class="text-sm font-semibold text-primary" id="roster-summary-count">0 Attendees Registered</span>
+          <span class="chip chip-coffee text-xs" id="roster-spots-left">-- Spots Available</span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Patron Name & Contact</th>
+                <th>Party Size</th>
+                <th>RSVP Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="roster-table-body">
+              <!-- Injected dynamically by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-close-modal>Close Roster</button>
       </div>
     </div>
   </div>

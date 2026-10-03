@@ -11,7 +11,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const { sendEmail, sendDonationApprovedEmail, sendDonationRejectedEmail } = require('./services/emailService');
+const { sendEmail, sendDonationApprovedEmail, sendDonationRejectedEmail, sendRsvpApprovedEmail, sendRsvpRejectedEmail, sendFloralOrderEmail } = require('./services/emailService');
 const { createDonation, getDonations, getDonationById, updateDonation } = require('./donationsStore');
 
 
@@ -630,6 +630,51 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// DIY Stem Bar / Floral Custom Bouquet Order Endpoint (Sends email via Resend)
+// ---------------------------------------------------------------------------
+app.post('/api/flowers/order', async (req, res) => {
+  try {
+    const { patronName, patronEmail, phone, itemsSummary, wrapStyle, pickupTime, notes, totalAmount } = req.body;
+
+    if (!patronEmail || !patronEmail.includes('@')) {
+      return res.status(400).json({ error: 'A valid email address is required for custom bouquet orders.' });
+    }
+
+    // Dispatch confirmation email via Resend API
+    let emailResult = { success: false };
+    try {
+      emailResult = await sendFloralOrderEmail({
+        patronName,
+        patronEmail,
+        phone,
+        itemsSummary,
+        wrapStyle,
+        pickupTime,
+        notes,
+        totalAmount
+      });
+    } catch (eErr) {
+      console.warn('[Floral Order Email Warning]:', eErr.message);
+    }
+
+    res.status(201).json({
+      message: 'Custom floral order submitted successfully!',
+      orderSummary: {
+        patronName,
+        patronEmail,
+        itemsSummary,
+        wrapStyle,
+        totalAmount
+      },
+      emailSent: emailResult.success
+    });
+  } catch (err) {
+    console.error('Error submitting floral order:', err);
+    res.status(500).json({ error: err.message || 'Internal server error processing floral order.' });
+  }
+});
+
 app.get('/api/orders', async (req, res) => {
   try {
     const { status, user_id } = req.query;
@@ -720,28 +765,67 @@ app.delete('/api/orders/:id', async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// 8. Event RSVPs
+// 8. Event RSVPs & Reservations
 // ---------------------------------------------------------------------------
 app.post('/api/rsvps', async (req, res) => {
   try {
-    const { eventId, userId, guestCount = 1 } = req.body;
+    const { eventId, userId, guestCount = 1, email, userName } = req.body;
     if (!eventId) {
       return res.status(400).json({ error: 'eventId is required.' });
     }
 
-    const { data, error } = await supabase
+    // Insert RSVP record
+    const { data: rsvp, error } = await supabase
       .from('event_rsvps')
       .insert([{
-        event_id: eventId,
+        event_id: parseInt(eventId),
         user_id: userId || null,
         guest_count: guestCount,
         status: 'Confirmed'
       }])
-      .select()
+      .select('*, events(title, event_date, event_time, location), profiles(full_name, patron_code)')
       .single();
 
     if (error) throw error;
-    res.status(201).json({ message: 'Spot reserved successfully!', rsvp: data });
+
+    // Determine recipient email & name
+    let recipientEmail = email;
+    let recipientName = userName || rsvp.profiles?.full_name || 'Patron';
+
+    if (!recipientEmail && userId && typeof userId === 'string' && userId.length === 36) {
+      try {
+        const { data: userData } = await supabase.auth.admin.getUserById(userId);
+        if (userData?.user?.email) {
+          recipientEmail = userData.user.email;
+        }
+      } catch (e) {}
+    }
+
+    // Attempt email dispatch
+    let emailSent = false;
+    if (recipientEmail) {
+      try {
+        const ev = rsvp.events || {};
+        await sendRsvpApprovedEmail({
+          patronName: recipientName,
+          patronEmail: recipientEmail,
+          eventTitle: ev.title || 'Community Gathering',
+          eventDate: ev.event_date,
+          eventTime: ev.event_time,
+          location: ev.location,
+          guestCount: rsvp.guest_count
+        });
+        emailSent = true;
+      } catch (eErr) {
+        console.warn('[RSVP Email Notice]:', eErr.message);
+      }
+    }
+
+    res.status(201).json({
+      message: 'Event spot reserved successfully!',
+      rsvp,
+      emailSent
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -750,13 +834,82 @@ app.post('/api/rsvps', async (req, res) => {
 app.get('/api/rsvps', async (req, res) => {
   try {
     const { event_id, user_id } = req.query;
-    let query = supabase.from('event_rsvps').select('*, events(title, event_date, event_time, location), profiles(full_name, patron_code)').order('created_at', { ascending: false });
+    let query = supabase
+      .from('event_rsvps')
+      .select('*, events(title, event_date, event_time, location), profiles(full_name, patron_code)')
+      .order('created_at', { ascending: false });
+
     if (event_id) query = query.eq('event_id', event_id);
     if (user_id) query = query.eq('user_id', user_id);
 
     const { data, error } = await query;
     if (error) throw error;
     res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch('/api/rsvps/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, adminNote } = req.body;
+
+    const { data: rsvp, error } = await supabase
+      .from('event_rsvps')
+      .update({ status })
+      .eq('rsvp_id', id)
+      .select('*, events(title, event_date, event_time, location), profiles(full_name, patron_code)')
+      .single();
+
+    if (error) throw error;
+
+    // Send status update email if confirmed or rejected
+    let recipientEmail = null;
+    let recipientName = rsvp.profiles?.full_name || 'Patron';
+
+    if (rsvp.user_id) {
+      try {
+        const { data: userData } = await supabase.auth.admin.getUserById(rsvp.user_id);
+        if (userData?.user?.email) recipientEmail = userData.user.email;
+      } catch (e) {}
+    }
+
+    if (recipientEmail) {
+      const ev = rsvp.events || {};
+      if (status === 'Confirmed') {
+        await sendRsvpApprovedEmail({
+          patronName: recipientName,
+          patronEmail: recipientEmail,
+          eventTitle: ev.title,
+          eventDate: ev.event_date,
+          eventTime: ev.event_time,
+          location: ev.location,
+          guestCount: rsvp.guest_count,
+          adminNote
+        });
+      } else if (status === 'Cancelled' || status === 'Rejected') {
+        await sendRsvpRejectedEmail({
+          patronName: recipientName,
+          patronEmail: recipientEmail,
+          eventTitle: ev.title,
+          adminNote
+        });
+      }
+    }
+
+    res.json({ message: `RSVP status updated to ${status}`, rsvp });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/rsvps/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { error } = await supabase.from('event_rsvps').delete().eq('rsvp_id', id);
+    if (error) throw error;
+    res.json({ message: 'RSVP reservation cancelled successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
