@@ -275,3 +275,10 @@ function setupHeaderSearch() {
     }
   });
 }
+
+// Auto-initialize navigation when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initNavigation);
+} else {
+  initNavigation();
+}
