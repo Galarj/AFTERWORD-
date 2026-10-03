@@ -315,15 +315,10 @@ function initHeaderAuth() {
     </button>
   `;
 
-  // Insert before or replace existing generic avatar link
+  // Replace generic avatar with patron badge
   const existingAvatar = headerRight.querySelector('.nav-user-avatar');
   if (existingAvatar) {
-    if (user.role === 'admin') {
-      existingAvatar.title = 'Staff Admin Console';
-      headerRight.insertBefore(patronBadge, existingAvatar);
-    } else {
-      existingAvatar.replaceWith(patronBadge);
-    }
+    existingAvatar.replaceWith(patronBadge);
   } else {
     headerRight.appendChild(patronBadge);
   }
