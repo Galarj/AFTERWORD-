@@ -261,34 +261,6 @@ function initHeaderAuth() {
   const user = getLoggedInUser();
   if (!user || isAuthPage()) return;
 
-  // Dynamically inject Admin Tab for staff and admins
-  if (user.role === 'admin' || user.role === 'staff') {
-    const adminUrl = getAdminUrl();
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks && !navLinks.querySelector('[href*="admin.html"]')) {
-      const adminLink = document.createElement('a');
-      adminLink.href = adminUrl;
-      adminLink.className = 'nav-link';
-      if (window.location.pathname.includes('admin.html')) {
-        adminLink.classList.add('active');
-      }
-      adminLink.innerHTML = `<span class="material-symbols-outlined icon-16" style="vertical-align: sub; margin-right: 3px;">admin_panel_settings</span>Admin`;
-      navLinks.appendChild(adminLink);
-    }
-
-    const mobileDrawer = document.querySelector('.mobile-nav-drawer');
-    if (mobileDrawer && !mobileDrawer.querySelector('[href*="admin.html"]')) {
-      const mobileAdminLink = document.createElement('a');
-      mobileAdminLink.href = adminUrl;
-      mobileAdminLink.className = 'nav-link';
-      if (window.location.pathname.includes('admin.html')) {
-        mobileAdminLink.classList.add('active');
-      }
-      mobileAdminLink.textContent = 'Staff Admin Console';
-      mobileDrawer.appendChild(mobileAdminLink);
-    }
-  }
-
   const headerRight = document.querySelector('.site-header .header-right');
   if (!headerRight) return;
 
