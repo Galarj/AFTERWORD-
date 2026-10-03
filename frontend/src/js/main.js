@@ -71,9 +71,58 @@ function _injectNotifStyles() {
   style.id = 'notif-custom-styles';
   style.textContent = `
     .notif-dropdown-header {
-      padding: 10px 14px;
-      border-bottom: 1px solid rgba(0,0,0,0.08);
-      background: #faf7f2;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      padding: 14px 16px !important;
+      border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+      background: #faf7f2 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .notif-hdr-row {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      width: 100% !important;
+    }
+    .notif-category-tabs {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      width: 100% !important;
+      padding-bottom: 8px !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+      overflow-x: auto !important;
+    }
+    .notif-tab-btn {
+      padding: 4px 10px !important;
+      font-size: 0.75rem !important;
+      font-weight: 600 !important;
+      border-radius: 12px !important;
+      border: 1px solid rgba(0, 0, 0, 0.15) !important;
+      background: #ffffff !important;
+      color: #555 !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      transition: all 0.15s ease !important;
+      flex-shrink: 0 !important;
+    }
+    .notif-tab-btn:hover {
+      background: #efebe4 !important;
+      color: #111 !important;
+    }
+    .notif-tab-btn.active {
+      background: #3b2922 !important;
+      color: #faf7f2 !important;
+      border-color: #3b2922 !important;
+    }
+    .notif-hdr-actions {
+      display: flex !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
     }
     .notif-hdr-btn {
       background: #fff;
