@@ -120,6 +120,36 @@
           <button class="tab-btn" data-category="drinks">Drinks</button>
           <button class="tab-btn" data-category="food">Food</button>
         </nav>
+    <!-- Live Seating & Table Occupancy Floor Map -->
+    <section class="pt-lg pb-0">
+      <div class="container">
+        <div class="card card-subtle p-md">
+          <div class="flex-row items-center justify-between flex-wrap gap-sm mb-md border-b border-light pb-sm">
+            <div>
+              <span class="chip chip-coffee mb-2xs">LIVE CAFÉ FLOOR PLAN</span>
+              <h2 class="section-title text-md mb-2xs">Real-Time Table Occupancy &amp; Seating Status</h2>
+              <p class="text-xs text-muted mb-0">Select an available table to lock in your in-seat coffee delivery or check live room availability.</p>
+            </div>
+            <div class="flex-row items-center gap-sm">
+              <span class="text-xs text-mono font-semibold" id="seating-stats-summary">8 / 12 Tables Occupied (18 Seated Patrons)</span>
+              <div class="flex-row items-center gap-xs">
+                <span class="chip chip-olive" style="font-size: 11px;">🟢 Available (4)</span>
+                <span class="chip chip-terracotta" style="font-size: 11px;">🔴 Occupied (6)</span>
+                <span class="chip chip-coffee" style="font-size: 11px;">🟡 Reserved (2)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 12-Table Seating Floor Grid -->
+          <div class="grid-6 gap-xs" id="seating-floor-grid">
+            <!-- Dynamically populated / interactive tables rendered via cafe.js -->
+          </div>
+
+          <div class="flex-row items-center justify-between mt-sm pt-xs border-t border-light text-xs text-muted">
+            <span id="selected-table-notice">Current Selection: <strong>Table #4 (Selected for In-Seat Order)</strong></span>
+            <span>Click any open table above to auto-select it for in-seat delivery!</span>
+          </div>
+        </div>
       </div>
     </section>
 
