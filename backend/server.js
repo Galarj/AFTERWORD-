@@ -7,6 +7,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
@@ -1426,6 +1427,149 @@ app.get('/api/rsvps', async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// Cancel RSVP / Back Out Endpoint
+// ---------------------------------------------------------------------------
+app.post('/api/rsvps/cancel', async (req, res) => {
+  try {
+    const { rsvpId, eventId, userId, email } = req.body;
+
+    if (rsvpId) {
+      const { data, error } = await supabase
+        .from('event_rsvps')
+        .update({ status: 'Cancelled' })
+        .eq('rsvp_id', rsvpId)
+        .select();
+      if (error) throw error;
+      return res.json({ message: 'RSVP cancelled successfully!', data });
+    }
+
+    if (eventId) {
+      if (userId && UUID_REGEX.test(userId)) {
+        const { data, error } = await supabase
+          .from('event_rsvps')
+          .update({ status: 'Cancelled' })
+          .eq('event_id', parseInt(eventId, 10))
+          .eq('user_id', userId)
+          .select();
+        if (error) throw error;
+        return res.json({ message: 'RSVP cancelled successfully!', data });
+      }
+    }
+
+    res.json({ message: 'RSVP cancelled.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Event Proposals Store & Endpoints
+// ---------------------------------------------------------------------------
+const PROPOSALS_FILE = path.join(__dirname, 'event_proposals.json');
+
+function loadProposalsFromFile() {
+  try {
+    if (fs.existsSync(PROPOSALS_FILE)) {
+      const raw = fs.readFileSync(PROPOSALS_FILE, 'utf8');
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.warn('[Proposals File Read Notice]:', err.message);
+  }
+  return [];
+}
+
+function saveProposalsToFile(proposals) {
+  try {
+    fs.writeFileSync(PROPOSALS_FILE, JSON.stringify(proposals, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('[Proposals File Save Notice]:', err.message);
+  }
+}
+
+app.get('/api/proposals', async (req, res) => {
+  try {
+    try {
+      const { data, error } = await supabase.from('event_proposals').select('*').order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) return res.json(data);
+    } catch (e) {}
+
+    const fileProposals = loadProposalsFromFile();
+    res.json(fileProposals);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/proposals', async (req, res) => {
+  try {
+    const { organizerName, organizerEmail, eventTitle, space, description, proposedDate } = req.body;
+
+    if (!organizerName || !organizerEmail || !eventTitle) {
+      return res.status(400).json({ error: 'Organizer name, email, and event title are required.' });
+    }
+
+    const newProposal = {
+      id: 'prop_' + Date.now(),
+      proposal_id: 'prop_' + Date.now(),
+      organizer_name: organizerName,
+      organizer_email: organizerEmail,
+      title: eventTitle,
+      event_title: eventTitle,
+      preferred_space: space || 'Main Café Room',
+      description: description || '',
+      proposed_date: proposedDate || new Date().toISOString().split('T')[0],
+      status: 'Pending',
+      created_at: new Date().toISOString()
+    };
+
+    const fileProposals = loadProposalsFromFile();
+    fileProposals.unshift(newProposal);
+    saveProposalsToFile(fileProposals);
+
+    try {
+      await supabase.from('event_proposals').insert([{
+        organizer_name: organizerName,
+        organizer_email: organizerEmail,
+        title: eventTitle,
+        preferred_space: space || 'Main Café Room',
+        description: description || '',
+        status: 'Pending'
+      }]);
+    } catch (e) {}
+
+    res.status(201).json({
+      message: 'Event proposal submitted successfully! Our staff team will review your proposal.',
+      proposal: newProposal
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch('/api/proposals/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const fileProposals = loadProposalsFromFile();
+    const prop = fileProposals.find(p => p.id === id || p.proposal_id === id);
+    if (prop) {
+      prop.status = status;
+      saveProposalsToFile(fileProposals);
+    }
+
+    try {
+      await supabase.from('event_proposals').update({ status }).eq('id', id);
+    } catch (e) {}
+
+    res.json({ message: `Proposal status updated to ${status}`, proposal: prop });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.patch('/api/rsvps/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
@@ -1492,7 +1636,6 @@ app.delete('/api/rsvps/:id', async (req, res) => {
 });
 
 // Pending Loan Approvals Persistence Helper
-const fs = require('fs');
 const PENDING_LOANS_FILE = path.join(__dirname, 'pending_loans.json');
 
 function getPendingLoanIds() {

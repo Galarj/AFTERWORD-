@@ -139,12 +139,29 @@ function renderDynamicEvents(events, rsvps) {
               <span class="text-mono text-xs text-light">${spotsRemaining > 0 ? `Only ${spotsRemaining} seat${spotsRemaining !== 1 ? 's' : ''} remaining` : 'Fully Booked (Walk-ins welcome)'}</span>
             </div>
 
-            <button class="btn ${isReserved ? 'btn-secondary' : 'btn-primary'} btn-sm btn-full live-rsvp-btn" 
-              data-event-id="${event.event_id}"
-              data-event-title="${escapeHtml(event.title)}"
-              data-is-reserved="${isReserved}">
-              <span>${isReserved ? '<span class="material-symbols-outlined icon-16">check</span> Spot Reserved' : 'RSVP / Reserve'}</span>
-            </button>
+            ${isReserved ? `
+              <div class="flex-col gap-xs">
+                <button class="btn btn-secondary btn-sm btn-full" disabled style="opacity: 0.95; cursor: default;">
+                  <span class="material-symbols-outlined icon-16" style="color: #2e7d32;">check_circle</span>
+                  <span>Spot Reserved</span>
+                </button>
+                <button class="btn btn-outline btn-xs btn-full live-cancel-rsvp-btn" 
+                  style="color: #c53030; border-color: #feb2b2; margin-top: 4px;"
+                  data-event-id="${event.event_id}"
+                  data-rsvp-id="${userRsvp ? userRsvp.rsvp_id : ''}"
+                  data-event-title="${escapeHtml(event.title)}">
+                  <span class="material-symbols-outlined icon-14">cancel</span>
+                  <span>Unregister / Back Out</span>
+                </button>
+              </div>
+            ` : `
+              <button class="btn btn-primary btn-sm btn-full live-rsvp-btn" 
+                data-event-id="${event.event_id}"
+                data-event-title="${escapeHtml(event.title)}"
+                data-is-reserved="false">
+                <span>RSVP / Reserve</span>
+              </button>
+            `}
           </div>
 
         </div>
@@ -160,7 +177,6 @@ function renderDynamicEvents(events, rsvps) {
       e.preventDefault();
       const eventId = btn.getAttribute('data-event-id');
       const eventTitle = btn.getAttribute('data-event-title');
-      const isReserved = btn.getAttribute('data-is-reserved') === 'true';
 
       const user = (typeof getLoggedInUser === 'function') ? getLoggedInUser() : null;
       const userId = (typeof getSupabaseUserId === 'function') ? getSupabaseUserId() : null;
@@ -170,30 +186,25 @@ function renderDynamicEvents(events, rsvps) {
       btn.disabled = true;
 
       try {
-        if (!isReserved) {
-          const res = await fetch('/api/rsvps', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              eventId: parseInt(eventId, 10),
-              userId: userId,
-              email: userEmail,
-              userName: userName,
-              guestCount: 1
-            })
-          });
+        const res = await fetch('/api/rsvps', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId: parseInt(eventId, 10),
+            userId: userId,
+            email: userEmail,
+            userName: userName,
+            guestCount: 1
+          })
+        });
 
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || 'Failed to submit RSVP.');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to submit RSVP.');
 
-          if (typeof showToast === 'function') {
-            showToast(`✓ Spot reserved for "${eventTitle}"!`, 'check_circle');
-          }
-        } else {
-          if (typeof showToast === 'function') {
-            showToast(`You have already reserved a spot for "${eventTitle}".`, 'info');
-          }
+        if (typeof showToast === 'function') {
+          showToast(`✓ Spot reserved for "${eventTitle}"!`, 'check_circle');
         }
+
         initDynamicEventsPage();
       } catch (err) {
         console.error('RSVP Error:', err);
@@ -206,11 +217,142 @@ function renderDynamicEvents(events, rsvps) {
     });
   });
 
+  // Attach Unregister / Back Out button listeners
+  container.querySelectorAll('.live-cancel-rsvp-btn').forEach(cancelBtn => {
+    cancelBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const eventId = cancelBtn.getAttribute('data-event-id');
+      const rsvpId = cancelBtn.getAttribute('data-rsvp-id');
+      const eventTitle = cancelBtn.getAttribute('data-event-title');
+
+      const user = (typeof getLoggedInUser === 'function') ? getLoggedInUser() : null;
+      const userId = (typeof getSupabaseUserId === 'function') ? getSupabaseUserId() : null;
+      const userEmail = user?.email || null;
+
+      if (!confirm(`Are you sure you want to unregister and back out from "${eventTitle}"? Your reserved spot will be freed.`)) {
+        return;
+      }
+
+      cancelBtn.disabled = true;
+      cancelBtn.textContent = 'Unregistering...';
+
+      try {
+        const res = await fetch('/api/rsvps/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            rsvpId: rsvpId ? parseInt(rsvpId, 10) : null,
+            eventId: parseInt(eventId, 10),
+            userId: userId,
+            email: userEmail
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to cancel RSVP.');
+
+        if (typeof showToast === 'function') {
+          showToast(`✓ Unregistered from "${eventTitle}". Spot freed!`, 'info');
+        }
+
+        initDynamicEventsPage();
+      } catch (err) {
+        console.error('Cancel RSVP Error:', err);
+        if (typeof showToast === 'function') {
+          showToast(`Notice: ${err.message}`, 'warning');
+        }
+      } finally {
+        cancelBtn.disabled = false;
+      }
+    });
+  });
+
   // Re-apply filters if available
   if (typeof applyEventFilters === 'function') {
     applyEventFilters();
   }
 }
+
+// ---------------------------------------------------------------------------
+// Proposal Form Submission Handler
+// ---------------------------------------------------------------------------
+function initProposalForms() {
+  const attachFormHandler = (form) => {
+    if (!form || form.getAttribute('data-proposal-initialized') === 'true') return;
+    form.setAttribute('data-proposal-initialized', 'true');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      const orgNameInput = form.querySelector('#inline-org-name') || form.querySelector('#organizer-name');
+      const orgEmailInput = form.querySelector('#inline-org-email') || form.querySelector('#organizer-email');
+      const titleInput = form.querySelector('#inline-event-title') || form.querySelector('#event-topic');
+      const spaceInput = form.querySelector('#inline-event-space') || form.querySelector('#event-space');
+      const dateInput = form.querySelector('#inline-event-date');
+      const descInput = form.querySelector('#inline-event-desc') || form.querySelector('#event-description');
+
+      const organizerName = orgNameInput ? orgNameInput.value.trim() : '';
+      const organizerEmail = orgEmailInput ? orgEmailInput.value.trim() : '';
+      const eventTitle = titleInput ? titleInput.value.trim() : '';
+      const space = spaceInput ? spaceInput.value : 'Main Café Room';
+      const proposedDate = dateInput ? dateInput.value : '';
+      const description = descInput ? descInput.value.trim() : '';
+
+      if (!organizerName || !organizerEmail || !eventTitle) {
+        if (typeof showToast === 'function') showToast('Please fill in organizer name, email, and event title.', 'warning');
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Submitting Proposal...</span>';
+      }
+
+      try {
+        const res = await fetch('/api/proposals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            organizerName,
+            organizerEmail,
+            eventTitle,
+            space,
+            proposedDate,
+            description
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to submit proposal.');
+
+        if (typeof showToast === 'function') {
+          showToast('✓ Event proposal submitted! Sent to Staff Admin Console.', 'check_circle');
+        }
+
+        form.reset();
+
+        const modal = document.getElementById('event-proposal-modal');
+        if (modal) modal.classList.remove('open');
+      } catch (err) {
+        console.error('Proposal submission error:', err);
+        if (typeof showToast === 'function') {
+          showToast(`Proposal notice: ${err.message}`, 'warning');
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span class="material-symbols-outlined icon-18">send</span><span>Submit Proposal to Admin</span>';
+        }
+      }
+    });
+  };
+
+  attachFormHandler(document.getElementById('inline-proposal-form'));
+  attachFormHandler(document.getElementById('event-proposal-form'));
+}
+
+document.addEventListener('DOMContentLoaded', initProposalForms);
 
 function escapeHtml(str) {
   if (!str) return '';

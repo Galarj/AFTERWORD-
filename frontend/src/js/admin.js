@@ -1738,8 +1738,11 @@ function openReservationsModal(bookId) {
 // Events Subsystem
 // ---------------------------------------------------------------------------
 
+let adminProposals = [];
+
 function initEventsSection() {
   loadEventsFromBackend();
+  loadProposalsFromBackend();
 
   const tableBody = document.getElementById('events-table-body');
   if (tableBody) {
@@ -1750,6 +1753,123 @@ function initEventsSection() {
         showEventRosterModal(evId);
       }
     });
+  }
+
+  const proposalsBody = document.getElementById('proposals-table-body');
+  if (proposalsBody) {
+    proposalsBody.addEventListener('click', (e) => {
+      const approveBtn = e.target.closest('[data-proposal-action="approve"]');
+      const declineBtn = e.target.closest('[data-proposal-action="decline"]');
+
+      if (approveBtn) {
+        const id = approveBtn.getAttribute('data-proposal-id');
+        updateProposalStatus(id, 'Approved');
+      } else if (declineBtn) {
+        const id = declineBtn.getAttribute('data-proposal-id');
+        updateProposalStatus(id, 'Declined');
+      }
+    });
+  }
+}
+
+async function loadProposalsFromBackend() {
+  try {
+    const res = await fetch('/api/proposals');
+    if (res.ok) {
+      adminProposals = await res.json();
+      renderProposalsTable();
+    }
+  } catch (err) {
+    console.warn('Proposals fetch notice:', err);
+  }
+}
+
+function renderProposalsTable() {
+  const tableBody = document.getElementById('proposals-table-body');
+  const countBadge = document.getElementById('proposals-count-badge');
+  if (!tableBody) return;
+
+  const pendingCount = (adminProposals || []).filter(p => (p.status || '').toLowerCase() === 'pending').length;
+  if (countBadge) {
+    countBadge.textContent = `${pendingCount} Pending Proposal${pendingCount !== 1 ? 's' : ''}`;
+  }
+
+  if (!adminProposals || adminProposals.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="6" class="text-center p-md text-muted">No community event proposals submitted yet.</td></tr>`;
+    return;
+  }
+
+  tableBody.innerHTML = adminProposals.map(p => {
+    const pId = p.id || p.proposal_id;
+    const orgName = p.organizer_name || p.organizerName || 'Anonymous Organizer';
+    const orgEmail = p.organizer_email || p.organizerEmail || 'No Email';
+    const title = p.title || p.event_title || 'Untitled Proposal';
+    const space = p.preferred_space || p.space || 'Main Café Room';
+    const dateStr = p.proposed_date || p.proposedDate || 'TBD';
+    const desc = p.description || 'No description provided.';
+    const status = p.status || 'Pending';
+
+    let badgeClass = 'status-badge--pending';
+    if (status === 'Approved') badgeClass = 'status-badge--completed';
+    if (status === 'Declined' || status === 'Rejected') badgeClass = 'status-badge--cancelled';
+
+    const safeFormat = (typeof formatAdminText === 'function') ? formatAdminText : (s => s || '');
+
+    return `
+      <tr>
+        <td>
+          <div class="table-media-info">
+            <span class="table-primary-text">${safeFormat(orgName)}</span>
+            <span class="table-sub-text">${safeFormat(orgEmail)}</span>
+          </div>
+        </td>
+        <td><strong class="text-primary">${safeFormat(title)}</strong></td>
+        <td>
+          <div>
+            <span class="chip chip-olive">${safeFormat(space)}</span>
+            <div class="text-xs text-muted mt-xs">Date: ${safeFormat(dateStr)}</div>
+          </div>
+        </td>
+        <td><span class="text-xs text-muted" style="max-width: 200px; display: inline-block;">${safeFormat(desc)}</span></td>
+        <td><span class="status-badge ${badgeClass}">${status}</span></td>
+        <td>
+          <div class="table-actions-cell">
+            ${status === 'Pending' ? `
+              <button class="btn btn-primary btn-xs" data-proposal-action="approve" data-proposal-id="${pId}">
+                Approve Proposal ✓
+              </button>
+              <button class="btn btn-outline btn-xs text-danger" data-proposal-action="decline" data-proposal-id="${pId}">
+                Decline ✕
+              </button>
+            ` : `<span class="text-xs text-muted italic">${status}</span>`}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function updateProposalStatus(proposalId, newStatus) {
+  try {
+    const res = await fetch(`/api/proposals/${proposalId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+
+    if (!res.ok) throw new Error('Failed to update proposal status');
+
+    const prop = adminProposals.find(p => String(p.id || p.proposal_id) === String(proposalId));
+    if (prop) prop.status = newStatus;
+
+    renderProposalsTable();
+    showToast(`✓ Event proposal marked as ${newStatus}!`, 'check_circle');
+
+    if (newStatus === 'Approved') {
+      loadEventsFromBackend();
+    }
+  } catch (err) {
+    showToast(`Could not update proposal: ${err.message}`, 'warning');
   }
 }
 

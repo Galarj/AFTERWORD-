@@ -333,22 +333,62 @@
         </div>
 
         <!-- Host an Event Community Proposal Callout Section -->
-        <section class="proposal-callout-box" aria-label="Propose an Event">
-          <div class="col-span-8">
-            <span class="section-eyebrow">GRASSROOTS CULTURE INITIATIVE</span>
-            <h2 class="section-title text-primary">
-              Have an idea for a book launch, reading group, or creative salon?
-            </h2>
-            <p class="section-desc">
-              We offer zero-cost room bookings, sound amplification, projector equipment, and café hospitality staff
-              support for neighborhood literary, cultural, and craft gatherings.
-            </p>
-          </div>
-          <div>
-            <button class="btn btn-primary btn-lg" data-action="open-event-modal">
-              <span class="material-symbols-outlined icon-20">add_circle</span>
-              <span>Submit Event Proposal</span>
-            </button>
+        <section class="proposal-callout-box bg-surface-low p-md border-radius-md border-light" aria-label="Submit Event Proposal" style="margin-top: 2rem;">
+          <div class="grid-12 gap-md items-start">
+            <div class="col-span-12">
+              <span class="section-eyebrow text-tertiary font-bold">COMMUNITY PROGRAMMING</span>
+              <h2 class="section-title text-primary" style="font-size: 1.75rem; margin-bottom: 0.5rem;">
+                Do you have an event proposal? Submit here now!
+              </h2>
+              <p class="section-desc text-muted mb-md">
+                Have an idea for a book review, gaming night, creative salon, or workshop? Fill out the proposal form below to submit directly to our café staff team for admin review.
+              </p>
+            </div>
+
+            <!-- Embedded Proposal Form -->
+            <form id="inline-proposal-form" class="col-span-12 grid-12 gap-sm bg-surface p-md border-light border-radius-sm">
+              <div class="col-span-6">
+                <label class="form-label text-sm font-semibold" for="inline-org-name">Organizer Name / Collective *</label>
+                <input type="text" id="inline-org-name" class="form-input" placeholder="e.g. North Square Reading Society" required>
+              </div>
+
+              <div class="col-span-6">
+                <label class="form-label text-sm font-semibold" for="inline-org-email">Contact Email *</label>
+                <input type="email" id="inline-org-email" class="form-input" placeholder="you@example.com" required>
+              </div>
+
+              <div class="col-span-6">
+                <label class="form-label text-sm font-semibold" for="inline-event-title">Proposed Event Title & Concept *</label>
+                <input type="text" id="inline-event-title" class="form-input" placeholder="e.g. Indie Manga Review & Sketch Night" required>
+              </div>
+
+              <div class="col-span-3">
+                <label class="form-label text-sm font-semibold" for="inline-event-space">Preferred Space</label>
+                <select id="inline-event-space" class="form-select">
+                  <option value="Main Café Room (Up to 40 people)">Main Café Room (Up to 40)</option>
+                  <option value="Reading Corner (Up to 16 people)">Reading Corner (Up to 16)</option>
+                  <option value="Floral Studio Loft (Up to 12 people)">Floral Studio Loft (Up to 12)</option>
+                </select>
+              </div>
+
+              <div class="col-span-3">
+                <label class="form-label text-sm font-semibold" for="inline-event-date">Proposed Date</label>
+                <input type="date" id="inline-event-date" class="form-input">
+              </div>
+
+              <div class="col-span-12">
+                <label class="form-label text-sm font-semibold" for="inline-event-desc">Event Description & Needs</label>
+                <textarea id="inline-event-desc" class="form-textarea" rows="2" placeholder="Tell us about your event concept, estimated attendance, and equipment needs..."></textarea>
+              </div>
+
+              <div class="col-span-12 flex-row justify-between items-center mt-xs">
+                <span class="text-xs text-muted">Submitted proposals are dispatched to the Staff Admin Console for review.</span>
+                <button type="submit" class="btn btn-primary btn-md">
+                  <span class="material-symbols-outlined icon-18">send</span>
+                  <span>Submit Proposal to Admin</span>
+                </button>
+              </div>
+            </form>
           </div>
         </section>
 

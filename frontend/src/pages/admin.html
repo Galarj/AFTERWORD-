@@ -828,6 +828,35 @@
             </div>
 
           </div>
+
+          <!-- Submitted Event Proposals Card -->
+          <div class="admin-card" style="margin-top: 1.5rem;">
+            <div class="admin-card-header">
+              <div>
+                <h3 class="admin-card-title">Submitted Community Event Proposals</h3>
+                <span class="admin-card-desc">Event proposals submitted by patrons and neighborhood organizers for admin approval.</span>
+              </div>
+              <span class="chip chip-olive" id="proposals-count-badge">0 Proposals</span>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Organizer & Contact</th>
+                    <th>Proposed Event Title</th>
+                    <th>Space & Date</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="proposals-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <!-- ================================================================= -->
