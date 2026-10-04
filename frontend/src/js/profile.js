@@ -84,9 +84,10 @@ async function initUserProfile() {
 async function fetchLiveUserActivity(userId) {
   try {
     const api = window.AfterwordAPI;
+    const isUUID = userId && typeof userId === 'string' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(userId);
 
     // Fetch user profile from DB to get patron_code
-    if (api && typeof api.getUserProfile === 'function') {
+    if (api && typeof api.getUserProfile === 'function' && isUUID) {
       try {
         const dbProfile = await api.getUserProfile(userId);
         if (dbProfile && dbProfile.patron_code) {
@@ -99,9 +100,10 @@ async function fetchLiveUserActivity(userId) {
     // 1. Fetch Loans
     let loans = [];
     try {
-      const loanUrl = userId ? `/api/loans?user_id=${userId}` : '/api/loans';
-      const res = await fetch(loanUrl);
-      if (res.ok) loans = await res.json();
+      if (isUUID) {
+        const res = await fetch(`/api/loans?user_id=${userId}`);
+        if (res.ok) loans = await res.json();
+      }
     } catch (e) {}
 
     const activeLoans = loans.filter(l => l.status === 'Borrowed');
@@ -138,8 +140,10 @@ async function fetchLiveUserActivity(userId) {
     // 3. Fetch Orders
     let orders = [];
     try {
-      const res = await fetch(`/api/orders?user_id=${userId}`);
-      if (res.ok) orders = await res.json();
+      if (isUUID) {
+        const res = await fetch(`/api/orders?user_id=${userId}`);
+        if (res.ok) orders = await res.json();
+      }
     } catch (e) {}
 
     const ordersStatEl = document.getElementById('stat-orders');
@@ -151,8 +155,10 @@ async function fetchLiveUserActivity(userId) {
     // 4. Fetch RSVPs
     let rsvps = [];
     try {
-      const res = await fetch(`/api/rsvps?user_id=${userId}`);
-      if (res.ok) rsvps = await res.json();
+      if (isUUID) {
+        const res = await fetch(`/api/rsvps?user_id=${userId}`);
+        if (res.ok) rsvps = await res.json();
+      }
     } catch (e) {}
 
     const activeRsvps = rsvps.filter(r => r.status === 'Confirmed');
@@ -165,8 +171,10 @@ async function fetchLiveUserActivity(userId) {
     // 5. Fetch Wishlist
     let wishlist = [];
     try {
-      const res = await fetch(`/api/wishlist?user_id=${userId}`);
-      if (res.ok) wishlist = await res.json();
+      if (isUUID) {
+        const res = await fetch(`/api/wishlist?user_id=${userId}`);
+        if (res.ok) wishlist = await res.json();
+      }
     } catch (e) {}
 
     renderUserWishlist(wishlist);

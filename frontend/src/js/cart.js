@@ -326,6 +326,18 @@ function initCart() {
           res = await response.json();
         }
 
+        if (res?.order) {
+          try {
+            const existing = JSON.parse(localStorage.getItem('afterword_user_orders') || '[]');
+            existing.unshift({
+              order_id: res.order.order_id,
+              order_number: res.order.order_number,
+              created_at: res.order.created_at || new Date().toISOString()
+            });
+            localStorage.setItem('afterword_user_orders', JSON.stringify(existing.slice(0, 10)));
+          } catch (e) {}
+        }
+
         const orderRef = res?.order?.order_number ? ` (${res.order.order_number})` : '';
         showToast(`Order Placed! Total: ₱${getCartTotal().toFixed(2)}${orderRef} — ${destination}`, 'check_circle');
 

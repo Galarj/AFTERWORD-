@@ -452,7 +452,8 @@
             showToast(`Welcome back, ${result.user.name}!`, 'check_circle');
             
             const params = new URLSearchParams(window.location.search);
-            const returnUrl = params.get('redirect') || 'index.html';
+            const defaultTarget = result.user.role === 'admin' ? 'src/pages/admin.html' : 'index.html';
+            const returnUrl = params.get('redirect') || defaultTarget;
             setTimeout(() => {
               window.location.href = returnUrl;
             }, 800);

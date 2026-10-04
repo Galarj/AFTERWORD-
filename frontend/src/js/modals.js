@@ -102,7 +102,7 @@ function initBorrowModal() {
       
       const bookId = borrowModalEl?.getAttribute('data-book-id') || bookTitle;
       const user = (typeof getLoggedInUser === 'function') ? getLoggedInUser() : null;
-      const userId = user?.id || ((typeof getSupabaseUserId === 'function') ? getSupabaseUserId() : null);
+      const userId = (typeof getSupabaseUserId === 'function') ? getSupabaseUserId() : null;
 
       if (!userId) {
         closeBorrowModal();
@@ -188,7 +188,7 @@ function initQuickRsvpButtons() {
         } catch (e) {}
       }
 
-      const userId = user?.id || user?.supabaseId || (typeof getSupabaseUserId === 'function' ? getSupabaseUserId() : null);
+      const userId = (typeof getSupabaseUserId === 'function') ? getSupabaseUserId() : null;
       const userEmail = user?.email || null;
       const userName = user?.name || null;
 
