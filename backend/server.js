@@ -18,13 +18,8 @@ const { createDonation, getDonations, getDonationById, updateDonation } = requir
 
 
 // Initialize Supabase Client (service_role key — bypasses RLS for server operations)
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error('ERROR: SUPABASE_URL and SUPABASE_KEY must be defined in .env');
-  process.exit(1);
-}
+const supabaseUrl = process.env.SUPABASE_URL || 'https://iqsgmkufptdqkdxskgde.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxc2dta3VmcHRkcWtkeHNrZ2RlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDE2MDYzNSwiZXhwIjoyMTA1NzM2NjM1fQ.lrbcUXl9tPV2kHTRkAKgs6qDtovwDCy8eLS4QAmWA2E';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -122,7 +117,7 @@ app.get('/api/health', async (req, res) => {
 // ---------------------------------------------------------------------------
 // 2. Authentication (Supabase Auth proxy)
 // ---------------------------------------------------------------------------
-const anonKey = process.env.SUPABASE_ANON_KEY;
+const anonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxc2dta3VmcHRkcWtkeHNrZ2RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNjA2MzUsImV4cCI6MjEwNTczNjYzNX0.fW_BUDsKShvUlJoRGCRlA1ia5uA1PcSzX06WPhG99pM';
 const supabaseAuth = anonKey ? createClient(supabaseUrl, anonKey) : null;
 
 app.post('/api/auth/signup', async (req, res) => {
@@ -2868,11 +2863,15 @@ app.patch('/api/tables/:table_number', async (req, res) => {
   }
 });
 
-// Start listening
-app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(` AFTERWORD REST API Server listening on port ${PORT}`);
-  console.log(` URL: http://localhost:${PORT}`);
-  console.log(` Healthcheck: http://localhost:${PORT}/api/health`);
-  console.log(`====================================================`);
-});
+// Start listening if run directly
+if (require.main === module || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(` AFTERWORD REST API Server listening on port ${PORT}`);
+    console.log(` URL: http://localhost:${PORT}`);
+    console.log(` Healthcheck: http://localhost:${PORT}/api/health`);
+    console.log(`====================================================`);
+  });
+}
+
+module.exports = app;
