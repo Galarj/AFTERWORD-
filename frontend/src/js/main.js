@@ -18,13 +18,14 @@
  * Sequentially initializes each frontend subsystem in safe dependency order.
  */
 document.addEventListener('DOMContentLoaded', () => {
-  initNavigation();
-  initCart();
-  initFilters();
-  initModals();
-  initCafeTable();
-  initNotificationSystem();
-  initDynamicBookAvailability();
+  if (typeof initNavigation === 'function') initNavigation();
+  if (typeof initCart === 'function') initCart();
+  if (typeof initFilters === 'function') initFilters();
+  if (typeof initModals === 'function') initModals();
+  if (typeof initCafeTable === 'function') initCafeTable();
+  else if (typeof initCafeSeatingSystem === 'function') initCafeSeatingSystem();
+  if (typeof initNotificationSystem === 'function') initNotificationSystem();
+  if (typeof initDynamicBookAvailability === 'function') initDynamicBookAvailability();
 });
 
 // ---------------------------------------------------------------------------
@@ -817,6 +818,9 @@ async function initDynamicBookAvailability() {
         }
       }
     });
+  } catch (err) {
+    console.warn('Dynamic book availability error:', err);
+  }
 }
 
 /**

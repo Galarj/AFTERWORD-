@@ -8,8 +8,8 @@
 // 1. Session Storage Keys
 // ---------------------------------------------------------------------------
 
-const AUTH_STORAGE_KEY = 'afterword_user';
-const AUTH_SESSION_KEY = 'afterword_session';
+var AUTH_STORAGE_KEY = 'afterword_user';
+var AUTH_SESSION_KEY = 'afterword_session';
 
 // ---------------------------------------------------------------------------
 // 2. Core Session Helpers
@@ -109,7 +109,7 @@ checkAuthGuard();
 // ---------------------------------------------------------------------------
 
 // Known Demo Accounts Client Fallback Registry
-const DEMO_USERS_CLIENT = {
+var DEMO_USERS_CLIENT = {
   'elena@afterword.hub': {
     id: 'd3b07384-d113-460a-8409-e85df6498c49',
     supabaseId: 'd3b07384-d113-460a-8409-e85df6498c49',

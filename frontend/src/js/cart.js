@@ -268,7 +268,10 @@ function initCart() {
     const category = target.getAttribute('data-category') || 'General';
 
     addToCart({ name, price, category });
-    showToast(`Added "${name}" to your tray`, 'shopping_bag');
+    openCart();
+    if (typeof showToast === 'function') {
+      showToast(`Added "${name}" to your tray`, 'shopping_bag');
+    }
   });
 
   // Clear Cart Button
