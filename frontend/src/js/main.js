@@ -533,47 +533,79 @@ async function fetchAndRenderNotifications() {
       }
 
       if (Array.isArray(ordersToQuery)) {
+        const nowTs = Date.now();
         ordersToQuery.forEach(order => {
-          if (order.status === 'Ready' || order.status === 'Preparing') {
-            const items = (order.order_items || []).map(oi => oi.products?.name || 'Item').filter(Boolean).join(', ');
-            const isFlower = (order.order_items || []).some(oi => {
-              const catName = (oi.products?.categories?.name || '').toLowerCase();
-              const prodName = (oi.products?.name || '').toLowerCase();
-              return catName.includes('flower') || prodName.includes('rose') || prodName.includes('tulip') || prodName.includes('bouquet') || prodName.includes('stem');
-            });
-            const key = `order_ready:${order.order_id || order.order_number}:${order.status}`;
+          const items = (order.order_items || []).map(oi => oi.products?.name || 'Item').filter(Boolean).join(', ');
+          const isFlower = (order.order_items || []).some(oi => {
+            const catName = (oi.products?.categories?.name || '').toLowerCase();
+            const prodName = (oi.products?.name || '').toLowerCase();
+            return catName.includes('flower') || prodName.includes('rose') || prodName.includes('tulip') || prodName.includes('bouquet') || prodName.includes('stem');
+          });
 
-            if (order.status === 'Ready') {
-              allNotifs.push({
-                key,
-                type: isFlower ? 'flower_ready' : 'meal_ready',
-                category: 'orders',
-                icon: isFlower ? 'local_florist' : 'restaurant',
-                title: isFlower ? '🌸 Your Flowers Are Ready!' : '☕ Your Order Is Ready!',
-                message: isFlower
-                  ? `Order #${order.order_number}${items ? ' (' + items + ')' : ''} is ready for pickup!`
-                  : order.table_number
-                    ? `Order #${order.order_number}${items ? ' (' + items + ')' : ''} is being delivered to Table #${order.table_number}!`
-                    : `Order #${order.order_number}${items ? ' (' + items + ')' : ''} is ready for counter pickup!`,
-                urgent: true,
-                orderId: order.order_id,
-                orderNumber: order.order_number,
-                timestamp: order.created_at || new Date().toISOString()
-              });
-            } else if (order.status === 'Preparing') {
-              allNotifs.push({
-                key,
-                type: 'order_preparing',
-                category: 'orders',
-                icon: 'skillet',
-                title: `Order #${order.order_number} — Preparing`,
-                message: `Our kitchen staff is currently preparing your order (${items || 'Items'}).`,
-                urgent: false,
-                orderId: order.order_id,
-                orderNumber: order.order_number,
-                timestamp: order.created_at || new Date().toISOString()
-              });
-            }
+          if (order.status === 'Completed') {
+            const key = `order_completed:${order.order_id || order.order_number}`;
+            allNotifs.push({
+              key,
+              type: isFlower ? 'flower_completed' : 'meal_completed',
+              category: 'orders',
+              icon: 'check_circle',
+              title: isFlower ? '🌸 Floral Order Complete!' : '✅ Order Complete!',
+              message: isFlower
+                ? `Order #${order.order_number}${items ? ' (' + items + ')' : ''} has been fulfilled. Thank you!`
+                : order.table_number
+                  ? `Order #${order.order_number}${items ? ' (' + items + ')' : ''} was delivered to Table #${order.table_number}. Enjoy!`
+                  : `Order #${order.order_number}${items ? ' (' + items + ')' : ''} has been completed. Enjoy!`,
+              urgent: true,
+              orderId: order.order_id,
+              orderNumber: order.order_number,
+              timestamp: order.updated_at || order.created_at || new Date().toISOString()
+            });
+          } else if (order.status === 'Ready') {
+            const key = `order_ready:${order.order_id || order.order_number}:${order.status}`;
+            allNotifs.push({
+              key,
+              type: isFlower ? 'flower_ready' : 'meal_ready',
+              category: 'orders',
+              icon: isFlower ? 'local_florist' : 'restaurant',
+              title: isFlower ? '🌸 Your Flowers Are Ready!' : '☕ Your Order Is Ready!',
+              message: isFlower
+                ? `Order #${order.order_number}${items ? ' (' + items + ')' : ''} is ready for pickup!`
+                : order.table_number
+                  ? `Order #${order.order_number}${items ? ' (' + items + ')' : ''} is being delivered to Table #${order.table_number}!`
+                  : `Order #${order.order_number}${items ? ' (' + items + ')' : ''} is ready for counter pickup!`,
+              urgent: true,
+              orderId: order.order_id,
+              orderNumber: order.order_number,
+              timestamp: order.created_at || new Date().toISOString()
+            });
+          } else if (order.status === 'Preparing') {
+            const key = `order_ready:${order.order_id || order.order_number}:${order.status}`;
+            allNotifs.push({
+              key,
+              type: 'order_preparing',
+              category: 'orders',
+              icon: 'skillet',
+              title: `Order #${order.order_number} — Preparing`,
+              message: `Our kitchen staff is currently preparing your order (${items || 'Items'}).`,
+              urgent: false,
+              orderId: order.order_id,
+              orderNumber: order.order_number,
+              timestamp: order.created_at || new Date().toISOString()
+            });
+          } else if (order.status === 'Pending') {
+            const key = `order_pending:${order.order_id || order.order_number}`;
+            allNotifs.push({
+              key,
+              type: 'order_pending',
+              category: 'orders',
+              icon: 'receipt_long',
+              title: `Order #${order.order_number} — Placed`,
+              message: `Your order (${items || 'Items'}) has been received! Staff will prepare it shortly.`,
+              urgent: false,
+              orderId: order.order_id,
+              orderNumber: order.order_number,
+              timestamp: order.created_at || new Date().toISOString()
+            });
           }
         });
       }
@@ -601,7 +633,7 @@ async function fetchAndRenderNotifications() {
       for (const notif of activeNotifications) {
         if (!_shownNotifKeys.has(notif.key)) {
           _shownNotifKeys.add(notif.key);
-          if (notif.type === 'table_confirmed' || notif.type === 'meal_ready' || notif.type === 'flower_ready' || notif.type.includes('ready')) {
+          if (notif.type === 'table_confirmed' || notif.type === 'meal_ready' || notif.type === 'flower_ready' || notif.type.includes('ready') || notif.type.includes('completed')) {
             playNotificationChimeSound();
             if (typeof showToast === 'function') {
               showToast(`${notif.title} — ${notif.message}`, notif.icon || 'check_circle');
@@ -837,7 +869,7 @@ function updateHeroOrderTracker(orders) {
   if (!trackerEl || !labelEl || !valEl || !subEl || !iconEl) return;
 
   if (!Array.isArray(orders) || orders.length === 0) {
-    trackerEl.classList.remove('order-ready-active', 'order-preparing-active');
+    trackerEl.classList.remove('order-ready-active', 'order-preparing-active', 'order-completed-active');
     labelEl.textContent = 'Live Order Tracker';
     labelEl.style.color = '';
     labelEl.style.fontWeight = '';
@@ -848,13 +880,16 @@ function updateHeroOrderTracker(orders) {
     return;
   }
 
-  // Find most recent Ready or Preparing order
+  // Priority order: Ready -> Preparing -> Pending -> Most recent Completed order
   const readyOrder = orders.find(o => o.status === 'Ready');
   const preparingOrder = orders.find(o => o.status === 'Preparing');
-  const activeOrder = readyOrder || preparingOrder;
+  const pendingOrder = orders.find(o => o.status === 'Pending');
+  const recentCompletedOrder = orders.find(o => o.status === 'Completed');
+
+  const activeOrder = readyOrder || preparingOrder || pendingOrder || recentCompletedOrder;
 
   if (!activeOrder) {
-    trackerEl.classList.remove('order-ready-active', 'order-preparing-active');
+    trackerEl.classList.remove('order-ready-active', 'order-preparing-active', 'order-completed-active');
     labelEl.textContent = 'Live Order Tracker';
     labelEl.style.color = '';
     labelEl.style.fontWeight = '';
@@ -878,7 +913,7 @@ function updateHeroOrderTracker(orders) {
   });
 
   if (activeOrder.status === 'Ready') {
-    trackerEl.classList.remove('order-preparing-active');
+    trackerEl.classList.remove('order-preparing-active', 'order-completed-active');
     trackerEl.classList.add('order-ready-active');
 
     labelEl.textContent = '🎉 READY FOR PICKUP!';
@@ -895,7 +930,7 @@ function updateHeroOrderTracker(orders) {
     iconEl.textContent = isFlower ? 'local_florist' : 'restaurant';
     if (iconWrapEl) iconWrapEl.style.color = '#2e7d32';
   } else if (activeOrder.status === 'Preparing') {
-    trackerEl.classList.remove('order-ready-active');
+    trackerEl.classList.remove('order-ready-active', 'order-completed-active');
     trackerEl.classList.add('order-preparing-active');
 
     labelEl.textContent = '⏳ PREPARING YOUR ORDER...';
@@ -907,5 +942,30 @@ function updateHeroOrderTracker(orders) {
 
     iconEl.textContent = 'skillet';
     if (iconWrapEl) iconWrapEl.style.color = '#d97706';
+  } else if (activeOrder.status === 'Pending') {
+    trackerEl.classList.remove('order-ready-active', 'order-preparing-active', 'order-completed-active');
+
+    labelEl.textContent = '📋 ORDER RECEIVED';
+    labelEl.style.color = '#0284c7';
+    labelEl.style.fontWeight = '700';
+
+    valEl.textContent = `Order Received: ${itemsText}`;
+    subEl.textContent = `Order #${activeOrder.order_number} · Pending preparation by kitchen staff`;
+
+    iconEl.textContent = 'receipt_long';
+    if (iconWrapEl) iconWrapEl.style.color = '#0284c7';
+  } else if (activeOrder.status === 'Completed') {
+    trackerEl.classList.remove('order-ready-active', 'order-preparing-active');
+    trackerEl.classList.add('order-completed-active');
+
+    labelEl.textContent = '✅ ORDER COMPLETED';
+    labelEl.style.color = '#2e7d32';
+    labelEl.style.fontWeight = '800';
+
+    valEl.textContent = `Completed: ${itemsText}`;
+    subEl.textContent = `Order #${activeOrder.order_number} · Thank you! Enjoy your day at Afterword.`;
+
+    iconEl.textContent = 'task_alt';
+    if (iconWrapEl) iconWrapEl.style.color = '#2e7d32';
   }
 }

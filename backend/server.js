@@ -1354,7 +1354,7 @@ app.patch('/api/orders/:id/status', async (req, res) => {
     let filterCol = isNaN(id) ? 'order_number' : 'order_id';
     const { data, error } = await supabase
       .from('orders')
-      .update({ status })
+      .update({ status, updated_at: new Date().toISOString() })
       .eq(filterCol, id)
       .select()
       .single();
@@ -2204,15 +2204,16 @@ app.get('/api/notifications/:userId', async (req, res) => {
       }
     }
 
-    // 2. Check order status (Ready for pickup / Ready for delivery)
+    // 2. Check order status (Ready / Preparing / Completed / Pending)
     const { data: orders } = await supabase
       .from('orders')
       .select('*, order_items(*, products(name, category_id, categories(name, type)))')
       .eq('user_id', userId)
-      .in('status', ['Ready', 'Preparing'])
+      .in('status', ['Ready', 'Preparing', 'Completed', 'Pending'])
       .order('created_at', { ascending: false });
 
     if (orders) {
+      const now = new Date();
       for (const order of orders) {
         const items = (order.order_items || []).map(oi => oi.products?.name || 'Item');
         const itemsStr = items.join(', ');
@@ -2225,7 +2226,22 @@ app.get('/api/notifications/:userId', async (req, res) => {
         });
         const isCafe = !isFlower;
 
-        if (order.status === 'Ready') {
+        if (order.status === 'Completed') {
+          notifications.push({
+            type: isFlower ? 'flower_completed' : 'meal_completed',
+            icon: 'check_circle',
+            title: isFlower ? '🌸 Floral Order Complete!' : '✅ Order Complete!',
+            message: isFlower
+              ? `Your floral order #${order.order_number} (${itemsStr}) has been fulfilled. Thank you!`
+              : order.table_number
+                ? `Order #${order.order_number} (${itemsStr}) was delivered to Table #${order.table_number}. Enjoy!`
+                : `Order #${order.order_number} (${itemsStr}) has been picked up. Enjoy!`,
+            urgent: true,
+            orderId: order.order_id,
+            orderNumber: order.order_number,
+            timestamp: order.updated_at || order.created_at
+          });
+        } else if (order.status === 'Ready') {
           notifications.push({
             type: isFlower ? 'flower_ready' : 'meal_ready',
             icon: isFlower ? 'local_florist' : 'restaurant',
@@ -2248,6 +2264,17 @@ app.get('/api/notifications/:userId', async (req, res) => {
             message: isFlower
               ? `Your floral arrangement (${itemsStr}) is being assembled. We'll notify you when it's ready!`
               : `Your order (${itemsStr}) is being prepared. Hang tight!`,
+            urgent: false,
+            orderId: order.order_id,
+            orderNumber: order.order_number,
+            timestamp: order.created_at
+          });
+        } else if (order.status === 'Pending') {
+          notifications.push({
+            type: 'order_pending',
+            icon: 'receipt_long',
+            title: `Order #${order.order_number} — Placed`,
+            message: `Your order (${itemsStr}) has been received! Staff will begin preparing it shortly.`,
             urgent: false,
             orderId: order.order_id,
             orderNumber: order.order_number,
