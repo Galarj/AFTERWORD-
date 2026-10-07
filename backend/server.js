@@ -25,11 +25,39 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const UUID_REGEX = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
-const DEMO_PATRON_PROFILES = {
-  'd3b07384-d113-460a-8409-e85df6498c49': { full_name: 'Elena Rostova', patron_code: '#MEM-8492', role: 'customer' },
-  'b2c3d4e5-f6a7-8901-bcde-f23456789012': { full_name: 'Marcus Vance', patron_code: '#STF-0102', role: 'staff' },
-  'a1b2c3d4-e5f6-7890-abcd-ef1234567890': { full_name: 'Dr. Julian Thorne', patron_code: '#ADM-0001', role: 'admin' }
-};
+const DEMO_USERS_TO_SEED = [
+  { id: 'd3b07384-d113-460a-8409-e85df6498c49', email: 'elena@afterword.hub', password: 'patron123', meta: { full_name: 'Elena Rostova', role: 'customer' }, code: '#MEM-8492' },
+  { id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012', email: 'staff@afterword.hub', password: 'staff123', meta: { full_name: 'Marcus Vance', role: 'staff' }, code: '#STF-0102' },
+  { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', email: 'admin@afterword.hub', password: 'admin123', meta: { full_name: 'Dr. Julian Thorne', role: 'admin' }, code: '#ADM-0001' }
+];
+
+async function ensureDemoAccountsSeeded() {
+  try {
+    for (const u of DEMO_USERS_TO_SEED) {
+      const { data: existing } = await supabase.from('profiles').select('id').eq('id', u.id).maybeSingle();
+      if (!existing) {
+        try {
+          await supabase.auth.admin.createUser({
+            id: u.id,
+            email: u.email,
+            password: u.password,
+            email_confirm: true,
+            user_metadata: u.meta
+          });
+        } catch (e) {}
+        await supabase.from('profiles').upsert([{
+          id: u.id,
+          full_name: u.meta.full_name,
+          patron_code: u.code,
+          role: u.meta.role
+        }], { onConflict: 'id' });
+      }
+    }
+  } catch (err) {}
+}
+
+// Auto seed demo users asynchronously on module load
+ensureDemoAccountsSeeded();
 
 async function validateUserId(userId) {
   let targetId = userId;
@@ -44,21 +72,11 @@ async function validateUserId(userId) {
       return targetId;
     }
 
-    // 2. Auto-upsert profile row so Foreign Key and NOT NULL constraints succeed
-    const demo = DEMO_PATRON_PROFILES[targetId] || {
-      full_name: 'Community Patron',
-      patron_code: '#MEM-8492',
-      role: 'customer'
-    };
+    // 2. Trigger demo account seeding if needed
+    await ensureDemoAccountsSeeded();
 
-    const { data: newProf, error: upsertErr } = await supabase.from('profiles').upsert([{
-      id: targetId,
-      full_name: demo.full_name || 'Community Patron',
-      patron_code: demo.patron_code || '#MEM-8492',
-      role: demo.role || 'customer'
-    }], { onConflict: 'id' }).select('id').maybeSingle();
-
-    if (!upsertErr && newProf && newProf.id) {
+    const { data: retryProfile } = await supabase.from('profiles').select('id').eq('id', targetId).maybeSingle();
+    if (retryProfile && retryProfile.id) {
       return targetId;
     }
 
