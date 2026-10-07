@@ -347,9 +347,13 @@
             <span class="material-symbols-outlined icon-14">badge</span>
             <span>Patron: Elena</span>
           </button>
-          <button type="button" class="demo-chip-btn" id="demo-admin-btn" title="Sign in as Staff Admin Dr. Thorne">
+          <button type="button" class="demo-chip-btn" id="demo-staff-btn" title="Sign in as Staff Barista Marcus Vance">
+            <span class="material-symbols-outlined icon-14">coffee</span>
+            <span>Staff: Marcus</span>
+          </button>
+          <button type="button" class="demo-chip-btn" id="demo-admin-btn" title="Sign in as Admin Dr. Thorne">
             <span class="material-symbols-outlined icon-14">shield_person</span>
-            <span>Staff: Thorne</span>
+            <span>Admin: Thorne</span>
           </button>
         </div>
       </div>
@@ -380,6 +384,7 @@
       const loginPassword = document.getElementById('login-password');
 
       const demoPatronBtn = document.getElementById('demo-patron-btn');
+      const demoStaffBtn = document.getElementById('demo-staff-btn');
       const demoAdminBtn = document.getElementById('demo-admin-btn');
       const forgotPasswordLink = document.getElementById('forgot-password-trigger');
 
@@ -522,7 +527,16 @@
           loginEmail.value = 'elena@afterword.hub';
           loginPassword.value = 'patron123';
           showToast('Filled demo patron credentials: Elena Rostova', 'info');
-          // Trigger submit
+          loginForm.dispatchEvent(new Event('submit'));
+        });
+      }
+
+      if (demoStaffBtn) {
+        demoStaffBtn.addEventListener('click', () => {
+          showLogin();
+          loginEmail.value = 'staff@afterword.hub';
+          loginPassword.value = 'staff123';
+          showToast('Filled demo staff credentials: Marcus Vance', 'coffee');
           loginForm.dispatchEvent(new Event('submit'));
         });
       }
@@ -532,8 +546,7 @@
           showLogin();
           loginEmail.value = 'admin@afterword.hub';
           loginPassword.value = 'admin123';
-          showToast('Filled demo staff admin: Dr. Julian Thorne', 'shield_person');
-          // Trigger submit
+          showToast('Filled demo admin credentials: Dr. Julian Thorne', 'shield_person');
           loginForm.dispatchEvent(new Event('submit'));
         });
       }

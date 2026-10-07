@@ -121,6 +121,17 @@ const DEMO_USERS_CLIENT = {
     role: 'customer',
     tier: 'Community Patron'
   },
+  'staff@afterword.hub': {
+    id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+    supabaseId: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+    name: 'Marcus Vance',
+    full_name: 'Marcus Vance',
+    email: 'staff@afterword.hub',
+    patronCode: '#STF-0102',
+    patron_code: '#STF-0102',
+    role: 'staff',
+    tier: 'Shift Barista & Staff Member'
+  },
   'admin@afterword.hub': {
     id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     supabaseId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -161,14 +172,19 @@ async function login(email, password) {
     if (res.ok) {
       const profile = data.profile || {};
       const userId = data.user?.id || profile.id || null;
+      const isAdmin = profile.role === 'admin' || cleanEmail.includes('admin');
+      const isStaffRole = profile.role === 'staff' || cleanEmail.includes('staff');
+      const userRole = profile.role || (isAdmin ? 'admin' : (isStaffRole ? 'staff' : 'customer'));
+      const userTier = profile.tier || (isAdmin ? 'Staff Administrator' : (isStaffRole ? 'Shift Barista & Staff Member' : 'Community Patron'));
+
       const userObj = {
         id: userId,
         supabaseId: userId,
         name: profile.full_name || data.user?.user_metadata?.full_name || cleanEmail.split('@')[0],
         email: data.user?.email || cleanEmail,
-        patronCode: profile.patron_code || `#MEM-${Math.floor(100 + Math.random() * 900)}`,
-        role: profile.role || (cleanEmail.includes('admin') ? 'admin' : 'customer'),
-        tier: profile.tier || (profile.role === 'admin' || cleanEmail.includes('admin') ? 'Staff Administrator' : 'Community Patron')
+        patronCode: profile.patron_code || (isAdmin ? '#ADM-0001' : (isStaffRole ? '#STF-0102' : `#MEM-${Math.floor(100 + Math.random() * 900)}`)),
+        role: userRole,
+        tier: userTier
       };
 
       saveSession(userObj);
@@ -191,17 +207,23 @@ async function login(email, password) {
 
   // 3. Dynamic fallback for any test email or @afterword.hub domain
   if (cleanEmail.includes('demo') || cleanEmail.includes('test') || cleanEmail.endsWith('@afterword.hub')) {
-    const isStaff = cleanEmail.includes('admin') || cleanEmail.includes('staff') || cleanEmail.includes('thorne');
+    const isAdmin = cleanEmail.includes('admin') || cleanEmail.includes('thorne');
+    const isStaff = !isAdmin && (cleanEmail.includes('staff') || cleanEmail.includes('marcus'));
+    const userRole = isAdmin ? 'admin' : (isStaff ? 'staff' : 'customer');
+    const mockId = isAdmin 
+      ? 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' 
+      : (isStaff ? 'b2c3d4e5-f6a7-8901-bcde-f23456789012' : 'd3b07384-d113-460a-8409-e85df6498c49');
+    
     const namePart = cleanEmail.split('@')[0];
     const userObj = {
-      id: isStaff ? 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' : 'd3b07384-d113-460a-8409-e85df6498c49',
-      supabaseId: isStaff ? 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' : 'd3b07384-d113-460a-8409-e85df6498c49',
+      id: mockId,
+      supabaseId: mockId,
       name: namePart.charAt(0).toUpperCase() + namePart.slice(1),
       full_name: namePart.charAt(0).toUpperCase() + namePart.slice(1),
       email: cleanEmail,
-      patronCode: isStaff ? '#ADM-0001' : '#MEM-8492',
-      role: isStaff ? 'admin' : 'customer',
-      tier: isStaff ? 'Staff Administrator' : 'Community Patron'
+      patronCode: isAdmin ? '#ADM-0001' : (isStaff ? '#STF-0102' : '#MEM-8492'),
+      role: userRole,
+      tier: isAdmin ? 'Staff Administrator' : (isStaff ? 'Shift Barista & Staff Member' : 'Community Patron')
     };
     saveSession(userObj);
     return { success: true, user: userObj };

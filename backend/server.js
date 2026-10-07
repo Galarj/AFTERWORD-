@@ -170,6 +170,25 @@ const DEMO_ACCOUNTS = {
       tier: 'Community Patron'
     }
   },
+  'staff@afterword.hub': {
+    user: {
+      id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+      email: 'staff@afterword.hub',
+      user_metadata: { full_name: 'Marcus Vance' }
+    },
+    session: {
+      access_token: 'demo-token-staff',
+      user: { id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012', email: 'staff@afterword.hub' }
+    },
+    profile: {
+      id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+      full_name: 'Marcus Vance',
+      email: 'staff@afterword.hub',
+      patron_code: '#STF-0102',
+      role: 'staff',
+      tier: 'Shift Barista & Staff Member'
+    }
+  },
   'admin@afterword.hub': {
     user: {
       id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -193,6 +212,7 @@ const DEMO_ACCOUNTS = {
 
 const DEMO_PROFILES_BY_ID = {
   'd3b07384-d113-460a-8409-e85df6498c49': DEMO_ACCOUNTS['elena@afterword.hub'].profile,
+  'b2c3d4e5-f6a7-8901-bcde-f23456789012': DEMO_ACCOUNTS['staff@afterword.hub'].profile,
   'a1b2c3d4-e5f6-7890-abcd-ef1234567890': DEMO_ACCOUNTS['admin@afterword.hub'].profile
 };
 
@@ -244,8 +264,13 @@ app.post('/api/auth/login', async (req, res) => {
     if (cleanEmail.includes('demo') || cleanEmail.includes('test') || cleanEmail.endsWith('@afterword.hub')) {
       const namePart = cleanEmail.split('@')[0];
       const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-      const isStaff = cleanEmail.includes('admin') || cleanEmail.includes('staff') || cleanEmail.includes('thorne');
-      const mockId = isStaff ? 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' : 'd3b07384-d113-460a-8409-e85df6498c49';
+      const isAdmin = cleanEmail.includes('admin') || cleanEmail.includes('thorne');
+      const isStaff = !isAdmin && (cleanEmail.includes('staff') || cleanEmail.includes('marcus'));
+      const userRole = isAdmin ? 'admin' : (isStaff ? 'staff' : 'customer');
+      const mockId = isAdmin 
+        ? 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' 
+        : (isStaff ? 'b2c3d4e5-f6a7-8901-bcde-f23456789012' : 'd3b07384-d113-460a-8409-e85df6498c49');
+      
       return res.json({
         message: 'Signed in successfully!',
         user: { id: mockId, email: cleanEmail, user_metadata: { full_name: capitalized } },
@@ -254,9 +279,9 @@ app.post('/api/auth/login', async (req, res) => {
           id: mockId,
           full_name: capitalized,
           email: cleanEmail,
-          patron_code: isStaff ? '#ADM-0001' : '#MEM-8492',
-          role: isStaff ? 'admin' : 'customer',
-          tier: isStaff ? 'Staff Administrator' : 'Community Patron'
+          patron_code: isAdmin ? '#ADM-0001' : (isStaff ? '#STF-0102' : '#MEM-8492'),
+          role: userRole,
+          tier: isAdmin ? 'Staff Administrator' : (isStaff ? 'Shift Barista & Staff Member' : 'Community Patron')
         }
       });
     }
